@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{189B60BE-EE27-49D9-A319-4BBD55BB9403}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{16FB869A-6FDB-4801-893E-C38BD345C8B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{0C97F21F-C66F-4354-A578-FE8D44A45DC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{0217D426-940C-4A34-8ADC-FA14B36D0AB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8F62B78B-9A79-4D66-A00F-CBAB814A0B87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Application", "OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj", "{8AEC986B-483F-479B-9615-8A25056C1D89}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AEC986B-483F-479B-9615-8A25056C1D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AEC986B-483F-479B-9615-8A25056C1D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AEC986B-483F-479B-9615-8A25056C1D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AEC986B-483F-479B-9615-8A25056C1D89}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8AEC986B-483F-479B-9615-8A25056C1D89} = {189B60BE-EE27-49D9-A319-4BBD55BB9403}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60264EF3-E7F7-4FFA-8AF8-F7789FD4D705}
+	EndGlobalSection
+EndGlobal
