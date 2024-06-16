@@ -12,12 +12,16 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .Property(p => p.Price)
             .HasPrecision(18, 2);
 
-        //Relationship One To Many
         builder
             .HasOne(p => p.Category)
             .WithMany(p => p.Products)
-            .HasForeignKey(b => b.CategoryId); 
+            .HasForeignKey(b => b.CategoryId);
 
+        builder
+            .HasIndex(_ => _.IsDeleted)
+            .HasFilter("IsDeleted = 0");
 
+        builder
+            .HasQueryFilter(_ => !_.IsDeleted);
     }
 }
