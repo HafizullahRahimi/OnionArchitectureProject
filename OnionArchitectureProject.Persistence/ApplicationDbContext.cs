@@ -1,0 +1,20 @@
+﻿using Microsoft.EntityFrameworkCore;
+using OnionArchitecture.Domain.Entities;
+
+namespace OnionArchitectureProject.Persistence;
+public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        //builder.ApplyConfiguration(new ProductConfiguration());
+
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+    }
+}

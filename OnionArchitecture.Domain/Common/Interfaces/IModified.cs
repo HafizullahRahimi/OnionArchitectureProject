@@ -1,6 +1,6 @@
 ﻿namespace OnionArchitecture.Domain.Common.Interfaces;
 public interface IModified
 {
-    DateTime? ModifiedAt { get; set; }
+    DateTime? ModifiedDateUTC { get; set; }
     string? ModifiedBy { get; set; }
 }

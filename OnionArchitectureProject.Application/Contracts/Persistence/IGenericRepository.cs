@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Application.Contracts.Persistence.Common;
+namespace OnionArchitectureProject.Application.Contracts.Persistence;
 public interface IGenericRepository<T> where T : class
 {
     IEnumerable<T> GetAll();
@@ -10,8 +10,8 @@ public interface IGenericRepository<T> where T : class
     Task<T> GetByIdAsync(int id);
     Task<T> GetByIdWithIncludesAsync(int id);
     bool Remove(int id);
-    void Add(in T sender);
-    void Update(in T sender);
+    void Add(T entity);
+    void Update(T entity);
     int Save();
     Task<int> SaveAsync();
     public T Select(Expression<Func<T, bool>> predicate);

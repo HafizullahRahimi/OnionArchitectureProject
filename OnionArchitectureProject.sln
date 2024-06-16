@@ -13,9 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8F62B78B-9A79-4D66-A00F-CBAB814A0B87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Application", "OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj", "{8AEC986B-483F-479B-9615-8A25056C1D89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Application", "OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj", "{8AEC986B-483F-479B-9615-8A25056C1D89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitecture.Domain", "OnionArchitecture.Domain\OnionArchitecture.Domain.csproj", "{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitecture.Domain", "OnionArchitecture.Domain\OnionArchitecture.Domain.csproj", "{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Persistence", "OnionArchitectureProject.Persistence\OnionArchitectureProject.Persistence.csproj", "{7263FBC4-92E9-4278-B99F-91BB388730D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7263FBC4-92E9-4278-B99F-91BB388730D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7263FBC4-92E9-4278-B99F-91BB388730D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7263FBC4-92E9-4278-B99F-91BB388730D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7263FBC4-92E9-4278-B99F-91BB388730D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8AEC986B-483F-479B-9615-8A25056C1D89} = {189B60BE-EE27-49D9-A319-4BBD55BB9403}
 		{8AFA6C57-68A9-45EB-ABE6-7DE705C86CF7} = {16FB869A-6FDB-4801-893E-C38BD345C8B6}
+		{7263FBC4-92E9-4278-B99F-91BB388730D4} = {0C97F21F-C66F-4354-A578-FE8D44A45DC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {60264EF3-E7F7-4FFA-8AF8-F7789FD4D705}
