@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Common;
-using OnionArchitecture.Domain.Entities;
 
-namespace OnionArchitectureProject.Persistence.Repositories;
+namespace OnionArchitectureProject.Persistence.Repositories.Common;
 public abstract class Repository<TEntity>
     where TEntity : EntityBase<Guid>
 {
@@ -15,7 +14,7 @@ public abstract class Repository<TEntity>
 
     public async Task<List<TEntity>> GetAllAsync()
     {
-       return await DbContext.Set<TEntity>().ToListAsync();
+        return await DbContext.Set<TEntity>().ToListAsync();
     }
 
     public virtual async Task<TEntity?> GetByIdAsync(Guid id)
@@ -43,8 +42,8 @@ public abstract class Repository<TEntity>
     public async void RemoveById(Guid id)
     {
         var entity = await GetByIdAsync(id);
-        if (entity != null) 
-        DbContext.Set<TEntity>().Remove(entity);
+        if (entity != null)
+            DbContext.Set<TEntity>().Remove(entity);
     }
 
     public async Task<bool> ExistAsync(Guid id)
@@ -55,6 +54,6 @@ public abstract class Repository<TEntity>
 
     public async Task SaveChangesAsync()
     {
-       await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
     }
 }

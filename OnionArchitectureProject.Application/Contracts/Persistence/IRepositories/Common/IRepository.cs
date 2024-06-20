@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
+﻿namespace OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
 public interface IRepository<TEntity> where TEntity : class
 {
     Task<TEntity?> GetByIdAsync(Guid id);
