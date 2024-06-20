@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Entities;
 using OnionArchitectureProject.Api.Dto;
+using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
 using OnionArchitectureProject.Persistence;
 
 namespace OnionArchitectureProject.Api.Controllers;
@@ -9,24 +10,27 @@ namespace OnionArchitectureProject.Api.Controllers;
 [ApiController]
 public class ProductController : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IProductRepository _productRepository;
 
-    public ProductController(ApplicationDbContext dbContext)
+    public ProductController( IProductRepository productRepository)
     {
-        _dbContext = dbContext;
+        _productRepository = productRepository;
     }
 
-    // GET: api/<ProductController>
+    // GET: api/Product
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductResponseDto>>> Get()
     {
-        var products = await _dbContext.Products.Select(p => new ProductResponseDto
+        var products = await _productRepository.GetByAllWithCategoryAsync(CancellationToken.None);
+
+        var productResponseDtos = products.Select(p => new ProductResponseDto
         {
             Id = p.Id,
             Name = p.Name,
             Image = p.Image,
             Price = p.Price,
             CategoryId = p.CategoryId,
+            CategoryName = p.Category.Name,
 
             IsDeleted = p.IsDeleted,
             DeletedDateUTC = p.DeletedDateUTC,
@@ -37,21 +41,23 @@ public class ProductController : ControllerBase
             ModifiedBy = p.ModifiedBy,
             ModifiedDateUTC = p.ModifiedDateUTC,
 
-        }).ToListAsync();
-        return products;
+        }).ToList();
+        return productResponseDtos;
     }
 
-    // GET api/<ProductController>/5
+    // GET api/Product/5
     [HttpGet("{productId}")]
-    public async Task<ActionResult<Product>> Get(Guid productId)
+    public async Task<ActionResult<ProductResponseDto>> Get(Guid productId)
     {
-        var product = await _dbContext.Products.AsNoTracking().Select(p => new ProductResponseDto
+        var p = await _productRepository.GetByIdWithCategoryAsync(productId, CancellationToken.None);
+        var productResponseDto = new ProductResponseDto()
         {
             Id = p.Id,
             Name = p.Name,
             Image = p.Image,
             Price = p.Price,
             CategoryId = p.CategoryId,
+            CategoryName = p.Category.Name,
 
             IsDeleted = p.IsDeleted,
             DeletedDateUTC = p.DeletedDateUTC,
@@ -61,14 +67,13 @@ public class ProductController : ControllerBase
 
             ModifiedBy = p.ModifiedBy,
             ModifiedDateUTC = p.ModifiedDateUTC,
+        };
 
-        }).SingleOrDefaultAsync(p => p.Id == productId);
-
-        if (product is null) return NotFound();
-        return Ok(product);
+        if (productResponseDto is null) return NotFound();
+        return Ok(productResponseDto);
     }
 
-    // POST api/<ProductController>
+    // POST api/Product
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ProductDto productDto)
     {
@@ -79,17 +84,16 @@ public class ProductController : ControllerBase
             Price = productDto.Price,
             CategoryId = productDto.CategoryId,
         };
-        _dbContext.Products.Add(product);
-        await _dbContext.SaveChangesAsync();
-
+        await _productRepository.AddAsync(product);
+        await _productRepository.SaveChangesAsync();
         return Ok(product.Id);
     }
 
-    // PUT api/<ProductController>/5
+    // PUT api/Product/5
     [HttpPut("{productId}")]
     public async Task<IActionResult> Put(Guid productId, [FromBody] ProductDto productDto)
     {
-        var product = await _dbContext.Products.FindAsync(productId);
+        var product = await _productRepository.GetByIdAsync(productId);
 
         if (product is null) return NotFound();
 
@@ -98,22 +102,22 @@ public class ProductController : ControllerBase
         product.Price = productDto.Price;
         product.CategoryId = productDto.CategoryId;
 
-        await _dbContext.SaveChangesAsync();
-
+        _productRepository.Update(product);
+        await _productRepository.SaveChangesAsync();
         return NoContent();
     }
 
-    // DELETE api/<ProductController>/5
+    // DELETE api/Product/5
     [HttpDelete("{productId}")]
     public async Task<IActionResult> Delete(Guid productId)
     {
-        var product = _dbContext.Products.AsNoTracking().SingleOrDefault(_ => _.Id == productId);
+        var product = await _productRepository.ExistAsync(productId);
 
-        if (product is null)
+        if (!product)
             return BadRequest();
 
-        _dbContext.Products.Remove(product);
-        await _dbContext.SaveChangesAsync();
+        _productRepository.RemoveById(productId);
+        await _productRepository.SaveChangesAsync();
 
         return Ok();
     }

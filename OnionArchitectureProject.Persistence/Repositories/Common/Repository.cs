@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Common;
+using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;
 public abstract class Repository<TEntity>
@@ -23,7 +24,7 @@ public abstract class Repository<TEntity>
             .SingleOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task<TEntity> Add(TEntity entity)
+    public async Task<TEntity> AddAsync(TEntity entity)
     {
         await DbContext.Set<TEntity>().AddAsync(entity);
         return entity;
