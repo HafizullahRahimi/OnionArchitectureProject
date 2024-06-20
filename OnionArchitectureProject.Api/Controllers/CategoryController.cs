@@ -25,7 +25,6 @@ public class CategoryController : ControllerBase
         {
             Id = p.Id,
             Name = p.Name,
-            Description = p.Description,
             IsDeleted = p.IsDeleted,
             DeletedBy = p.DeletedBy,
             DeletedDateUTC = p.DeletedDateUTC,
@@ -41,7 +40,6 @@ public class CategoryController : ControllerBase
         {
             Id = p.Id,
             Name = p.Name,
-            Description = p.Description,
             IsDeleted = p.IsDeleted,
             DeletedBy = p.DeletedBy,
             DeletedDateUTC = p.DeletedDateUTC,
@@ -57,8 +55,7 @@ public class CategoryController : ControllerBase
     {
         var category = new Category
         {
-            Name = categoryDto.Name,
-            Description = categoryDto.Description,
+            Name = categoryDto.Name
         };
         _dbContext.Categories.Add(category);
         await _dbContext.SaveChangesAsync();
@@ -75,7 +72,6 @@ public class CategoryController : ControllerBase
         if (category is null) return NotFound();
 
         category.Name = categoryDto.Name;
-        category.Description = categoryDto.Description;
 
         await _dbContext.SaveChangesAsync();
 
