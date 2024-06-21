@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Entities;
 using OnionArchitectureProject.Api.Dto;
 using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
-using OnionArchitectureProject.Persistence;
+using OnionArchitectureProject.Persistence.Repositories;
+using OnionArchitectureProject.Persistence.Repositories.Common;
 
 namespace OnionArchitectureProject.Api.Controllers;
 [Route("api/[controller]")]
@@ -12,7 +12,7 @@ public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
 
-    public ProductController( IProductRepository productRepository)
+    public ProductController(IProductRepository productRepository)
     {
         _productRepository = productRepository;
     }
@@ -48,7 +48,15 @@ public class ProductController : ControllerBase
     [HttpGet("{productId}")]
     public async Task<ActionResult<ProductResponseDto>> Get(Guid productId)
     {
-        var p = await _productRepository.GetByIdWithCategoryAsync(productId, CancellationToken.None);
+        var filter = new Filter<Product>(p => p.Id == productId);
+        var includes = new ProductIncludes();
+
+        var p = await _productRepository.GetAsync(filter, CancellationToken.None, includes);
+
+        //var pTest = await _productRepository.GetAsync(IIncludes<Product>.);
+
+
+        var p1 = await _productRepository.GetByIdWithCategoryAsync(productId, CancellationToken.None);
         var productResponseDto = new ProductResponseDto()
         {
             Id = p.Id,
@@ -82,8 +90,7 @@ public class ProductController : ControllerBase
             Price = productDto.Price,
             CategoryId = productDto.CategoryId,
         };
-        await _productRepository.AddAsync(product);
-        await _productRepository.SaveChangesAsync();
+        await _productRepository.CreateAsync(product, CancellationToken.None);
         return Ok(product.Id);
     }
 
@@ -91,7 +98,7 @@ public class ProductController : ControllerBase
     [HttpPut("{productId}")]
     public async Task<IActionResult> Put(Guid productId, [FromBody] ProductDto productDto)
     {
-        var product = await _productRepository.GetByIdAsync(productId);
+        var product = await _productRepository.GetByIdAsync(productId, CancellationToken.None);
 
         if (product is null) return NotFound();
 
@@ -100,8 +107,7 @@ public class ProductController : ControllerBase
         product.Price = productDto.Price;
         product.CategoryId = productDto.CategoryId;
 
-        _productRepository.Update(product);
-        await _productRepository.SaveChangesAsync();
+        await _productRepository.UpdateAsync(product, CancellationToken.None);
         return NoContent();
     }
 
@@ -109,14 +115,12 @@ public class ProductController : ControllerBase
     [HttpDelete("{productId}")]
     public async Task<IActionResult> Delete(Guid productId)
     {
-        var product = await _productRepository.ExistAsync(productId);
+        var product = await _productRepository.ExistAsync(productId, CancellationToken.None);
 
         if (!product)
             return BadRequest();
 
-        _productRepository.RemoveById(productId);
-        await _productRepository.SaveChangesAsync();
-
+        await _productRepository.DeleteAsync(productId, CancellationToken.None);
         return Ok();
     }
 }

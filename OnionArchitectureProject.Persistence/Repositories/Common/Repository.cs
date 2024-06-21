@@ -1,60 +1,64 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Common;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;
-public abstract class Repository<TEntity>
-    where TEntity : EntityBase<Guid>
+public class Repository<TEntity> : RepositoryWithFilter<TEntity>
+    where TEntity : EntityBase<Guid>, new()
 {
-    public readonly ApplicationDbContext DbContext;
+    //public readonly ApplicationDbContext DbContext;
 
-    protected Repository(ApplicationDbContext dbContext)
+    protected Repository(ApplicationDbContext dbContext) : base(dbContext) 
     {
-        DbContext = dbContext;
+        //DbContext = dbContext;
     }
 
-    public async Task<List<TEntity>> GetAllAsync()
+    public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await DbContext.Set<TEntity>().ToListAsync();
+        return await DbContext.Set<TEntity>().ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(Guid id)
+    public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await DbContext.Set<TEntity>()
-            .SingleOrDefaultAsync(c => c.Id == id);
+            .SingleOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
 
-    public async Task<TEntity> AddAsync(TEntity entity)
+    public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
     {
-        await DbContext.Set<TEntity>().AddAsync(entity);
+        await DbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
+        await SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    public void Update(TEntity entity)
+    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         DbContext.Set<TEntity>().Update(entity);
+        await SaveChangesAsync(cancellationToken);
+        return entity;
     }
 
-    public void Remove(TEntity entity)
+    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
     {
         DbContext.Set<TEntity>().Remove(entity);
+        await SaveChangesAsync(cancellationToken);
     }
 
-    public async void RemoveById(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, cancellationToken);
         if (entity != null)
             DbContext.Set<TEntity>().Remove(entity);
+        await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistAsync(Guid id)
+    public async Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, cancellationToken);
         return entity != null;
     }
 
-    public async Task SaveChangesAsync()
+    private async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(cancellationToken);
     }
 }
