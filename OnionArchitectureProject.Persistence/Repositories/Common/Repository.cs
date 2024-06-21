@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitecture.Domain.Common;
+using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;
-public class Repository<TEntity> : RepositoryWithFilter<TEntity>
+public class Repository<TEntity> : RepositoryWithFilter<TEntity> , IRepository<TEntity>
     where TEntity : EntityBase<Guid>, new()
 {
-    //public readonly ApplicationDbContext DbContext;
-
-    protected Repository(ApplicationDbContext dbContext) : base(dbContext) 
-    {
-        //DbContext = dbContext;
-    }
+    protected Repository(ApplicationDbContext dbContext) : base(dbContext) { }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {

@@ -2,7 +2,7 @@
 using OnionArchitecture.Domain.Entities;
 using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
 
-namespace OnionArchitectureProject.Persistence.Repositories;
+namespace OnionArchitectureProject.Persistence.Repositories.ProductRepository;
 public class ProductIncludes : IIncludes<Product>
 {
     public IQueryable<Product> ApplyIncludes(IQueryable<Product> query)

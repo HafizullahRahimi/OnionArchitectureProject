@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
-using OnionArchitectureProject.Persistence.Repositories;
+using OnionArchitectureProject.Persistence.Repositories.ProductRepository;
 
 namespace OnionArchitectureProject.Persistence;
 public static class PersistenceServicesRegistration

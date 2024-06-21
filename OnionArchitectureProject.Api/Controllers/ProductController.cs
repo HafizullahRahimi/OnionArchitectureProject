@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Api.Dto;
 using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
-using OnionArchitectureProject.Persistence.Repositories;
-using OnionArchitectureProject.Persistence.Repositories.Common;
+using OnionArchitectureProject.Application.Services.ProductService;
+using OnionArchitectureProject.Application.Services.ProductService.Models;
+
 
 namespace OnionArchitectureProject.Api.Controllers;
 [Route("api/[controller]")]
@@ -11,72 +11,29 @@ namespace OnionArchitectureProject.Api.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
+    private readonly IProductService _productService;
 
-    public ProductController(IProductRepository productRepository)
+    public ProductController(IProductRepository productRepository, IProductService productService)
     {
         _productRepository = productRepository;
+        _productService = productService;
     }
 
     // GET: api/Product
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductResponseDto>>> Get()
+    public async Task<ActionResult<List<ProductDto>>> Get()
     {
-        var products = await _productRepository.GetByAllWithCategoryAsync(CancellationToken.None);
-
-        var productResponseDtos = products.Select(p => new ProductResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Image = p.Image,
-            Price = p.Price,
-            CategoryId = p.CategoryId,
-            CategoryName = p.Category.Name,
-
-            IsDeleted = p.IsDeleted,
-
-            CreatedBy = p.CreatedBy,
-            CreatedDateUTC = p.CreatedDateUTC,
-
-            ModifiedBy = p.ModifiedBy,
-            ModifiedDateUTC = p.ModifiedDateUTC,
-
-        }).ToList();
-        return productResponseDtos;
+        var productDtos = await _productService.GetAllAsync(CancellationToken.None);
+        return Ok(productDtos);
     }
 
     // GET api/Product/5
     [HttpGet("{productId}")]
-    public async Task<ActionResult<ProductResponseDto>> Get(Guid productId)
+    public async Task<ActionResult<ProductDto>> Get(Guid productId)
     {
-        var filter = new Filter<Product>(p => p.Id == productId);
-        var includes = new ProductIncludes();
-
-        var p = await _productRepository.GetAsync(filter, CancellationToken.None, includes);
-
-        //var pTest = await _productRepository.GetAsync(IIncludes<Product>.);
-
-
-        var p1 = await _productRepository.GetByIdWithCategoryAsync(productId, CancellationToken.None);
-        var productResponseDto = new ProductResponseDto()
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Image = p.Image,
-            Price = p.Price,
-            CategoryId = p.CategoryId,
-            CategoryName = p.Category.Name,
-
-            IsDeleted = p.IsDeleted,
-
-            CreatedBy = p.CreatedBy,
-            CreatedDateUTC = p.CreatedDateUTC,
-
-            ModifiedBy = p.ModifiedBy,
-            ModifiedDateUTC = p.ModifiedDateUTC,
-        };
-
-        if (productResponseDto is null) return NotFound();
-        return Ok(productResponseDto);
+        var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
+        if (productDto is null) return NotFound();
+        return Ok(productDto);
     }
 
     // POST api/Product
