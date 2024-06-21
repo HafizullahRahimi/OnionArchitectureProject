@@ -33,7 +33,6 @@ public class ProductController : ControllerBase
             CategoryName = p.Category.Name,
 
             IsDeleted = p.IsDeleted,
-            DeletedDateUTC = p.DeletedDateUTC,
 
             CreatedBy = p.CreatedBy,
             CreatedDateUTC = p.CreatedDateUTC,
@@ -60,7 +59,6 @@ public class ProductController : ControllerBase
             CategoryName = p.Category.Name,
 
             IsDeleted = p.IsDeleted,
-            DeletedDateUTC = p.DeletedDateUTC,
 
             CreatedBy = p.CreatedBy,
             CreatedDateUTC = p.CreatedDateUTC,

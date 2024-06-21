@@ -1,7 +1,7 @@
 ﻿using OnionArchitecture.Domain.Common;
 
 namespace OnionArchitecture.Domain.Entities;
-public class Product : EditableEntityBaseWithSoftDeleted<Guid>
+public class Product : EditableEntityBase<Guid>
 {
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;

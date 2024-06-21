@@ -26,8 +26,6 @@ public class CategoryController : ControllerBase
             Id = p.Id,
             Name = p.Name,
             IsDeleted = p.IsDeleted,
-            DeletedBy = p.DeletedBy,
-            DeletedDateUTC = p.DeletedDateUTC,
         }).ToListAsync();
         return Categories;
     }
@@ -41,8 +39,6 @@ public class CategoryController : ControllerBase
             Id = p.Id,
             Name = p.Name,
             IsDeleted = p.IsDeleted,
-            DeletedBy = p.DeletedBy,
-            DeletedDateUTC = p.DeletedDateUTC,
         }).SingleOrDefaultAsync(p => p.Id == categoryId);
 
         if (category is null) return NotFound();

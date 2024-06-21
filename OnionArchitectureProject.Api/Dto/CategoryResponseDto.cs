@@ -2,7 +2,7 @@
 
 namespace OnionArchitectureProject.Api.Dto;
 
-public class CategoryResponseDto : SoftdeleteableEntityBase<Guid>
+public class CategoryResponseDto : EditableEntityBase<Guid>
 {
     public string Name { get; set; } = string.Empty;
 }
