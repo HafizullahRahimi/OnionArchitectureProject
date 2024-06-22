@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitecture.Domain.Products;
+using OnionArchitectureProject.Persistence.Interceptors;
 using OnionArchitectureProject.Persistence.Repositories.ProductRepository;
+using System;
 
 namespace OnionArchitectureProject.Persistence;
 public static class PersistenceServicesRegistration
@@ -13,7 +15,19 @@ public static class PersistenceServicesRegistration
             .GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddSingleton<SoftDeletedInterceptor>();
+        services.AddSingleton<CreatedInterceptor>();
+        services.AddSingleton<ModifiedInterceptor>();
+
+        services.AddDbContext<ApplicationDbContext>(
+            (sp, option) => option
+            .UseSqlServer(connectionString)
+            .AddInterceptors(sp.GetRequiredService<SoftDeletedInterceptor>())
+            .AddInterceptors(sp.GetRequiredService<CreatedInterceptor>())
+            .AddInterceptors(sp.GetRequiredService<ModifiedInterceptor>())
+            );
+
+        //services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
         #region Repositories
         services.AddScoped<IProductRepository, ProductRepository>();

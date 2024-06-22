@@ -21,11 +21,11 @@ public class ProductService : IProductService
         _mapper = mapperConfig.CreateMapper();
     }
 
-    public async Task<ProductDto> CreateAsync(CreateProductDto productDto, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(CreateProductDto productDto, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Product>(productDto);
         product = await _productRepository.CreateAsync(product, cancellationToken);
-        return _mapper.Map<ProductDto>(product);
+        return product.Id;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
@@ -33,9 +33,9 @@ public class ProductService : IProductService
         await _productRepository.DeleteAsync(id, cancellationToken);
     }
 
-    public Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken) => 
+    public Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken) =>
         _productRepository.ExistAsync(id, cancellationToken);
-    
+
     public async Task<List<ProductDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var products = await _productRepository.GetAllWithCategoryAsync(cancellationToken);
@@ -51,10 +51,18 @@ public class ProductService : IProductService
         return ProductDto;
     }
 
-    public async Task<ProductDto> UpdateAsync(CreateProductDto productDto, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid productId, CreateProductDto productDto, CancellationToken cancellationToken)
     {
-        var product = _mapper.Map<Product>(productDto);
-        product = await _productRepository.UpdateAsync(product, cancellationToken);
-        return _mapper.Map<ProductDto>(product);
+        var product = await _productRepository.GetByIdAsync(productId, cancellationToken);
+
+        if (product != null)
+        {
+            product.Name = productDto.Name;
+            product.Price = productDto.Price;
+            product.Image = productDto.Image;
+            product.CategoryId = productDto.CategoryId;
+        }
+
+        await _productRepository.UpdateAsync(product, cancellationToken);
     }
 }

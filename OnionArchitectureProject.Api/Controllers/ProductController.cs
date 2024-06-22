@@ -37,32 +37,32 @@ public class ProductController : ControllerBase
 
     // POST api/Product
     [HttpPost]
-    public async Task<ActionResult<ProductDto>> Post([FromBody] CreateProductDto productDto)
+    public async Task<ActionResult<Guid>> Post([FromBody] CreateProductDto productDto)
     {
-        var produtDto = await _productService.CreateAsync(productDto, CancellationToken.None);
-        return produtDto is null ? BadRequest() : Ok(produtDto);
+        var productId = await _productService.CreateAsync(productDto, CancellationToken.None);
+        return Ok(productId);
     }
 
     // PUT api/Product/5
     [HttpPut("{productId}")]
-    public async Task<ActionResult<ProductDto>> Put(Guid productId, [FromBody] CreateProductDto productDto)
+    public async Task<ActionResult> Put(Guid productId, [FromBody] CreateProductDto productDto)
     {
         var product = await _productService.ExistAsync(productId, CancellationToken.None);
         if (!product) return NotFound();
 
-        var produtDto = await _productService.UpdateAsync(productDto, CancellationToken.None);
-        return Ok(produtDto);
+        await _productService.UpdateAsync(productId,productDto, CancellationToken.None);
+        return Ok();
 
     }
 
     // DELETE api/Product/5
     [HttpDelete("{productId}")]
-    public async Task<ActionResult<ProductDto>> Delete(Guid productId)
+    public async Task<ActionResult> Delete(Guid productId)
     {
         var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
         if (productDto is null) return NotFound();
 
         await _productService.DeleteAsync(productId, CancellationToken.None);
-        return Ok(productDto);
+        return Ok();
     }
 }

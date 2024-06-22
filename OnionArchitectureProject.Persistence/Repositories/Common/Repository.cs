@@ -26,11 +26,10 @@ public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TE
         return entity;
     }
 
-    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+    public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         DbContext.Set<TEntity>().Update(entity);
         await SaveChangesAsync(cancellationToken);
-        return entity;
     }
 
     public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
