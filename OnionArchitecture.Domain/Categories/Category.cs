@@ -1,4 +1,4 @@
-﻿using OnionArchitecture.Domain.Common.DataEntities;
+﻿using OnionArchitecture.Domain.Common.BaseEntities;
 using OnionArchitecture.Domain.Products;
 
 namespace OnionArchitecture.Domain.Categories;

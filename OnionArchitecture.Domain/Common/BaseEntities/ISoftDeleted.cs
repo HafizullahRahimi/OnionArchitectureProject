@@ -1,4 +1,4 @@
-﻿namespace OnionArchitecture.Domain.Common.DataEntities;
+﻿namespace OnionArchitecture.Domain.Common.BaseEntities;
 public interface ISoftDeleted
 {
     bool IsDeleted { get; set; }

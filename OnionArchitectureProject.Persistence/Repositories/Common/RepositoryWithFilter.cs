@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Common.DataEntities;
+using OnionArchitecture.Domain.Common.BaseEntities;
 using OnionArchitecture.Domain.Common.Repositories;
 using System.Linq.Expressions;
 

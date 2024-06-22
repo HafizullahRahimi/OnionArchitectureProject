@@ -1,5 +1,5 @@
 ﻿using OnionArchitecture.Domain.Categories;
-using OnionArchitecture.Domain.Common.DataEntities;
+using OnionArchitecture.Domain.Common.BaseEntities;
 
 namespace OnionArchitecture.Domain.Products;
 public class Product : EditableEntityBase<Guid>
