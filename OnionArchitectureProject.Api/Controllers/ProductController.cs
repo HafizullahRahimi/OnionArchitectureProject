@@ -37,46 +37,32 @@ public class ProductController : ControllerBase
 
     // POST api/Product
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ProductDto productDto)
+    public async Task<ActionResult<ProductDto>> Post([FromBody] CreateProductDto productDto)
     {
-        var product = new Product
-        {
-            Name = productDto.Name,
-            Image = productDto.Image,
-            Price = productDto.Price,
-            CategoryId = productDto.CategoryId,
-        };
-        await _productRepository.CreateAsync(product, CancellationToken.None);
-        return Ok(product.Id);
+        var produtDto = await _productService.CreateAsync(productDto, CancellationToken.None);
+        return produtDto is null ? BadRequest() : Ok(produtDto);
     }
 
     // PUT api/Product/5
     [HttpPut("{productId}")]
-    public async Task<IActionResult> Put(Guid productId, [FromBody] ProductDto productDto)
+    public async Task<ActionResult<ProductDto>> Put(Guid productId, [FromBody] CreateProductDto productDto)
     {
-        var product = await _productRepository.GetByIdAsync(productId, CancellationToken.None);
+        var product = await _productService.ExistAsync(productId, CancellationToken.None);
+        if (!product) return NotFound();
 
-        if (product is null) return NotFound();
+        var produtDto = await _productService.UpdateAsync(productDto, CancellationToken.None);
+        return Ok(produtDto);
 
-        product.Name = productDto.Name;
-        product.Image = productDto.Image;
-        product.Price = productDto.Price;
-        product.CategoryId = productDto.CategoryId;
-
-        await _productRepository.UpdateAsync(product, CancellationToken.None);
-        return NoContent();
     }
 
     // DELETE api/Product/5
     [HttpDelete("{productId}")]
-    public async Task<IActionResult> Delete(Guid productId)
+    public async Task<ActionResult<ProductDto>> Delete(Guid productId)
     {
-        var product = await _productRepository.ExistAsync(productId, CancellationToken.None);
+        var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
+        if (productDto is null) return NotFound();
 
-        if (!product)
-            return BadRequest();
-
-        await _productRepository.DeleteAsync(productId, CancellationToken.None);
-        return Ok();
+        await _productService.DeleteAsync(productId, CancellationToken.None);
+        return Ok(productDto);
     }
 }

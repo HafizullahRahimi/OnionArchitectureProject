@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Services;
 using OnionArchitectureProject.Application.Services.ProductService;
 using System.Reflection;
 
