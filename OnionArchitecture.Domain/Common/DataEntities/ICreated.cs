@@ -1,4 +1,4 @@
-﻿namespace OnionArchitecture.Domain.Common.Interfaces;
+﻿namespace OnionArchitecture.Domain.Common.DataEntities;
 public interface ICreated
 {
     DateTime CreatedDateUTC { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+namespace OnionArchitecture.Domain.Common.Repositories;
 public interface IFilter<TEntity>
 {
     Expression<Func<TEntity, bool>> ToExpression();

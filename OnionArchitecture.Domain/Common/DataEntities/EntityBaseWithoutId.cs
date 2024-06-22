@@ -1,6 +1,4 @@
-﻿using OnionArchitecture.Domain.Common.Interfaces;
-
-namespace OnionArchitecture.Domain.Common;
+﻿namespace OnionArchitecture.Domain.Common.DataEntities;
 public class EntityBaseWithoutId : ICreated
 {
     public DateTime CreatedDateUTC { get; set; }

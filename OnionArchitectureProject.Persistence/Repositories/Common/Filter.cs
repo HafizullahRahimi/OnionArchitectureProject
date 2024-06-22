@@ -1,4 +1,4 @@
-﻿using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+﻿using OnionArchitecture.Domain.Common.Repositories;
 using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
+using OnionArchitecture.Domain.Products;
 using OnionArchitectureProject.Application.Profiles;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
 
@@ -24,7 +23,7 @@ public class ProductService : IProductService
 
     public async Task<List<ProductDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var products = await _productRepository.GetAllAsync(cancellationToken);
+        var products = await _productRepository.GetAllWithCategoryAsync(cancellationToken);
         var ProductDtos = _mapper.Map<List<ProductDto>>(products);
         return ProductDtos;
     }
@@ -32,7 +31,7 @@ public class ProductService : IProductService
     public async Task<ProductDto> GetByIdAsync(Guid productId, CancellationToken cancellationToken)
     {
 
-        var product = await _productRepository.GetByIdAsync(productId, cancellationToken);
+        var product = await _productRepository.GetByIdWithCategoryAsync(productId, cancellationToken);
         var ProductDto = _mapper.Map<ProductDto>(product);
         return ProductDto;
     }

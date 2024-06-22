@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Common;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+using OnionArchitecture.Domain.Common.DataEntities;
+using OnionArchitecture.Domain.Common.Repositories;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;
-public class Repository<TEntity> : RepositoryWithFilter<TEntity> , IRepository<TEntity>
+public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TEntity>
     where TEntity : EntityBase<Guid>, new()
 {
     protected Repository(ApplicationDbContext dbContext) : base(dbContext) { }

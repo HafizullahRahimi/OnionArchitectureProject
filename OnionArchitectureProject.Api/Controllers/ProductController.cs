@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
+using OnionArchitecture.Domain.Products;
 using OnionArchitectureProject.Application.Services.ProductService;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
 

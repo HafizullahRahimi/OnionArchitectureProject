@@ -1,8 +1,6 @@
-﻿using OnionArchitecture.Domain.Common;
-using OnionArchitecture.Domain.Entities;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+namespace OnionArchitecture.Domain.Common.Repositories;
 public interface IRepositoryWithFilter<TEntity>
 {
     Task<List<TEntity>> GetAllAsync(IFilter<TEntity> filter, CancellationToken cancellationToken);
@@ -14,7 +12,7 @@ public interface IRepositoryWithFilter<TEntity>
     Task<List<TEntity>> GetAllAsync(IFilter<TEntity>? filter, IIncludes<TEntity>? includes,
         CancellationToken cancellationToken, int numberOfEntities = 0);
 
-    Task<TEntity?> GetAsync(IFilter<TEntity> filter, CancellationToken cancellationToken, 
+    Task<TEntity?> GetAsync(IFilter<TEntity> filter, CancellationToken cancellationToken,
         IIncludes<TEntity>? includes = null);
     Task<bool> AnyAsync(IFilter<TEntity> filter, CancellationToken cancellationToken);
 

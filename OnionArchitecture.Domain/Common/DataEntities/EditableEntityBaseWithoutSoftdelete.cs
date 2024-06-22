@@ -1,6 +1,4 @@
-﻿using OnionArchitecture.Domain.Common.Interfaces;
-
-namespace OnionArchitecture.Domain.Common;
+﻿namespace OnionArchitecture.Domain.Common.DataEntities;
 public abstract class EditableEntityBaseWithoutSoftdelete<TId> : EntityBase<TId>, IModified where TId : notnull
 {
     public DateTime? ModifiedDateUTC { get; set; }

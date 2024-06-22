@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Common;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+using OnionArchitecture.Domain.Common.DataEntities;
+using OnionArchitecture.Domain.Common.Repositories;
 using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;

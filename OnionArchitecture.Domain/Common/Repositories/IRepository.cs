@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Application.Contracts.Persistence.IRepositories.Common;
+﻿namespace OnionArchitecture.Domain.Common.Repositories;
 public interface IRepository<TEntity> where TEntity : class
 {
     Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken);

@@ -1,4 +1,4 @@
-﻿using OnionArchitecture.Domain.Common;
+﻿using OnionArchitecture.Domain.Common.DataEntities;
 
 namespace OnionArchitectureProject.Api.Dto;
 

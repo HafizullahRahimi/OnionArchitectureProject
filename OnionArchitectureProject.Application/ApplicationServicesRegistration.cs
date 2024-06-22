@@ -9,7 +9,6 @@ public static class ApplicationServicesRegistration
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddScoped<IService, Service>();
         services.AddScoped<IProductService, ProductService>();
     }
 }

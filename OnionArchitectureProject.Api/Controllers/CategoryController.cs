@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Entities;
+using OnionArchitecture.Domain.Categories;
 using OnionArchitectureProject.Api.Dto;
 using OnionArchitectureProject.Persistence;
 

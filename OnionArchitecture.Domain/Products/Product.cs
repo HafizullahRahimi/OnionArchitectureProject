@@ -1,6 +1,7 @@
-﻿using OnionArchitecture.Domain.Common;
+﻿using OnionArchitecture.Domain.Categories;
+using OnionArchitecture.Domain.Common.DataEntities;
 
-namespace OnionArchitecture.Domain.Entities;
+namespace OnionArchitecture.Domain.Products;
 public class Product : EditableEntityBase<Guid>
 {
     public string Name { get; set; } = string.Empty;
@@ -8,5 +9,5 @@ public class Product : EditableEntityBase<Guid>
     public decimal Price { get; set; }
 
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; } 
+    public Category Category { get; set; }
 }

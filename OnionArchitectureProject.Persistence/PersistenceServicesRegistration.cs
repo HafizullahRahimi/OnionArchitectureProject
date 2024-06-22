@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
+using OnionArchitecture.Domain.Products;
 using OnionArchitectureProject.Persistence.Repositories.ProductRepository;
 
 namespace OnionArchitectureProject.Persistence;
