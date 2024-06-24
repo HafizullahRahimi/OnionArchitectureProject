@@ -28,13 +28,11 @@ public class ProductService : IProductService
         return product.Id;
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
-    {
-        await _productRepository.DeleteAsync(id, cancellationToken);
-    }
+    public async Task DeleteAsync(Guid productId, CancellationToken cancellationToken) =>
+        await _productRepository.DeleteAsync(productId, cancellationToken);
 
-    public Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken) =>
-        _productRepository.ExistAsync(id, cancellationToken);
+    public Task<bool> ExistAsync(Guid productId, CancellationToken cancellationToken) =>
+        _productRepository.ExistAsync(productId, cancellationToken);
 
     public async Task<List<ProductDto>> GetAllAsync(CancellationToken cancellationToken)
     {

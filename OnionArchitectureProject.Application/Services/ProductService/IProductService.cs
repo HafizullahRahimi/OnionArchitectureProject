@@ -7,6 +7,6 @@ public interface IProductService
     Task<ProductDto> GetByIdAsync(Guid productId, CancellationToken cancellationToken);
     Task<Guid> CreateAsync(UpsertProductDto productDto, CancellationToken cancellationToken);
     Task UpdateAsync(Guid productId, UpsertProductDto productDto, CancellationToken cancellationToken);
-    Task<bool> ExistAsync(Guid id, CancellationToken cancellationToken);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken);
+    Task<bool> ExistAsync(Guid productId, CancellationToken cancellationToken);
+    Task DeleteAsync(Guid productId, CancellationToken cancellationToken);
 }
