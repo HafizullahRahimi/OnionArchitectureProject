@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnionArchitecture.Domain.Products;
+using OnionArchitectureProject.Application.Services.CategoryService;
 using OnionArchitectureProject.Application.Services.ProductService;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
-using System.Net;
 
 
 namespace OnionArchitectureProject.Api.Controllers;
@@ -10,13 +9,13 @@ namespace OnionArchitectureProject.Api.Controllers;
 [ApiController]
 public class ProductController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
     private readonly IProductService _productService;
+    private readonly ICategoryService _categoryService;
 
-    public ProductController(IProductRepository productRepository, IProductService productService)
+    public ProductController(IProductService productService, ICategoryService categoryService)
     {
-        _productRepository = productRepository;
         _productService = productService;
+        _categoryService = categoryService;
     }
 
     // GET: api/Product
@@ -32,7 +31,7 @@ public class ProductController : ControllerBase
     public async Task<ActionResult<ProductDto>> Get(Guid productId)
     {
         var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
-        if (productDto is null) return NotFound();
+        if (productDto is null) return NotFound("Product not found");
         return Ok(productDto);
     }
 
@@ -40,19 +39,25 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> Post([FromBody] UpsertProductDto productDto)
     {
+        var existCategory = await _categoryService.ExistAsync(productDto.CategoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
+
         var productId = await _productService.CreateAsync(productDto, CancellationToken.None);
-        return Ok(productId);
+        return Ok($"Added product with id: {productId}");
     }
 
     // PUT api/Product/5
     [HttpPut("{productId}")]
     public async Task<ActionResult> Put(Guid productId, [FromBody] UpsertProductDto productDto)
     {
-        var product = await _productService.ExistAsync(productId, CancellationToken.None);
-        if (!product) return NotFound();
+        var existProduct = await _productService.ExistAsync(productId, CancellationToken.None);
+        if (!existProduct) return NotFound("Product not found");
 
-        await _productService.UpdateAsync(productId,productDto, CancellationToken.None);
-        return Ok();
+        var existCategory = await _categoryService.ExistAsync(productDto.CategoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
+
+        await _productService.UpdateAsync(productId, productDto, CancellationToken.None);
+        return Ok($"Updated product with id: {productId}");
 
     }
 
@@ -61,9 +66,9 @@ public class ProductController : ControllerBase
     public async Task<ActionResult> Delete(Guid productId)
     {
         var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
-        if (productDto is null) return NotFound();
+        if (productDto is null) return NotFound("Product not found");
 
         await _productService.DeleteAsync(productId, CancellationToken.None);
-        return Ok();
+        return Ok("Product deleted");
     }
 }

@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Categories;
-using OnionArchitectureProject.Api.Dto;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnionArchitectureProject.Application.Services.CategoryService;
 using OnionArchitectureProject.Application.Services.CategoryService.Models;
-using OnionArchitectureProject.Persistence;
 
 namespace OnionArchitectureProject.Api.Controllers;
 [Route("api/category")]
@@ -33,7 +28,7 @@ public class CategoryController : ControllerBase
     {
         var category = await _categoryService.GetByIdAsync(categoryId, CancellationToken.None);
 
-        if (category is null) return NotFound();
+        if (category is null) return NotFound("Category not found");
         return Ok(category);
     }
 
@@ -42,7 +37,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> Post([FromBody] string categoryName)
     {
         var categoryId = await _categoryService.CreateAsync(categoryName, CancellationToken.None);
-        return Ok(categoryId);
+        return Ok($"Added category with id: {categoryId}");
     }
 
     // PUT api/category/5
@@ -50,12 +45,10 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> Put(Guid categoryId, [FromBody] string categoryName)
     {
         var existCategory = await _categoryService.ExistAsync(categoryId, CancellationToken.None);
-
-        if (!existCategory) return NotFound();
+        if (!existCategory) return NotFound("Category not found");
 
         await _categoryService.UpdateAsync(categoryId, categoryName, CancellationToken.None);
-
-        return NoContent();
+        return Ok($"Updated category with id: {categoryId}");
     }
 
     // DELETE api/category/5
@@ -63,10 +56,9 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> Delete(Guid categoryId)
     {
         var existCategory = await _categoryService.ExistAsync(categoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
 
-        if (!existCategory) return BadRequest();
-        await _categoryService.DeleteAsync(categoryId,CancellationToken.None);
-
-        return Ok();
+        await _categoryService.DeleteAsync(categoryId, CancellationToken.None);
+        return Ok("Category deleted");
     }
 }
