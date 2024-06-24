@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OnionArchitectureProject.Application.Services.CategoryService;
 using OnionArchitectureProject.Application.Services.ProductService;
 using System.Reflection;
 
@@ -9,5 +10,6 @@ public static class ApplicationServicesRegistration
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ICategoryService, CategoryService>();
     }
 }
