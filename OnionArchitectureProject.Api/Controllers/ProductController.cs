@@ -2,6 +2,7 @@
 using OnionArchitecture.Domain.Products;
 using OnionArchitectureProject.Application.Services.ProductService;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
+using System.Net;
 
 
 namespace OnionArchitectureProject.Api.Controllers;
@@ -37,7 +38,7 @@ public class ProductController : ControllerBase
 
     // POST api/Product
     [HttpPost]
-    public async Task<ActionResult<Guid>> Post([FromBody] CreateProductDto productDto)
+    public async Task<ActionResult<Guid>> Post([FromBody] UpsertProductDto productDto)
     {
         var productId = await _productService.CreateAsync(productDto, CancellationToken.None);
         return Ok(productId);
@@ -45,7 +46,7 @@ public class ProductController : ControllerBase
 
     // PUT api/Product/5
     [HttpPut("{productId}")]
-    public async Task<ActionResult> Put(Guid productId, [FromBody] CreateProductDto productDto)
+    public async Task<ActionResult> Put(Guid productId, [FromBody] UpsertProductDto productDto)
     {
         var product = await _productService.ExistAsync(productId, CancellationToken.None);
         if (!product) return NotFound();

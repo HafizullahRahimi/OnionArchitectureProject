@@ -1,5 +1,5 @@
 ﻿namespace OnionArchitectureProject.Application.Services.ProductService.Models;
-public class CreateProductDto
+public class UpsertProductDto
 {
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;

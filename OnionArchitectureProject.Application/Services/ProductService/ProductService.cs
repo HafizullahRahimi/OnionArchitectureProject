@@ -21,7 +21,7 @@ public class ProductService : IProductService
         _mapper = mapperConfig.CreateMapper();
     }
 
-    public async Task<Guid> CreateAsync(CreateProductDto productDto, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(UpsertProductDto productDto, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Product>(productDto);
         product = await _productRepository.CreateAsync(product, cancellationToken);
@@ -51,18 +51,15 @@ public class ProductService : IProductService
         return ProductDto;
     }
 
-    public async Task UpdateAsync(Guid productId, CreateProductDto productDto, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid productId, UpsertProductDto productDto, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(productId, cancellationToken);
 
         if (product != null)
         {
-            product.Name = productDto.Name;
-            product.Price = productDto.Price;
-            product.Image = productDto.Image;
-            product.CategoryId = productDto.CategoryId;
+            _mapper.Map(productDto, product);
+            await _productRepository.UpdateAsync(product, cancellationToken);
         }
 
-        await _productRepository.UpdateAsync(product, cancellationToken);
     }
 }
