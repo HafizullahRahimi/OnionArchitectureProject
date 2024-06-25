@@ -78,6 +78,25 @@ public class AuthService : IAuthService
         return null;
     }
 
+    public AuthResponse? GetCurrentUserInfo(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
+        if (jwtToken == null)
+            return null;
+
+        var userInfo = new AuthResponse()
+        {
+            Id = jwtToken.Claims.First(claim => claim.Type == "uid").Value,
+            UserName = jwtToken.Claims.First(claim => claim.Type == "sub").Value,
+            Email = jwtToken.Claims.First(claim => claim.Type == "email").Value,
+            Token = token
+        };
+
+        return userInfo;
+    }
+
     private async Task<ApplicationUser?> PasswordSignInAsync(AuthRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);

@@ -31,4 +31,15 @@ public class AuthController : ControllerBase
     {
         return Ok(await _authService.Register(request));
     }
+
+    [HttpPost("CurrentUserInfo")]
+    public IActionResult CurrentUserInfo()
+    {
+        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+        var userInfo = _authService.GetCurrentUserInfo(token);
+
+        if (userInfo == null) return Unauthorized();
+
+        return Ok(userInfo);
+    }
 }
