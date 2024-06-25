@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnionArchitectureProject.Application.Services.CategoryService;
 using OnionArchitectureProject.Application.Services.CategoryService.Models;
 
 namespace OnionArchitectureProject.Api.Controllers;
+
+[Authorize]
 [Route("api/category")]
 [ApiController]
 public class CategoryController : ControllerBase
