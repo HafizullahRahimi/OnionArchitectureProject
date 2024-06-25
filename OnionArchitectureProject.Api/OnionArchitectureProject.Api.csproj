@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnionArchitecture.Authentication\OnionArchitecture.Authentication.csproj" />
     <ProjectReference Include="..\OnionArchitecture.Domain\OnionArchitecture.Domain.csproj" />
     <ProjectReference Include="..\OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj" />
     <ProjectReference Include="..\OnionArchitectureProject.Persistence\OnionArchitectureProject.Persistence.csproj" />

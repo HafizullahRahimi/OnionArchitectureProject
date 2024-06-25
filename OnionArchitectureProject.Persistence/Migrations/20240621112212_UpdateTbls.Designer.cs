@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnionArchitectureProject.Persistence;
 
@@ -11,9 +12,11 @@ using OnionArchitectureProject.Persistence;
 namespace OnionArchitectureProject.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240621112212_UpdateTbls")]
+    partial class UpdateTbls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +36,9 @@ namespace OnionArchitectureProject.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDateUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -70,6 +76,9 @@ namespace OnionArchitectureProject.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDateUTC")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDateUTC")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Image")

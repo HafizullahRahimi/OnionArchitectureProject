@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Entities;
+using OnionArchitecture.Domain.Categories;
+using OnionArchitecture.Domain.Products;
 
 namespace OnionArchitectureProject.Persistence;
 public class ApplicationDbContext : DbContext
@@ -12,9 +13,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        //builder.ApplyConfiguration(new ProductConfiguration());
-
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

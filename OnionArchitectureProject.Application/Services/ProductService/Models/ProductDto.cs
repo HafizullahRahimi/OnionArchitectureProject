@@ -1,0 +1,11 @@
+﻿using OnionArchitecture.Domain.Common.BaseEntities;
+
+namespace OnionArchitectureProject.Application.Services.ProductService.Models;
+public class ProductDto : EditableEntityBase<Guid>
+{
+    public string Name { get; set; } = string.Empty;
+    public string Image { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+}

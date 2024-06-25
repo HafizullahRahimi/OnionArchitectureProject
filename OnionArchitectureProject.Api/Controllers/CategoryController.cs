@@ -1,95 +1,67 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Api.Dto;
-using OnionArchitectureProject.Persistence;
+using OnionArchitectureProject.Application.Services.CategoryService;
+using OnionArchitectureProject.Application.Services.CategoryService.Models;
 
 namespace OnionArchitectureProject.Api.Controllers;
+
+[Authorize]
 [Route("api/category")]
 [ApiController]
 public class CategoryController : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ICategoryService _categoryService;
 
-    public CategoryController(ApplicationDbContext dbContext)
+    public CategoryController(ICategoryService categoryService)
     {
-        _dbContext = dbContext;
+        _categoryService = categoryService;
     }
 
     // GET api/category
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> Get()
+    public async Task<ActionResult<IEnumerable<CategoryDto>>> Get()
     {
-        var Categories = await _dbContext.Categories.Select(p => new CategoryResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            IsDeleted = p.IsDeleted,
-            DeletedBy = p.DeletedBy,
-            DeletedDateUTC = p.DeletedDateUTC,
-        }).ToListAsync();
-        return Categories;
+        var categoryDtos = await _categoryService.GetAllAsync(CancellationToken.None);
+        return Ok(categoryDtos);
     }
 
     // GET api/category/5
     [HttpGet("{categoryId}")]
-    public async Task<ActionResult<CategoryResponseDto>> Get(Guid categoryId)
+    public async Task<ActionResult<CategoryDto>> Get(Guid categoryId)
     {
-        var category = await _dbContext.Categories.AsNoTracking().Select(p => new CategoryResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            IsDeleted = p.IsDeleted,
-            DeletedBy = p.DeletedBy,
-            DeletedDateUTC = p.DeletedDateUTC,
-        }).SingleOrDefaultAsync(p => p.Id == categoryId);
+        var category = await _categoryService.GetByIdAsync(categoryId, CancellationToken.None);
 
-        if (category is null) return NotFound();
+        if (category is null) return NotFound("Category not found");
         return Ok(category);
     }
 
     // POST api/category
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CategoryDto categoryDto)
+    public async Task<IActionResult> Post([FromBody] string categoryName)
     {
-        var category = new Category
-        {
-            Name = categoryDto.Name
-        };
-        _dbContext.Categories.Add(category);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok(category.Id);
+        var categoryId = await _categoryService.CreateAsync(categoryName, CancellationToken.None);
+        return Ok($"Added category with id: {categoryId}");
     }
 
     // PUT api/category/5
     [HttpPut("{categoryId}")]
-    public async Task<IActionResult> Put(Guid categoryId, [FromBody] CategoryDto categoryDto)
+    public async Task<IActionResult> Put(Guid categoryId, [FromBody] string categoryName)
     {
-        var category = await _dbContext.Categories.FindAsync(categoryId);
+        var existCategory = await _categoryService.ExistAsync(categoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
 
-        if (category is null) return NotFound();
-
-        category.Name = categoryDto.Name;
-
-        await _dbContext.SaveChangesAsync();
-
-        return NoContent();
+        await _categoryService.UpdateAsync(categoryId, categoryName, CancellationToken.None);
+        return Ok($"Updated category with id: {categoryId}");
     }
 
     // DELETE api/category/5
     [HttpDelete("{categoryId}")]
     public async Task<IActionResult> Delete(Guid categoryId)
     {
-        var category = _dbContext.Categories.AsNoTracking().SingleOrDefault(_ => _.Id == categoryId);
+        var existCategory = await _categoryService.ExistAsync(categoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
 
-        if (category is null)
-            return BadRequest();
-
-        _dbContext.Categories.Remove(category);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok();
+        await _categoryService.DeleteAsync(categoryId, CancellationToken.None);
+        return Ok("Category deleted");
     }
 }

@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Application.Contracts.Persistence.IRepositories;
+﻿using OnionArchitecture.Domain.Categories;
+using OnionArchitectureProject.Persistence.Repositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories;
 public class CategoryRepository : Repository<Category>, ICategoryRepository

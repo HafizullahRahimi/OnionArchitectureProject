@@ -1,120 +1,74 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Entities;
-using OnionArchitectureProject.Api.Dto;
-using OnionArchitectureProject.Persistence;
+using OnionArchitectureProject.Application.Services.CategoryService;
+using OnionArchitectureProject.Application.Services.ProductService;
+using OnionArchitectureProject.Application.Services.ProductService.Models;
+
 
 namespace OnionArchitectureProject.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
+    private readonly ICategoryService _categoryService;
 
-    public ProductController(ApplicationDbContext dbContext)
+    public ProductController(IProductService productService, ICategoryService categoryService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
+        _categoryService = categoryService;
     }
 
-    // GET: api/<ProductController>
+    // GET: api/Product
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductResponseDto>>> Get()
+    public async Task<ActionResult<List<ProductDto>>> Get()
     {
-        var products = await _dbContext.Products.Select(p => new ProductResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Image = p.Image,
-            Price = p.Price,
-            CategoryId = p.CategoryId,
-
-            IsDeleted = p.IsDeleted,
-            DeletedDateUTC = p.DeletedDateUTC,
-
-            CreatedBy = p.CreatedBy,
-            CreatedDateUTC = p.CreatedDateUTC,
-
-            ModifiedBy = p.ModifiedBy,
-            ModifiedDateUTC = p.ModifiedDateUTC,
-
-        }).ToListAsync();
-        return products;
+        var productDtos = await _productService.GetAllAsync(CancellationToken.None);
+        return Ok(productDtos);
     }
 
-    // GET api/<ProductController>/5
+    // GET api/Product/5
     [HttpGet("{productId}")]
-    public async Task<ActionResult<Product>> Get(Guid productId)
+    public async Task<ActionResult<ProductDto>> Get(Guid productId)
     {
-        var product = await _dbContext.Products.AsNoTracking().Select(p => new ProductResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Image = p.Image,
-            Price = p.Price,
-            CategoryId = p.CategoryId,
-
-            IsDeleted = p.IsDeleted,
-            DeletedDateUTC = p.DeletedDateUTC,
-
-            CreatedBy = p.CreatedBy,
-            CreatedDateUTC = p.CreatedDateUTC,
-
-            ModifiedBy = p.ModifiedBy,
-            ModifiedDateUTC = p.ModifiedDateUTC,
-
-        }).SingleOrDefaultAsync(p => p.Id == productId);
-
-        if (product is null) return NotFound();
-        return Ok(product);
+        var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
+        if (productDto is null) return NotFound("Product not found");
+        return Ok(productDto);
     }
 
-    // POST api/<ProductController>
+    // POST api/Product
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ProductDto productDto)
+    public async Task<ActionResult<Guid>> Post([FromBody] UpsertProductDto productDto)
     {
-        var product = new Product
-        {
-            Name = productDto.Name,
-            Image = productDto.Image,
-            Price = productDto.Price,
-            CategoryId = productDto.CategoryId,
-        };
-        _dbContext.Products.Add(product);
-        await _dbContext.SaveChangesAsync();
+        var existCategory = await _categoryService.ExistAsync(productDto.CategoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
 
-        return Ok(product.Id);
+        var productId = await _productService.CreateAsync(productDto, CancellationToken.None);
+        return Ok($"Added product with id: {productId}");
     }
 
-    // PUT api/<ProductController>/5
+    // PUT api/Product/5
     [HttpPut("{productId}")]
-    public async Task<IActionResult> Put(Guid productId, [FromBody] ProductDto productDto)
+    public async Task<ActionResult> Put(Guid productId, [FromBody] UpsertProductDto productDto)
     {
-        var product = await _dbContext.Products.FindAsync(productId);
+        var existProduct = await _productService.ExistAsync(productId, CancellationToken.None);
+        if (!existProduct) return NotFound("Product not found");
 
-        if (product is null) return NotFound();
+        var existCategory = await _categoryService.ExistAsync(productDto.CategoryId, CancellationToken.None);
+        if (!existCategory) return NotFound("Category not found");
 
-        product.Name = productDto.Name;
-        product.Image = productDto.Image;
-        product.Price = productDto.Price;
-        product.CategoryId = productDto.CategoryId;
+        await _productService.UpdateAsync(productId, productDto, CancellationToken.None);
+        return Ok($"Updated product with id: {productId}");
 
-        await _dbContext.SaveChangesAsync();
-
-        return NoContent();
     }
 
-    // DELETE api/<ProductController>/5
+    // DELETE api/Product/5
     [HttpDelete("{productId}")]
-    public async Task<IActionResult> Delete(Guid productId)
+    public async Task<ActionResult> Delete(Guid productId)
     {
-        var product = _dbContext.Products.AsNoTracking().SingleOrDefault(_ => _.Id == productId);
+        var productDto = await _productService.GetByIdAsync(productId, CancellationToken.None);
+        if (productDto is null) return NotFound("Product not found");
 
-        if (product is null)
-            return BadRequest();
-
-        _dbContext.Products.Remove(product);
-        await _dbContext.SaveChangesAsync();
-
-        return Ok();
+        await _productService.DeleteAsync(productId, CancellationToken.None);
+        return Ok("Product deleted");
     }
 }
