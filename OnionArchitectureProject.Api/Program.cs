@@ -1,7 +1,7 @@
 using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Application;
 using OnionArchitectureProject.Api.Extensions;
-using OnionArchitecture.Authentication;
+using OnionArchitectureProject.Authentication;
 ;
 
 var builder = WebApplication.CreateBuilder(args);

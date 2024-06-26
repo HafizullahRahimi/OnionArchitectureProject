@@ -1,4 +1,4 @@
-﻿using OnionArchitecture.Domain.Categories;
+﻿using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Persistence.Repositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories;
