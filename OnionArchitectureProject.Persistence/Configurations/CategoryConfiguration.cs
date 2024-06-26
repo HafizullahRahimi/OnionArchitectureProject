@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnionArchitecture.Domain.Categories;
+using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Persistence.Configurations;
 internal class CategoryConfiguration : IEntityTypeConfiguration<Category>

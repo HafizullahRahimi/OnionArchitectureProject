@@ -1,6 +1,0 @@
-﻿namespace OnionArchitecture.Domain.Common.BaseEntities;
-public class EntityBaseWithoutId : ICreated
-{
-    public DateTime CreatedDateUTC { get; set; }
-    public string CreatedBy { get; set; } = string.Empty;
-}

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnionArchitecture.Domain.Products;
+using OnionArchitectureProject.Domain.Products;
 
 namespace OnionArchitectureProject.Persistence.Configurations;
 internal class ProductConfiguration : IEntityTypeConfiguration<Product>

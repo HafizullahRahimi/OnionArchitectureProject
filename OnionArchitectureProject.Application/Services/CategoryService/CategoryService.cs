@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnionArchitecture.Domain.Categories;
+using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Application.Profiles;
 using OnionArchitectureProject.Application.Services.CategoryService.Models;
 

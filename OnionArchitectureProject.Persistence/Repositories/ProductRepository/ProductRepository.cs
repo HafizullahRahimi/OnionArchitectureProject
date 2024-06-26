@@ -1,5 +1,5 @@
-﻿using OnionArchitecture.Domain.Products;
-using OnionArchitecture.Domain.Products.Repositories;
+﻿using OnionArchitectureProject.Domain.Products;
+using OnionArchitectureProject.Domain.Products.Repositories;
 using OnionArchitectureProject.Persistence.Repositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories.ProductRepository;

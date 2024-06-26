@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitecture.Domain.Categories;
-using OnionArchitecture.Domain.Products;
+using OnionArchitectureProject.Domain.Categories;
+using OnionArchitectureProject.Domain.Products;
 
 namespace OnionArchitectureProject.Persistence;
 public class ApplicationDbContext : DbContext

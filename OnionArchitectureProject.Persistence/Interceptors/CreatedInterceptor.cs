@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using OnionArchitecture.Domain.Common.BaseEntities;
+using OnionArchitectureProject.Domain.Common.BaseEntities;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 public class CreatedInterceptor : SaveChangesInterceptor

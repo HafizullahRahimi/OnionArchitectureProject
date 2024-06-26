@@ -1,4 +1,4 @@
-﻿using OnionArchitecture.Domain.Common.Repositories;
+﻿using OnionArchitectureProject.Domain.Common.Repositories;
 using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;

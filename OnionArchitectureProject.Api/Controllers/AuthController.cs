@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnionArchitecture.Authentication.Services.AuthService;
-using OnionArchitecture.Authentication.Services.AuthService.Models;
+using OnionArchitectureProject.Authentication.Services.AuthService;
+using OnionArchitectureProject.Authentication.Services.AuthService.Models;
 
 namespace OnionArchitectureProject.Api.Controllers;
 [Route("api/[controller]")]

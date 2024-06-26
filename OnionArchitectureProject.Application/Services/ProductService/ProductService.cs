@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnionArchitecture.Domain.Products;
+using OnionArchitectureProject.Domain.Products;
 using OnionArchitectureProject.Application.Profiles;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
 
