@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Services.AuthService;
+using OnionArchitectureProject.Authentication.Services.TokenService;
 using System.Text;
 
 namespace OnionArchitectureProject.Authentication;
@@ -29,6 +30,9 @@ public static class AuthenticationServicesRegistration
 
         #region Servises
         services.AddScoped<IAuthService, AuthService>();
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<ITokenService, TokenService>();
         #endregion
 
         #region JWT

@@ -25,7 +25,7 @@ public class CreatedInterceptor : SaveChangesInterceptor
         foreach (EntityEntry<ICreated> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            softDeletable.Entity.CreatedBy = "CreatedByHafiz";
+            //softDeletable.Entity.CreatedBy = "CreatedByHafiz";
             softDeletable.Entity.CreatedDateUTC = DateTime.Now;
         }
 

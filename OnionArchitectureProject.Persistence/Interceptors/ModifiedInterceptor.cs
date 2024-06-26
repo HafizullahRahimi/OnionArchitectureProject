@@ -25,7 +25,7 @@ public class ModifiedInterceptor : SaveChangesInterceptor
         foreach (EntityEntry<IModified> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            softDeletable.Entity.ModifiedBy = "ModifiedByHafizullah";
+            //softDeletable.Entity.ModifiedBy = "ModifiedByHafizullah";
             softDeletable.Entity.ModifiedDateUTC = DateTime.Now;
         }
 

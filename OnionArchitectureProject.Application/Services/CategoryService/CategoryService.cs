@@ -21,23 +21,27 @@ public class CategoryService : ICategoryService
         _mapper = mapperConfig.CreateMapper();
     }
 
-    public async Task<Guid> CreateAsync(string categoryName, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(string categoryName, string createdBy, CancellationToken cancellationToken)
     {
-        var category = new Category { Name = categoryName };
+        var category = new Category
+        {
+            Name = categoryName,
+            CreatedBy = createdBy,
+        };
         category = await _categoryRepository.CreateAsync(category, cancellationToken);
         return category.Id;
     }
 
-    public Task DeleteAsync(Guid categoryId, CancellationToken cancellationToken)=>
+    public Task DeleteAsync(Guid categoryId, CancellationToken cancellationToken) =>
         _categoryRepository.DeleteAsync(categoryId, cancellationToken);
 
-    public Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken)=>
+    public Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken) =>
         _categoryRepository.ExistAsync(categoryId, cancellationToken);
 
     public async Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var categories = await _categoryRepository.GetAllAsync(cancellationToken);
-        var categoryDtos =_mapper.Map<List<CategoryDto>>(categories);
+        var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
         return categoryDtos;
     }
 
@@ -47,10 +51,11 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryDto>(category);
     }
 
-    public async Task UpdateAsync(Guid categoryId, string categoryName, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid categoryId, string categoryName, string modifiedBy, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(categoryId, cancellationToken);
         category.Name = categoryName;
+        category.ModifiedBy = modifiedBy;
 
         await _categoryRepository.UpdateAsync(category, cancellationToken);
     }
