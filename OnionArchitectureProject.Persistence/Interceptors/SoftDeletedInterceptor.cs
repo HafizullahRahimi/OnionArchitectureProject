@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Common.BaseEntities;
 
-namespace OnionArchitectureProject.Persistence.Interceptors;
+namespace OnionArchitectureProject.Persistence.Extensions;
 public class SoftDeletedInterceptor : SaveChangesInterceptor
 {
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(

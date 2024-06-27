@@ -7,8 +7,8 @@ using OnionArchitectureProject.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddAuthentication(builder.Configuration);
+builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddControllers();

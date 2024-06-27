@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OnionArchitectureProject.Application.Services.CategoryService;
 using OnionArchitectureProject.Application.Services.CategoryService.Models;
-using OnionArchitectureProject.Authentication.Services.TokenService;
 
 namespace OnionArchitectureProject.Api.Controllers;
 
@@ -12,12 +11,10 @@ namespace OnionArchitectureProject.Api.Controllers;
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _categoryService;
-    private readonly ITokenService _tokenService;
 
-    public CategoryController(ICategoryService categoryService, ITokenService tokenService)
+    public CategoryController(ICategoryService categoryService)
     {
         _categoryService = categoryService;
-        _tokenService = tokenService;
     }
 
     // GET api/category
@@ -42,8 +39,7 @@ public class CategoryController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] string categoryName)
     {
-        var userName = _tokenService.GetCurrentUserName();
-        var categoryId = await _categoryService.CreateAsync(categoryName, userName, CancellationToken.None);
+        var categoryId = await _categoryService.CreateAsync(categoryName, CancellationToken.None);
         return Ok($"Added category with id: {categoryId}");
     }
 
@@ -54,9 +50,7 @@ public class CategoryController : ControllerBase
         var existCategory = await _categoryService.ExistAsync(categoryId, CancellationToken.None);
         if (!existCategory) return NotFound("Category not found");
 
-        var userName = _tokenService.GetCurrentUserName();
-
-        await _categoryService.UpdateAsync(categoryId, categoryName, userName, CancellationToken.None);
+        await _categoryService.UpdateAsync(categoryId, categoryName, CancellationToken.None);
         return Ok($"Updated category with id: {categoryId}");
     }
 

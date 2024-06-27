@@ -21,13 +21,9 @@ public class CategoryService : ICategoryService
         _mapper = mapperConfig.CreateMapper();
     }
 
-    public async Task<Guid> CreateAsync(string categoryName, string createdBy, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(string categoryName, CancellationToken cancellationToken)
     {
-        var category = new Category
-        {
-            Name = categoryName,
-            CreatedBy = createdBy,
-        };
+        var category = new Category { Name = categoryName };
         category = await _categoryRepository.CreateAsync(category, cancellationToken);
         return category.Id;
     }
@@ -51,12 +47,12 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryDto>(category);
     }
 
-    public async Task UpdateAsync(Guid categoryId, string categoryName, string modifiedBy, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(Guid categoryId, string categoryName, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(categoryId, cancellationToken);
+        if (category == null) return false;
         category.Name = categoryName;
-        category.ModifiedBy = modifiedBy;
-
         await _categoryRepository.UpdateAsync(category, cancellationToken);
+        return true;
     }
 }
