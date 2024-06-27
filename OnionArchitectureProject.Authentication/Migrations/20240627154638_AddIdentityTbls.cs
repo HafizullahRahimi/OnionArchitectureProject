@@ -174,8 +174,8 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "05446344-f9cc-4566-bd2c-36791b4e28ed", 0, "72fadccd-f7a9-4223-9e77-f5529d911626", "admin@localhost.com", true, "Admin", "Adminian", false, null, "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEKVZ9NSrYKCPQF5o/7KMMy4cAZ8hxB12P+gwMHxKqcuZwewpVrWXPw4antFrqytDYg==", null, false, "1b241c58-62cc-47f1-92da-42c97f42d7ef", false, "admin@localhost.com" },
-                    { "2ec9f480-7288-4d0f-a1cd-53cc89968b45", 0, "b70484eb-d750-4ed8-bef4-06d7837c3a97", "user@localhost.com", true, "System", "User", false, null, "USER@LOCALHOST.COM", "USER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBYF7qE3I3ZbXeDrdkEHqDxQWFw7d/v4N9WsSsJsdBOWUo9CTOgQ/fwFJoLoBMVpPQ==", null, false, "213a641e-6b98-476e-b160-ce70cffbd6fb", false, "user@localhost.com" }
+                    { "05446344-f9cc-4566-bd2c-36791b4e28ed", 0, "b89c69ae-891c-4f83-bb88-b153bb313f54", "admin@localhost.com", true, "Admin", "System", false, null, "ADMIN@LOCALHOST.COM", "ADMIN10", "AQAAAAIAAYagAAAAENN82iU/mUgXYyOqepiliEdIXNymV4mOHk8iVakAgnijRLK0Pi6/eqdKQ/Itt6GKTA==", null, false, "5486038b-bbc1-4a93-8147-d55077ed5a14", false, "Admin10" },
+                    { "2ec9f480-7288-4d0f-a1cd-53cc89968b45", 0, "33af31fb-ff27-4b7b-b085-dc4ef510eeff", "user@localhost.com", true, "User", "System", false, null, "USER@LOCALHOST.COM", "USER20", "AQAAAAIAAYagAAAAEJJ2Q8UKgjNSVf/Unt4A8sXydhPky34x1uJtmxxNqhk/oi+c7c68GXTUDUv9BLpmeg==", null, false, "5e0b8426-df91-4245-9740-7a735201297b", false, "User20" }
                 });
 
             migrationBuilder.InsertData(

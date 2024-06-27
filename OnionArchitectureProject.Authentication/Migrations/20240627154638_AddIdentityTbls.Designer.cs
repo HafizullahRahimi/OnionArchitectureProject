@@ -12,7 +12,7 @@ using OnionArchitectureProject.Authentication;
 namespace OnionArchitectureProject.Authentication.Migrations
 {
     [DbContext(typeof(AuthenticationDbContext))]
-    [Migration("20240626170042_AddIdentityTbls")]
+    [Migration("20240627154638_AddIdentityTbls")]
     partial class AddIdentityTbls
     {
         /// <inheritdoc />
@@ -261,37 +261,37 @@ namespace OnionArchitectureProject.Authentication.Migrations
                         {
                             Id = "05446344-f9cc-4566-bd2c-36791b4e28ed",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "72fadccd-f7a9-4223-9e77-f5529d911626",
+                            ConcurrencyStamp = "b89c69ae-891c-4f83-bb88-b153bb313f54",
                             Email = "admin@localhost.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
-                            LastName = "Adminian",
+                            LastName = "System",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKVZ9NSrYKCPQF5o/7KMMy4cAZ8hxB12P+gwMHxKqcuZwewpVrWXPw4antFrqytDYg==",
+                            NormalizedUserName = "ADMIN10",
+                            PasswordHash = "AQAAAAIAAYagAAAAENN82iU/mUgXYyOqepiliEdIXNymV4mOHk8iVakAgnijRLK0Pi6/eqdKQ/Itt6GKTA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1b241c58-62cc-47f1-92da-42c97f42d7ef",
+                            SecurityStamp = "5486038b-bbc1-4a93-8147-d55077ed5a14",
                             TwoFactorEnabled = false,
-                            UserName = "admin@localhost.com"
+                            UserName = "Admin10"
                         },
                         new
                         {
                             Id = "2ec9f480-7288-4d0f-a1cd-53cc89968b45",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b70484eb-d750-4ed8-bef4-06d7837c3a97",
+                            ConcurrencyStamp = "33af31fb-ff27-4b7b-b085-dc4ef510eeff",
                             Email = "user@localhost.com",
                             EmailConfirmed = true,
-                            FirstName = "System",
-                            LastName = "User",
+                            FirstName = "User",
+                            LastName = "System",
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@LOCALHOST.COM",
-                            NormalizedUserName = "USER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBYF7qE3I3ZbXeDrdkEHqDxQWFw7d/v4N9WsSsJsdBOWUo9CTOgQ/fwFJoLoBMVpPQ==",
+                            NormalizedUserName = "USER20",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJJ2Q8UKgjNSVf/Unt4A8sXydhPky34x1uJtmxxNqhk/oi+c7c68GXTUDUv9BLpmeg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "213a641e-6b98-476e-b160-ce70cffbd6fb",
+                            SecurityStamp = "5e0b8426-df91-4245-9740-7a735201297b",
                             TwoFactorEnabled = false,
-                            UserName = "user@localhost.com"
+                            UserName = "User20"
                         });
                 });
 
