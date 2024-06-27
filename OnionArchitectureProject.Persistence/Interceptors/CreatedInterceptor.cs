@@ -6,11 +6,11 @@ using OnionArchitectureProject.Domain.Common.BaseEntities;
 namespace OnionArchitectureProject.Persistence.Extensions;
 public class CreatedInterceptor : SaveChangesInterceptor
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor httpContextAccessor;
 
     public CreatedInterceptor(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor = httpContextAccessor;
+        this.httpContextAccessor = httpContextAccessor;
     }
 
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
@@ -30,16 +30,12 @@ public class CreatedInterceptor : SaveChangesInterceptor
               .ChangeTracker.Entries<ICreated>()
               .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Added);
 
-        var JwtToken = _httpContextAccessor.GetJwtToken();
-        var currentUserName = string.Empty;
-        if (JwtToken != null)
-            currentUserName = JwtToken.GetCurrentUserName();
-
+        var currentUserId = httpContextAccessor.GetClaimsByType("uid");
 
         foreach (EntityEntry<ICreated> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            softDeletable.Entity.CreatedBy = currentUserName;
+            softDeletable.Entity.CreatedBy = currentUserId;
             softDeletable.Entity.CreatedDateUTC = DateTime.Now;
         }
 
