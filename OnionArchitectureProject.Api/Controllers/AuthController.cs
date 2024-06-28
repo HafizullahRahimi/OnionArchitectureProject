@@ -15,12 +15,12 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AuthResponse>> Login(AuthRequest request)
+    public async Task<ActionResult> Login(AuthRequest request)
     {
         var result = await _authService.Login(request);
         if (result != null)
         {
-            return Ok(result);
+            return Ok(result.Token);
         }
 
         return Unauthorized();

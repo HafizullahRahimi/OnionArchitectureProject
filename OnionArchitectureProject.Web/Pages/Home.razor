@@ -2,6 +2,15 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView Context="ctx">
+    <Authorized>
+        <h3>@ctx.User.GetName()</h3>
+        <p>@ctx.User.GetId()</p>
+        <p>@ctx.User.GetEmail()</p>
+    </Authorized>
+</AuthorizeView>
+
+
+
 
 Welcome to your new app.
