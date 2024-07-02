@@ -5,4 +5,6 @@ namespace OnionArchitectureProject.Authentication.Services.AccountService;
 public interface IAccountService
 {
     Task<ResponseDto> RegisterUserAsync(RegisterDto registerDto);
+    Task<LoginResponseDto> LoginUserAsync(LoginDto loginDto);
+    Task LogOut();
 }
