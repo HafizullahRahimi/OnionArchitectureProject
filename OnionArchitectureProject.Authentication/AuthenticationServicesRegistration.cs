@@ -5,8 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Authentication.Services.AccountService;
 using OnionArchitectureProject.Authentication.Services.AuthService;
 using OnionArchitectureProject.Authentication.Services.CurrentUserService;
+using System.Reflection;
 using System.Text;
 
 namespace OnionArchitectureProject.Authentication;
@@ -29,6 +31,9 @@ public static class AuthenticationServicesRegistration
             .AddDefaultTokenProviders();
 
         #region Servises
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddScoped<IAccountService, AccountService>();
+
         services.AddScoped<IAuthService, AuthService>();
 
         //services.AddHttpContextAccessor();
