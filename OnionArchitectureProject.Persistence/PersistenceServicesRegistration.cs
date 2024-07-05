@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnionArchitectureProject.Domain.Categories;
+using OnionArchitectureProject.Domain.Products;
 using OnionArchitectureProject.Persistence.Interceptors;
+using OnionArchitectureProject.Persistence.Repositories.CategoryRepository;
+using OnionArchitectureProject.Persistence.Repositories.ProductRepository;
 
 namespace OnionArchitectureProject.Persistence;
 public static class PersistenceServicesRegistration
@@ -27,6 +31,10 @@ public static class PersistenceServicesRegistration
         //services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
         #region Repositories
+
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+
         #endregion
 
         return services;
