@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Persistence", "OnionArchitectureProject.Persistence\OnionArchitectureProject.Persistence.csproj", "{B7DA2C4A-BE5D-4A0C-9F22-72EE25B0E5B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Application", "OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj", "{A09A646A-0E3E-464A-837E-696ADB816B17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Application", "OnionArchitectureProject.Application\OnionArchitectureProject.Application.csproj", "{A09A646A-0E3E-464A-837E-696ADB816B17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Authentication", "OnionArchitectureProject.Authentication\OnionArchitectureProject.Authentication.csproj", "{08ADAB4B-2602-47A1-8A8E-5680D530080A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{A09A646A-0E3E-464A-837E-696ADB816B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A09A646A-0E3E-464A-837E-696ADB816B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A09A646A-0E3E-464A-837E-696ADB816B17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08ADAB4B-2602-47A1-8A8E-5680D530080A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08ADAB4B-2602-47A1-8A8E-5680D530080A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08ADAB4B-2602-47A1-8A8E-5680D530080A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08ADAB4B-2602-47A1-8A8E-5680D530080A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 		{06EF4234-BFC7-452F-A6A6-2ECFB34D8898} = {AA0C6C9F-55ED-4A70-BFA1-C3BCEFDCDC9B}
 		{B7DA2C4A-BE5D-4A0C-9F22-72EE25B0E5B0} = {50899518-AEA5-4556-B6B3-A136E8E8361C}
 		{A09A646A-0E3E-464A-837E-696ADB816B17} = {1D3A3F88-DCFC-4532-A98B-6CDBBCC3C594}
+		{08ADAB4B-2602-47A1-8A8E-5680D530080A} = {50899518-AEA5-4556-B6B3-A136E8E8361C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1838AAFC-F9FE-49DD-9633-16041B635296}
