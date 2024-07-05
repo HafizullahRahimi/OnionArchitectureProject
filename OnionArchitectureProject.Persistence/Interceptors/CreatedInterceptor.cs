@@ -1,18 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Common.BaseEntities;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 public class CreatedInterceptor : SaveChangesInterceptor
 {
-    private readonly IHttpContextAccessor httpContextAccessor;
-
-    public CreatedInterceptor(IHttpContextAccessor httpContextAccessor)
-    {
-        this.httpContextAccessor = httpContextAccessor;
-    }
-
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
@@ -30,7 +22,6 @@ public class CreatedInterceptor : SaveChangesInterceptor
               .ChangeTracker.Entries<ICreated>()
               .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Added);
 
-        //var currentUserId = httpContextAccessor.GetClaimsByType("uid");
         var currentUserId = "Created by user id";
 
         foreach (EntityEntry<ICreated> softDeletable in entries)
