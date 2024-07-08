@@ -20,15 +20,13 @@ public static class PersistenceServicesRegistration
         services.AddSingleton<CreatedInterceptor>();
         services.AddSingleton<ModifiedInterceptor>();
 
-        services.AddDbContext<ApplicationDbContext>(
+        services.AddDbContextFactory<ApplicationDbContext>(
             (sp, option) => option
             .UseSqlServer(connectionString)
             .AddInterceptors(sp.GetRequiredService<SoftDeletedInterceptor>())
             .AddInterceptors(sp.GetRequiredService<CreatedInterceptor>())
             .AddInterceptors(sp.GetRequiredService<ModifiedInterceptor>())
             );
-
-        //services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
         #region Repositories
 
