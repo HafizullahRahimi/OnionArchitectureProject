@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OnionArchitectureProject.Authentication\OnionArchitectureProject.Authentication.csproj" />
+    <ProjectReference Include="..\OnionArchitectureProject.Persistence\OnionArchitectureProject.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
