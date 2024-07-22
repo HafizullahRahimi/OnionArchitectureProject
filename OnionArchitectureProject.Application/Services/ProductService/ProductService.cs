@@ -2,6 +2,7 @@
 using OnionArchitectureProject.Domain.Products;
 using OnionArchitectureProject.Application.Profiles;
 using OnionArchitectureProject.Application.Services.ProductService.Models;
+using OnionArchitectureProject.Application.Services.ProductService.Models.UpsertProductDto;
 
 namespace OnionArchitectureProject.Application.Services.ProductService;
 public class ProductService : IProductService
