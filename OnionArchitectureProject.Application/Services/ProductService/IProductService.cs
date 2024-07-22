@@ -1,4 +1,5 @@
 ﻿using OnionArchitectureProject.Application.Services.ProductService.Models;
+using OnionArchitectureProject.Application.Services.ProductService.Models.UpsertProductDto;
 
 namespace OnionArchitectureProject.Application.Services.ProductService;
 public interface IProductService
