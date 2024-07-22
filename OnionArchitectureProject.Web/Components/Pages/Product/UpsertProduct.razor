@@ -1,0 +1,77 @@
+﻿@using OnionArchitectureProject.Application.Services.ProductService
+@using OnionArchitectureProject.Application.Services.ProductService.Models.UpsertProductDto
+@using OnionArchitectureProject.Web.Validators
+
+@page "/upsert-product"
+@inject IProductService ProductService
+
+
+<h3 class="d-flex justify-content-center">Product</h3>
+@if (mess != null)
+{
+    <p class="d-flex justify-content-center alert alert-info">@mess</p>
+}
+
+<div class="d-flex justify-content-center align-items-center ">
+
+    <EditForm Model="@formModel" Enhance=true OnValidSubmit="OnSubmitForm" FormName="myForm">
+        <FluentValidationValidator @ref="_fluentValidationValidator" />
+        <ValidationSummary />
+        <div class="mt-2">
+            <label for="name" class="form-label">Name:</label>
+            <InputText id="name" @bind-Value="formModel.Name" class="form-control" />
+            <ValidationMessage For="@(()=>formModel.Name)"></ValidationMessage>
+        </div>
+
+        <div class="mt-2">
+            <label for="image" class="form-label">Image URL:</label>
+            <InputText id="image" @bind-Value="formModel.Image" class="form-control" />
+            <ValidationMessage For="@(()=>formModel.Image)"></ValidationMessage>
+        </div>
+
+        <div class="mt-2">
+            <label for="price" class="form-label">Price:</label>
+            <InputNumber id="price" @bind-Value="formModel.Price" class="form-control" />
+            <ValidationMessage For="@(()=>formModel.Price)"></ValidationMessage>
+        </div>
+
+        <div class="mt-3">
+            <label for="category" class="form-label">Category ID:</label>
+            <InputText id="category" @bind-Value="formModel.CategoryId" class="form-control" />
+            <ValidationMessage For="@(()=>formModel.CategoryId)"></ValidationMessage>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Submit</button>
+    </EditForm>
+
+</div>
+
+
+
+
+
+@code {
+    [SupplyParameterFromForm(FormName = "myForm")]
+    public UpsertProductDto formModel { get; set; } = new();
+
+    private string mess = null;
+
+    private FluentValidationValidator? _fluentValidationValidator;
+
+    async Task OnSubmitForm()
+    {
+
+        if (await _fluentValidationValidator!.ValidateAsync())
+        {
+            Console.WriteLine("Form Submitted Successfully!");
+
+            var productId = await ProductService.CreateAsync(formModel, CancellationToken.None);
+
+            if (productId != null)
+            {
+                mess = $"Product with id {productId} created!";
+                
+            }
+        }
+    }
+}

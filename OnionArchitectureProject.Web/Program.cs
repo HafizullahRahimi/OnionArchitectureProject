@@ -1,3 +1,4 @@
+using OnionArchitectureProject.Application;
 using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Authentication;
 using OnionArchitectureProject.Web.Components;
@@ -9,6 +10,7 @@ builder.Services.AddRazorComponents();
 
 builder.Services.AddAuthentication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
