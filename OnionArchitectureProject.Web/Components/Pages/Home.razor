@@ -5,3 +5,33 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+
+<EditForm FormName="MyForm" Model="ModelForm" OnSubmit="OnClick">
+    <InputText @bind-Value=ModelForm.Name hidden></InputText>
+    <button class="btn btn-success" type="submit">Success</button>
+</EditForm>
+
+<p>@ShowMess</p>
+
+@if (ShowMess)
+{
+    <SweetAlert Title="Good job!" Text="You clicked the button!" />
+}
+
+@code{
+    public class MyModelForm
+    {
+        public string Name { get; set; }
+    }
+
+    public MyModelForm ModelForm { get; set; } = new();
+
+    bool ShowMess = false;
+
+
+    async Task OnClick()
+    {
+        ShowMess = true;
+    }
+}

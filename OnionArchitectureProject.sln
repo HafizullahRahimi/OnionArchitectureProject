@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Authentication", "OnionArchitectureProject.Authentication\OnionArchitectureProject.Authentication.csproj", "{08ADAB4B-2602-47A1-8A8E-5680D530080A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnionArchitectureProject.Web", "OnionArchitectureProject.Web\OnionArchitectureProject.Web.csproj", "{5BC427C3-8385-426D-A0B1-669EEECC94A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnionArchitectureProject.Web", "OnionArchitectureProject.Web\OnionArchitectureProject.Web.csproj", "{5BC427C3-8385-426D-A0B1-669EEECC94A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
