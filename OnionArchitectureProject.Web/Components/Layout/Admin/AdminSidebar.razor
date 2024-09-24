@@ -1,0 +1,38 @@
+﻿
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="my-2 d-none d-lg-block">
+        <NavLink class="navbar-brand " href="admin/dashboard">
+            <img src="/images/admin.png" alt="" width="32" height="32" class="me-2" />
+            Admin Panel
+        </NavLink>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="admin/dashboard">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i> Dashboard
+            </NavLink>
+        </div>        
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="admin/upsert-product">
+                <i class="bi bi-basket-fill"></i> Products
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-house-door-fill"></i> Home
+            </NavLink>
+        </div>
+
+    </nav>
+</div>
+
+
+@code {
+
+}

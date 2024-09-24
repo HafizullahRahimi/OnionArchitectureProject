@@ -1,1 +1,6 @@
-﻿@using OnionArchitectureProject.Web.Components.Admin.Shared
+﻿@using Microsoft.AspNetCore.Authorization
+@using OnionArchitectureProject.Web.Components.Layout
+@using OnionArchitectureProject.Web.Components.Layout.Admin
+
+@attribute [Authorize] 
+@layout AdminLayout
