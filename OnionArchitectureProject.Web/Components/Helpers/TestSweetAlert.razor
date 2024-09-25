@@ -1,0 +1,26 @@
+﻿@page "/testsweetslert"
+
+<h3>TestSweetAlert</h3>
+<EditForm FormName="MyForm" Model="ModelForm" OnSubmit="OnClick">
+    <InputText @bind-Value=ModelForm.Name hidden></InputText>
+    <button class="btn btn-success" type="submit">Success</button>
+</EditForm>
+<p>@showAlert</p>
+@if (showAlert)
+{
+    <SweetAlert Title="Good job!" Text="You clicked the button!" />
+}
+
+@code {
+    public class MyModelForm
+    {
+        public string Name { get; set; }
+    }
+    public MyModelForm ModelForm { get; set; } = new();
+    bool showAlert = false;
+
+    private async Task OnClick()
+    {
+        showAlert = true;
+    }
+}

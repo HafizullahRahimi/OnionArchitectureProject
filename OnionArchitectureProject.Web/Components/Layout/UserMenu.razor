@@ -5,38 +5,37 @@
 <AuthorizeView>
     <Authorized>
         <div class="dropdown">
-            <a @onclick=ToggleDropDown class="d-flex align-items-center  text-decoration-none dropdown-toggle text-black" data-bs-toggle="dropdown" aria-expanded="false">
+            <a @onclick=ToggleDropdown class="d-flex align-items-center  text-decoration-none dropdown-toggle text-black" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="/images/user.png" alt="" width="32" height="32" class="rounded-circle me-2">
                 @context.User.Identity?.Name!.Substring(0, 7)
             </a>
             <ul class="@dropdownCss">
-                    <li class="dropdown-item"><a class="text-black" href="Account/Manage">Profile</a></li>
+                <li class="dropdown-item"><a class="text-black" href="Account/Manage">Profile</a></li>
                 <li class="dropdown-item"><a class="text-black" href="admin/dashboard">Dashboard</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li class="dropdown-item">
-                        <form action="Account/Logout" method="post">
-                            <AntiforgeryToken />
+                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-item">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                            <button type="submit" class="dropdown-item text-danger">
-                                <span class="bi bi-arrow-bar-left" aria-hidden="true"></span> Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+                        <button type="submit" class="dropdown-item text-danger">
+                            <span class="bi bi-arrow-bar-left" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </Authorized>
 </AuthorizeView>
 
 @code {
-    private bool show = false;
+    private bool dropdownStatus = false;
     private string? currentUrl;
-
-    private string dropdownCss => show
+    private string dropdownCss => dropdownStatus
         ? "dropdown-menu text-small shadow show"
         : "dropdown-menu";
 
-    private void ToggleDropDown()
-        => show = !show;
+    private void ToggleDropdown()
+        => dropdownStatus = !dropdownStatus;
 
     protected override void OnInitialized()
     {
@@ -46,6 +45,7 @@
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
+        dropdownStatus = false;
         currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }

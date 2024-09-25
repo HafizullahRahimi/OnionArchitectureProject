@@ -1,0 +1,57 @@
+﻿@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+@page "/dropdown"
+<PageTitle>Dropdown</PageTitle>
+
+<h3>Dropdown</h3>
+<div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" @attributes=UserAttributes @onclick=this.ToggleDropDown>
+        DropDown Button
+    </a>
+    <div class="@this.dropdownCss" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item active" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+    </div>
+
+</div>
+
+@code {
+    private bool show = false;
+    private string dropdownCss => show
+        ? "dropdown-menu show"
+        : "dropdown-menu";
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+
+    private void ToggleDropDown()
+        => this.show = !this.show;
+}
+
+
+
+<div class="m-2 col-auto">
+    <div class="dropdown">
+        <a @onclick=this.ToggleDropDown2 class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Manage
+        </a>
+        @if (state)
+        {
+            <div class="dropdown-menu show" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+@code {
+    private bool state = false;
+
+    private void ToggleDropDown2()
+        => this.state = !this.state;
+}

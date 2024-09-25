@@ -1,10 +1,10 @@
 ﻿@using OnionArchitectureProject.Application.Services.ProductService
 @using OnionArchitectureProject.Application.Services.ProductService.Models.UpsertProductDto
 @using OnionArchitectureProject.Web.Validators
-
-@page "/admin/upsert-product"
 @inject IProductService ProductService
 
+@page "/admin/upsert-product"
+<PageTitle>Product</PageTitle>
 
 <h3 class="d-flex justify-content-center">Product</h3>
 @if (mess != null)
