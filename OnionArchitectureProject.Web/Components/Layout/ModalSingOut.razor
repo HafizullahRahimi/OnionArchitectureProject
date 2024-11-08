@@ -1,0 +1,47 @@
+﻿@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<ModalBase @ref=RefModalBase>
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Sing Out</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to sing out?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+            <button type="submit" class="btn btn-danger">
+                @* <span class="bi bi-arrow-bar-left" aria-hidden="true"></span> *@
+                Sing Out
+            </button>
+        </form>
+    </div>
+</ModalBase>
+
+@code {
+    private ModalBase RefModalBase;
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    public async Task OpenModal()
+    {
+        await RefModalBase.OpenModal();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+}
