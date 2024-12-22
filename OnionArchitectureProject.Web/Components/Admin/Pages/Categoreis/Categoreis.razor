@@ -1,0 +1,186 @@
+﻿@page "/Admin/Categoreis"
+@rendermode InteractiveServer
+
+@using OnionArchitectureProject.Application.Services.CategoryService
+@using OnionArchitectureProject.Application.Services.CategoryService.Models.CategoryDto
+@using OnionArchitectureProject.Domain.Categories
+
+@inject ICategoryService CategoryService
+
+<PageTitle>Categoreis</PageTitle>
+
+<div>
+    <button type="button" class="btn btn-success float-end me-3" @onclick=OpenCategoryModal>Add category</button>
+    <h1 class="fs-2 text-black">Categoreis</h1>
+</div>
+
+@if (categories == null)
+{
+    <Spinner />
+}
+else
+{
+    <table class="table table-striped caption-top">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>CreatedAt</th>
+                @*   <th>CreatedBy</th>
+                <th>ModifiedAt</th>
+                <th>ModifiedBy</th> *@
+                <th>Settings</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in categories)
+            {
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+                    <td>@category.CreatedAt</td>
+                    @* <td>@category.CreatedBy</td>
+                    <td>@category.ModifiedAt</td>
+                    <td>@category.ModifiedBy</td> *@
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category))>Edit</a> |
+                        <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
+                        <!-- Button trigger Modal Delete -->
+                        <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+
+<ModalUpsetCategory @ref=categoryModalRef OnCategoryCreated="OnCategoryCreated" OnCategoryUpdated="OnCategoryUpdated" />
+<ModalDeleteCategory @ref=deleteModalRef OnCategoryDeleted="OnCategoryDeleted" />
+
+@code {
+    private ModalUpsetCategory? categoryModalRef;
+    private ModalDeleteCategory? deleteModalRef;
+    private IEnumerable<Category>? categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategoriesAsync();
+    }
+
+    private async Task OpenCategoryModal()
+    {
+        if (categoryModalRef != null)
+        {
+            await categoryModalRef.OpenModalAsync();
+        }
+    }
+
+    private async Task OpenCategoryModal(Category category)
+    {
+        if (categoryModalRef != null)
+        {
+            await categoryModalRef.OpenModalAsync(category);
+        }
+    }
+
+    private async Task CloseCategoryModal()
+    {
+        if (categoryModalRef != null)
+        {
+            await categoryModalRef.CloseModalAsync();
+        }
+    }
+
+    private async Task OnCategoryCreated(CategoryDto categoryDto)
+    {
+        try
+        {
+            var categoryId = await CategoryService.CreateAsync(categoryDto, CancellationToken.None);
+
+            if (categoryId != null)
+            {
+                await CloseCategoryModal();
+                await LoadCategoriesAsync();
+                await ShowMessageAsync($"Category created successfully!", "success");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+
+    }
+
+    private async Task OnCategoryUpdated(Category category)
+    {
+        try
+        {
+            var categoryUpdated = await CategoryService.UpdateAsync(category, CancellationToken.None);
+
+            if (categoryUpdated)
+            {
+                await CloseCategoryModal();
+                await ShowMessageAsync($"Category  {category.Name} updated successfully!", "success");
+            }
+            else
+            {
+                await ShowMessageAsync($"Category '{category.Name}' not found!", "warning");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task OpenDeleteModal(Category category)
+    {
+        if (deleteModalRef != null)
+        {
+            await deleteModalRef.OpenModalAsync(category);
+        }
+    }
+
+    private async Task OnCategoryDeleted(Category category)
+    {
+        if (category == null)
+        {
+            await ShowMessageAsync("Category is null.", "error");
+            return;
+        }
+
+        try
+        {
+            bool categoryExists = await CategoryService.ExistAsync(category.Id, CancellationToken.None);
+
+            if (categoryExists)
+            {
+                await CategoryService.DeleteAsync(category.Id, CancellationToken.None);
+                await LoadCategoriesAsync();
+                await ShowMessageAsync($"Category '{category.Name}' deleted successfully!", "success");
+            }
+            else
+            {
+                await ShowMessageAsync($"Category '{category.Name}' not found!", "warning");
+            }
+        }
+        catch (Exception ex)
+        {
+            await ShowMessageAsync($"An error occurred: {ex.Message}", "error");
+            throw;
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        categories = await CategoryService.GetAllAsync(CancellationToken.None);
+    }
+
+    private async Task ShowMessageAsync(string message, string icon)
+    {
+        await JSRuntime.InvokeVoidAsync("ShowSweet", "", message, icon);
+    }
+}

@@ -8,3 +8,17 @@ function CloseModal(modalId) {
     var modal = bootstrap.Modal.getInstance(myModalEl); // Returns a Bootstrap modal instance
     modal.hide();
 }
+
+function ShowSweet(title, text, icon) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        confirmButtonText: 'OK'
+    });
+}
+
+function myFunction() {
+    console.log("Hello!")
+}
+

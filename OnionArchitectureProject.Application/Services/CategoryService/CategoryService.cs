@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Application.Profiles;
-using OnionArchitectureProject.Application.Services.CategoryService.Models;
+using OnionArchitectureProject.Application.Services.CategoryService.Models.CategoryDto;
+using OnionArchitectureProject.Application.Services.ProductService.Models;
+using OnionArchitectureProject.Domain.Products;
 
 namespace OnionArchitectureProject.Application.Services.CategoryService;
 public class CategoryService : ICategoryService
@@ -21,9 +23,9 @@ public class CategoryService : ICategoryService
         _mapper = mapperConfig.CreateMapper();
     }
 
-    public async Task<Guid> CreateAsync(string categoryName, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(CategoryDto categoryDto, CancellationToken cancellationToken)
     {
-        var category = new Category { Name = categoryName };
+        var category = _mapper.Map<Category>(categoryDto);
         category = await _categoryRepository.CreateAsync(category, cancellationToken);
         return category.Id;
     }
@@ -34,11 +36,10 @@ public class CategoryService : ICategoryService
     public Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken) =>
         _categoryRepository.ExistAsync(categoryId, cancellationToken);
 
-    public async Task<IEnumerable<CategoryDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken cancellationToken)
     {
         var categories = await _categoryRepository.GetAllAsync(cancellationToken);
-        var categoryDtos = _mapper.Map<List<CategoryDto>>(categories);
-        return categoryDtos;
+        return categories;
     }
 
     public async Task<CategoryDto?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken)
@@ -47,12 +48,29 @@ public class CategoryService : ICategoryService
         return _mapper.Map<CategoryDto>(category);
     }
 
-    public async Task<bool> UpdateAsync(Guid categoryId, string categoryName, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(Guid categoryId, CategoryDto categoryDto, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetByIdAsync(categoryId, cancellationToken);
-        if (category == null) return false;
-        category.Name = categoryName;
-        await _categoryRepository.UpdateAsync(category, cancellationToken);
-        return true;
+        var existingCategory = await _categoryRepository.GetByIdAsync(categoryId, cancellationToken);
+
+        if (existingCategory != null)
+        {
+            _mapper.Map(categoryDto, existingCategory);
+            await _categoryRepository.UpdateAsync(existingCategory, cancellationToken);
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> UpdateAsync(Category category, CancellationToken cancellationToken)
+    {
+        var existingCategory = await _categoryRepository.GetByIdAsync(category.Id, cancellationToken);
+
+        if (existingCategory != null)
+        {
+            _mapper.Map(category, existingCategory);
+            await _categoryRepository.UpdateAsync(existingCategory, cancellationToken);
+            return true;
+        }
+        return false;
     }
 }

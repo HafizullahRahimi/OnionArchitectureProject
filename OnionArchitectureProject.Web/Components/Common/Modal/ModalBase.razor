@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveServer
+
+@inject IJSRuntime JSRuntime;
+
+<div class="modal fade" id="@ModalId" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    private string ModalId { get; } = Guid.NewGuid().ToString();
+
+    public async Task OpenModalAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("OpenModal", ModalId);
+    }
+
+    public async Task CloseModalAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("CloseModal", ModalId);
+    }
+}
