@@ -24,10 +24,17 @@
 <ModalSingOut @ref=RefModalSingOut />
 
 @code{
-    ModalSingOut RefModalSingOut;
+    ModalSingOut? RefModalSingOut;
 
     private async Task OpenModalSingOut()
     {
-        await RefModalSingOut.OpenModal();
+        if (RefModalSingOut != null)
+        {
+            await RefModalSingOut.OpenModal();
+        }
+        else
+        {
+            Console.WriteLine("Modal reference is not initialized.");
+        }
     }
 }
