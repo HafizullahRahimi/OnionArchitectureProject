@@ -1,0 +1,53 @@
+﻿@page "/SweetAlertTest"
+@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
+@rendermode InteractiveServer
+
+
+<h3>SweetAlert Test</h3>
+
+<!-- Simple Alert with Ref -->
+<button class="btn btn-primary" @onclick="ShowAlertAsync">CLick me! </button>
+<SweetAlert @ref=SweetAlertRef ConfirmButtonText="Ok" />
+<br />
+
+<!-- Simple Alert -->
+<SweetAlert Text="This is an informational alert!"
+            ConfirmButtonText="Got It">
+    <button class="btn btn-primary">Show Info Alert</button>
+</SweetAlert>
+<br />
+
+<!-- Question Alert -->
+<SweetAlert Title="Delete Confirmation"
+            Text="Are you sure you want to delete this?"
+            Icon="SweetAlertIcon.Question"
+            ShowCancelButton="true"
+            ConfirmButtonText="Yes, Delete"
+            CancelButtonText="No, Cancel"
+            OnConfirm="HandleConfirm"
+            OnCancel="HandleCancel">
+    <button class="btn btn-danger">Show Confirmation Alert</button>
+</SweetAlert>
+
+@code {
+    private SweetAlert? SweetAlertRef;
+
+    private void HandleConfirm()
+    {
+        Console.WriteLine("Confirmed action!");
+    }
+
+    private void HandleCancel()
+    {
+        Console.WriteLine("Action canceled!");
+    }
+
+
+    private async Task ShowAlertAsync()
+    {
+        if (SweetAlertRef != null)
+        {
+            await SweetAlertRef.ShowAlertAsync("ddddd", SweetAlertIcon.Error);
+        }
+    }
+}

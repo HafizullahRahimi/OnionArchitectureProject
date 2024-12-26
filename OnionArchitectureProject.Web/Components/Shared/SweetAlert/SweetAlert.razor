@@ -1,0 +1,71 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div @onclick="ShowAlertAsync">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string Text { get; set; } = "This is a default message";
+
+    [Parameter]
+    public SweetAlertIcon Icon { get; set; } = SweetAlertIcon.Info;
+
+    [Parameter]
+    public bool ShowCancelButton { get; set; } = false;
+
+    [Parameter]
+    public string ConfirmButtonText { get; set; } = "OK";
+
+    [Parameter]
+    public string CancelButtonText { get; set; } = "Cancel";
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public async Task ShowAlertAsync()
+    {
+        var result = await JSRuntime.InvokeAsync<AlertResult>("Swal.fire", new
+        {
+            title = Title,
+            text = Text,
+            icon = Icon.ToString().ToLower(), // Convert enum to lowercase string for SweetAlert2
+            showCancelButton = ShowCancelButton,
+            confirmButtonText = ConfirmButtonText,
+            cancelButtonText = CancelButtonText
+        });
+
+        if (result.IsConfirmed)
+        {
+            await OnConfirm.InvokeAsync();
+        }
+        else if (result.IsDismissed)
+        {
+            await OnCancel.InvokeAsync();
+        }
+    }
+
+    public async Task ShowAlertAsync(string text, SweetAlertIcon icon)
+    {
+        Text = text;
+        Icon = icon;
+        await InvokeAsync(StateHasChanged);
+        await ShowAlertAsync();
+    }
+
+    private class AlertResult
+    {
+        public bool IsConfirmed { get; set; }
+        public bool IsDismissed { get; set; }
+        public string? DismissReason { get; set; }
+    }
+}

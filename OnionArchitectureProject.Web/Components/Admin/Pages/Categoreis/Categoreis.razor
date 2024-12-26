@@ -4,6 +4,7 @@
 @using OnionArchitectureProject.Application.Services.CategoryService
 @using OnionArchitectureProject.Application.Services.CategoryService.Models.CategoryDto
 @using OnionArchitectureProject.Domain.Categories
+@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 
 @inject ICategoryService CategoryService
 
@@ -58,11 +59,13 @@ else
 
 <ModalUpsetCategory @ref=categoryModalRef OnCategoryCreated="OnCategoryCreated" OnCategoryUpdated="OnCategoryUpdated" />
 <ModalDeleteCategory @ref=deleteModalRef OnCategoryDeleted="OnCategoryDeleted" />
+<SweetAlert @ref=sweetAlertRef ConfirmButtonText="Ok" />
 
 @code {
     private ModalUpsetCategory? categoryModalRef;
     private ModalDeleteCategory? deleteModalRef;
     private IEnumerable<Category>? categories;
+    private SweetAlert? sweetAlertRef;
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,7 +106,7 @@ else
             {
                 await CloseCategoryModal();
                 await LoadCategoriesAsync();
-                await ShowMessageAsync($"Category created successfully!", "success");
+                await ShowAlertAsync($"Category created successfully!", SweetAlertIcon.Success);
             }
 
         }
@@ -123,11 +126,11 @@ else
             if (categoryUpdated)
             {
                 await CloseCategoryModal();
-                await ShowMessageAsync($"Category  {category.Name} updated successfully!", "success");
+                await ShowAlertAsync($"Category  {category.Name} updated successfully!", SweetAlertIcon.Success);
             }
             else
             {
-                await ShowMessageAsync($"Category '{category.Name}' not found!", "warning");
+                await ShowAlertAsync($"Category '{category.Name}' not found!", SweetAlertIcon.Warning);
             }
         }
         catch (Exception ex)
@@ -148,7 +151,7 @@ else
     {
         if (category == null)
         {
-            await ShowMessageAsync("Category is null.", "error");
+            await ShowAlertAsync("Category is null.", SweetAlertIcon.Error);
             return;
         }
 
@@ -160,16 +163,16 @@ else
             {
                 await CategoryService.DeleteAsync(category.Id, CancellationToken.None);
                 await LoadCategoriesAsync();
-                await ShowMessageAsync($"Category '{category.Name}' deleted successfully!", "success");
+                await ShowAlertAsync($"Category '{category.Name}' deleted successfully!", SweetAlertIcon.Success);
             }
             else
             {
-                await ShowMessageAsync($"Category '{category.Name}' not found!", "warning");
+                await ShowAlertAsync($"Category '{category.Name}' not found!", SweetAlertIcon.Warning);
             }
         }
         catch (Exception ex)
         {
-            await ShowMessageAsync($"An error occurred: {ex.Message}", "error");
+            await ShowAlertAsync($"An error occurred: {ex.Message}", SweetAlertIcon.Error);
             throw;
         }
     }
@@ -179,8 +182,11 @@ else
         categories = await CategoryService.GetAllAsync(CancellationToken.None);
     }
 
-    private async Task ShowMessageAsync(string message, string icon)
+    private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
     {
-        await JSRuntime.InvokeVoidAsync("ShowSweet", "", message, icon);
+        if (sweetAlertRef != null)
+        {
+            await sweetAlertRef.ShowAlertAsync(text, icon);
+        }
     }
 }

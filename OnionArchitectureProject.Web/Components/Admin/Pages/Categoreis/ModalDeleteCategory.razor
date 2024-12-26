@@ -26,10 +26,10 @@
         if (modalRef != null)
         {
             // await Task.Delay(5000);
-            // await InvokeAsync(StateHasChanged);
             // Console.WriteLine($"Category: {category.Name} ");
+            // StateHasChanged(); // Force update to ensure the UI binds to the new value
             categoryToDelete = category;
-            StateHasChanged(); // Force update to ensure the UI binds to the new value
+            await InvokeAsync(StateHasChanged);
             await modalRef.OpenModalAsync();
         }
 
