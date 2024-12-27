@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitectureProject.Domain.Common.Repositories;
+using OnionArchitectureProject.Domain.Common.BaseRepositories;
 
 namespace OnionArchitectureProject.Domain.Products.Repositories;
 public class ProductIncludes : IIncludes<Product>

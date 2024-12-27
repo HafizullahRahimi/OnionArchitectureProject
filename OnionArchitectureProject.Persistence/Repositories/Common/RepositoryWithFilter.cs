@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Common.BaseEntities;
-using OnionArchitectureProject.Domain.Common.Repositories;
+using OnionArchitectureProject.Domain.Common.BaseRepositories;
+using OnionArchitectureProject.Domain.Common.BaseRepositories;
 using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;

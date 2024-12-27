@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Domain.Common.Repositories;
+namespace OnionArchitectureProject.Domain.Common.BaseRepositories;
 public interface IRepositoryWithFilter<TEntity>
 {
     Task<List<TEntity>> GetAllAsync(IFilter<TEntity> filter, CancellationToken cancellationToken);

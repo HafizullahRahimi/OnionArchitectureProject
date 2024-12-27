@@ -1,4 +1,4 @@
-﻿using OnionArchitectureProject.Domain.Common.Repositories;
+﻿using OnionArchitectureProject.Domain.Common.BaseRepositories;
 
 namespace OnionArchitectureProject.Domain.Products;
 public interface IProductRepository : IRepository<Product>
