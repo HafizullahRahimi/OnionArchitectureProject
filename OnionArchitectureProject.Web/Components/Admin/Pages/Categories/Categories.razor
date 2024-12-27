@@ -1,4 +1,4 @@
-﻿@page "/Admin/Categoreis"
+﻿@page "/Admin/Categories"
 @rendermode InteractiveServer
 
 @using OnionArchitectureProject.Application.Services.CategoryService
@@ -7,17 +7,22 @@
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 
 @inject ICategoryService CategoryService
+@inject ILogger<Categories> Logger
 
-<PageTitle>Categoreis</PageTitle>
+<PageTitle>Categories</PageTitle>
 
 <div>
     <button type="button" class="btn btn-success float-end me-3" @onclick=OpenCategoryModal>Add category</button>
-    <h1 class="fs-2 text-black">Categoreis</h1>
+    <h1 class="fs-2 text-black">Categories</h1>
 </div>
 
 @if (categories == null)
 {
     <Spinner />
+}
+else if (!categories.Any())
+{
+    <div>No categories available.</div>
 }
 else
 {
@@ -67,6 +72,7 @@ else
     private IEnumerable<Category>? categories;
     private SweetAlert? sweetAlertRef;
 
+
     protected override async Task OnInitializedAsync()
     {
         await LoadCategoriesAsync();
@@ -102,7 +108,7 @@ else
         {
             var categoryId = await CategoryService.CreateAsync(categoryDto, CancellationToken.None);
 
-            if (categoryId != null)
+            if (categoryId != Guid.Empty)
             {
                 await CloseCategoryModal();
                 await LoadCategoriesAsync();
@@ -112,7 +118,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+            Logger.LogError(ex.Message, "Error creating category.");
         }
 
     }
@@ -126,7 +132,7 @@ else
             if (categoryUpdated)
             {
                 await CloseCategoryModal();
-                await ShowAlertAsync($"Category  {category.Name} updated successfully!", SweetAlertIcon.Success);
+                await ShowAlertAsync($"Category {category.Name} updated successfully!", SweetAlertIcon.Success);
             }
             else
             {
@@ -135,7 +141,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error: {ex.Message}");
+            Logger.LogError(ex.Message, "Error updating category.");
         }
     }
 
@@ -172,14 +178,14 @@ else
         }
         catch (Exception ex)
         {
-            await ShowAlertAsync($"An error occurred: {ex.Message}", SweetAlertIcon.Error);
-            throw;
+            Logger.LogError(ex.Message, "Error deleting category.");
         }
     }
 
     private async Task LoadCategoriesAsync()
     {
         categories = await CategoryService.GetAllAsync(CancellationToken.None);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)

@@ -1,7 +1,9 @@
 ﻿@page "/SweetAlertTest"
-@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 @rendermode InteractiveServer
 
+@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
+
+@inject ILogger<SweetAlertTest> Logger
 
 <h3>SweetAlert Test</h3>
 
@@ -34,12 +36,12 @@
 
     private void HandleConfirm()
     {
-        Console.WriteLine("Confirmed action!");
+        Logger.LogInformation("Confirmed action at {Time}", DateTime.Now);
     }
 
     private void HandleCancel()
     {
-        Console.WriteLine("Action canceled!");
+        Logger.LogWarning("Action canceled at {Time}", DateTime.Now);
     }
 
 
@@ -47,6 +49,7 @@
     {
         if (SweetAlertRef != null)
         {
+            Logger.LogError("Showing alert at {Time}", DateTime.Now);
             await SweetAlertRef.ShowAlertAsync("ddddd", SweetAlertIcon.Error);
         }
     }
