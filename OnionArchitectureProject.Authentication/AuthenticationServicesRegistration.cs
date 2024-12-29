@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Services;
-
+using OnionArchitectureProject.Domain.AuthenticationService;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -29,7 +29,7 @@ public static class AuthenticationServicesRegistration
         var connectionString = configuration
             .GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
- 
+
         services.AddDbContext<AuthenticationDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddDatabaseDeveloperPageExceptionFilter();
@@ -39,9 +39,9 @@ public static class AuthenticationServicesRegistration
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-        services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
         #region Servises
+        services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         #endregion
 
         return services;

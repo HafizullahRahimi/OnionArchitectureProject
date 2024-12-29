@@ -1,4 +1,4 @@
-﻿@using OnionArchitectureProject.Domain.Categories
+﻿@using OnionArchitectureProject.Application.Services.CategoryService.Models
 
 <ModalBase @ref="modalRef">
     <div class="modal-header">
@@ -16,12 +16,12 @@
 
 @code {
     [Parameter]
-    public EventCallback<Category> OnCategoryDeleted { get; set; }
+    public EventCallback<CategoryDto> OnCategoryDeleted { get; set; }
 
     private ModalBase? modalRef;
-    private Category categoryToDelete = new();
+    private CategoryDto categoryToDelete = new();
 
-    public async Task OpenModalAsync(Category category)
+    public async Task OpenModalAsync(CategoryDto category)
     {
         if (modalRef != null)
         {

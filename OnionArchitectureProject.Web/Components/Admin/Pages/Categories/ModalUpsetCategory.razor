@@ -1,10 +1,7 @@
 ﻿@rendermode InteractiveServer
 
-@using AutoMapper
-@using OnionArchitectureProject.Application.Services.CategoryService.Models.CategoryDto
+@using OnionArchitectureProject.Application.Services.CategoryService.Models.UpsertCategoryDto
 @using OnionArchitectureProject.Domain.Categories
-
-@inject IMapper mapper
 
 <ModalBase @ref=modalRef>
     <EditForm Model="@formModel" Enhance=true OnValidSubmit="OnSubmitForm">
@@ -37,16 +34,16 @@
 
 @code {
     [Parameter]
-    public EventCallback<CategoryDto> OnCategoryCreated { get; set; }
+    public EventCallback<UpsertCategoryDto> OnCategoryCreated { get; set; }
     [Parameter]
-    public EventCallback<Category> OnCategoryUpdated { get; set; }
+    public EventCallback<UpsertCategoryDto> OnCategoryUpdated { get; set; }
 
     private ModalBase? modalRef;
     private string modalMode = "add";
-    private CategoryDto formModel = new();
+    private UpsertCategoryDto formModel = new();
     private FluentValidationValidator? _fluentValidationValidator;
     private bool isLoading = false;
-    private Category? categoryToUpdate;
+    private UpsertCategoryDto? categoryToUpdate;
 
     public async Task OpenModalAsync()
     {
@@ -58,11 +55,10 @@
         }
     }
 
-    public async Task OpenModalAsync(Category category)
+    public async Task OpenModalAsync(UpsertCategoryDto category)
     {
         modalMode = "update";
-        categoryToUpdate = category;
-        formModel = mapper.Map<CategoryDto>(category);
+        formModel = category;
         if (modalRef != null)
         {
             await modalRef.OpenModalAsync();
@@ -89,12 +85,10 @@
                 {
                     await OnCategoryCreated.InvokeAsync(formModel);
                 }
-                else if (modalMode == "update" && categoryToUpdate != null)
+                else if (modalMode == "update")
                 {
-                    categoryToUpdate = mapper.Map<Category>(formModel);
-                    await OnCategoryUpdated.InvokeAsync(categoryToUpdate);
+                    await OnCategoryUpdated.InvokeAsync(formModel);
                 }
-                // await CloseModalAsync();
             }
         }
         catch (Exception ex)

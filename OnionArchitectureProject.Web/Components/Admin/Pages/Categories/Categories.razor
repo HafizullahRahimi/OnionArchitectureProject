@@ -1,13 +1,15 @@
 ﻿@page "/Admin/Categories"
 @rendermode InteractiveServer
 
+@using Microsoft.AspNetCore.Authentication
 @using OnionArchitectureProject.Application.Services.CategoryService
-@using OnionArchitectureProject.Application.Services.CategoryService.Models.CategoryDto
-@using OnionArchitectureProject.Domain.Categories
+@using OnionArchitectureProject.Application.Services.CategoryService.Models
+@using OnionArchitectureProject.Application.Services.CategoryService.Models.UpsertCategoryDto
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 
 @inject ICategoryService CategoryService
 @inject ILogger<Categories> Logger
+@inject IAuthenticationService AuthenticationService
 
 <PageTitle>Categories</PageTitle>
 
@@ -29,12 +31,12 @@ else
     <table class="table table-striped caption-top">
         <thead>
             <tr>
-                <th>ID</th>
+                @* <th>ID</th> *@
                 <th>Name</th>
                 <th>CreatedAt</th>
-                @*   <th>CreatedBy</th>
-                <th>ModifiedAt</th>
-                <th>ModifiedBy</th> *@
+                <th>CreatedBy</th>
+                @* <th>ModifiedAt</th> *@
+                <th>ModifiedBy</th>
                 <th>Settings</th>
             </tr>
         </thead>
@@ -42,16 +44,15 @@ else
             @foreach (var category in categories)
             {
                 <tr>
-                    <td>@category.Id</td>
+                    @* <td>@category.Id</td> *@
                     <td>@category.Name</td>
                     <td>@category.CreatedAt</td>
-                    @* <td>@category.CreatedBy</td>
-                    <td>@category.ModifiedAt</td>
-                    <td>@category.ModifiedBy</td> *@
+                    <td>@category.CreatedByUserName</td>
+                    @* <td>@category.ModifiedAt</td> *@
+                    <td>@category.ModifiedByUserName</td>
                     <td>
-                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category))>Edit</a> |
+                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category.Id))>Edit</a> |
                         <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
-                        <!-- Button trigger Modal Delete -->
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
 
                     </td>
@@ -69,7 +70,7 @@ else
 @code {
     private ModalUpsetCategory? categoryModalRef;
     private ModalDeleteCategory? deleteModalRef;
-    private IEnumerable<Category>? categories;
+    private IEnumerable<CategoryDto>? categories;
     private SweetAlert? sweetAlertRef;
 
 
@@ -86,11 +87,16 @@ else
         }
     }
 
-    private async Task OpenCategoryModal(Category category)
+    private async Task OpenCategoryModal(Guid categoryId)
     {
         if (categoryModalRef != null)
         {
-            await categoryModalRef.OpenModalAsync(category);
+            var category = await CategoryService.GetByIdAsync(categoryId, CancellationToken.None);
+
+            if (category != null)
+            {
+                await categoryModalRef.OpenModalAsync(category);
+            }
         }
     }
 
@@ -102,35 +108,32 @@ else
         }
     }
 
-    private async Task OnCategoryCreated(CategoryDto categoryDto)
+    private async Task OnCategoryCreated(UpsertCategoryDto categoryDto)
     {
         try
         {
             var categoryId = await CategoryService.CreateAsync(categoryDto, CancellationToken.None);
-
             if (categoryId != Guid.Empty)
             {
                 await CloseCategoryModal();
                 await LoadCategoriesAsync();
                 await ShowAlertAsync($"Category created successfully!", SweetAlertIcon.Success);
             }
-
         }
         catch (Exception ex)
         {
             Logger.LogError(ex.Message, "Error creating category.");
         }
-
     }
 
-    private async Task OnCategoryUpdated(Category category)
+    private async Task OnCategoryUpdated(UpsertCategoryDto category)
     {
         try
         {
             var categoryUpdated = await CategoryService.UpdateAsync(category, CancellationToken.None);
-
             if (categoryUpdated)
             {
+                await LoadCategoriesAsync();
                 await CloseCategoryModal();
                 await ShowAlertAsync($"Category {category.Name} updated successfully!", SweetAlertIcon.Success);
             }
@@ -145,7 +148,7 @@ else
         }
     }
 
-    private async Task OpenDeleteModal(Category category)
+    private async Task OpenDeleteModal(CategoryDto category)
     {
         if (deleteModalRef != null)
         {
@@ -153,7 +156,7 @@ else
         }
     }
 
-    private async Task OnCategoryDeleted(Category category)
+    private async Task OnCategoryDeleted(CategoryDto category)
     {
         if (category == null)
         {
@@ -184,7 +187,7 @@ else
 
     private async Task LoadCategoriesAsync()
     {
-        categories = await CategoryService.GetAllAsync(CancellationToken.None);
+        categories = await CategoryService.GetCategoriesAsync(CancellationToken.None);
         await InvokeAsync(StateHasChanged);
     }
 
