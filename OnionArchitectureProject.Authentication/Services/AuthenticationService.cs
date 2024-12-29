@@ -16,8 +16,7 @@ public class AuthenticationService : IAuthenticationService
     {
         if (string.IsNullOrEmpty(userId))
             return null;
-
         var user = await userManager.FindByIdAsync(userId);
-        return user?.UserName ?? "Unknown User";
+        return user?.UserName ?? null;
     }
 }
