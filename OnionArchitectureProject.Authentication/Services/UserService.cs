@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Domain.AuthenticationService;
+using OnionArchitectureProject.Domain.UserService;
 
 namespace OnionArchitectureProject.Authentication.Services;
-public class AuthenticationService : IAuthenticationService
+public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> userManager;
 
-    public AuthenticationService(UserManager<ApplicationUser> userManager)
+    public UserService(UserManager<ApplicationUser> userManager)
     {
         this.userManager = userManager;
     }

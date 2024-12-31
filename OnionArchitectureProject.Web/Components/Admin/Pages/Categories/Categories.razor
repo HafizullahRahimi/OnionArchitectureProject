@@ -8,7 +8,7 @@
 
 @inject ICategoryService CategoryService
 @inject ILogger<Categories> Logger
-@inject IAuthenticationService AuthenticationService
+@* @inject IAuthenticationService AuthenticationService *@
 
 <PageTitle>Categories</PageTitle>
 
@@ -50,7 +50,7 @@ else
                     @* <td>@category.ModifiedAt</td> *@
                     <td>@category.ModifiedByUserName</td>
                     <td>
-                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category.Id))>Edit</a> |
+                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category))>Edit</a> |
                         <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
 
@@ -86,11 +86,11 @@ else
         }
     }
 
-    private async Task OpenCategoryModal(Guid categoryId)
+    private async Task OpenCategoryModal(CategoryDto categoryDto)
     {
         if (categoryModalRef != null)
         {
-            var category = await CategoryService.GetByIdAsync(categoryId, CancellationToken.None);
+            var category = CategoryService.MapToUpsertCategoryDto(categoryDto);
 
             if (category != null)
             {
@@ -114,8 +114,9 @@ else
             var categoryId = await CategoryService.CreateAsync(categoryDto, CancellationToken.None);
             if (categoryId != Guid.Empty)
             {
-                await CloseCategoryModal();
                 await LoadCategoriesAsync();
+                await InvokeAsync(StateHasChanged);
+                await CloseCategoryModal();
                 await ShowAlertAsync($"Category created successfully!", SweetAlertIcon.Success);
             }
         }
@@ -133,6 +134,7 @@ else
             if (categoryUpdated)
             {
                 await LoadCategoriesAsync();
+                await InvokeAsync(StateHasChanged);
                 await CloseCategoryModal();
                 await ShowAlertAsync($"Category {category.Name} updated successfully!", SweetAlertIcon.Success);
             }
@@ -157,26 +159,18 @@ else
 
     private async Task OnCategoryDeleted(CategoryDto category)
     {
-        if (category == null)
+        if (category.Id == Guid.Empty)
         {
-            await ShowAlertAsync("Category is null.", SweetAlertIcon.Error);
+            await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
             return;
         }
 
         try
         {
-            bool categoryExists = await CategoryService.ExistAsync(category.Id, CancellationToken.None);
-
-            if (categoryExists)
-            {
-                await CategoryService.DeleteAsync(category.Id, CancellationToken.None);
-                await LoadCategoriesAsync();
-                await ShowAlertAsync($"Category '{category.Name}' deleted successfully!", SweetAlertIcon.Success);
-            }
-            else
-            {
-                await ShowAlertAsync($"Category '{category.Name}' not found!", SweetAlertIcon.Warning);
-            }
+            await CategoryService.DeleteAsync(category.Id, CancellationToken.None);
+            await LoadCategoriesAsync();
+            await InvokeAsync(StateHasChanged);
+            await ShowAlertAsync($"Category '{category.Name}' deleted successfully!", SweetAlertIcon.Success);
         }
         catch (Exception ex)
         {
@@ -187,7 +181,6 @@ else
     private async Task LoadCategoriesAsync()
     {
         categories = await CategoryService.GetCategoriesAsync(CancellationToken.None);
-        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)

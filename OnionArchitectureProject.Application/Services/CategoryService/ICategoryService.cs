@@ -11,4 +11,5 @@ public interface ICategoryService
     Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken);
     Task<bool> UpdateAsync(UpsertCategoryDto category, CancellationToken cancellationToken);
     Task DeleteAsync(Guid categoryId, CancellationToken cancellationToken);
+    UpsertCategoryDto MapToUpsertCategoryDto(CategoryDto categoryDto);
 }

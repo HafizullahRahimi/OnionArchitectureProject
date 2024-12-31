@@ -2,17 +2,17 @@
 using OnionArchitectureProject.Application.Profiles;
 using OnionArchitectureProject.Application.Services.CategoryService.Models;
 using OnionArchitectureProject.Application.Services.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Domain.AuthenticationService;
 using OnionArchitectureProject.Domain.Categories;
+using OnionArchitectureProject.Domain.UserService;
 
 namespace OnionArchitectureProject.Application.Services.CategoryService;
 public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository categoryRepository;
     private readonly IMapper mapper;
-    private readonly IAuthenticationService authenticationService;
+    private readonly IUserService authenticationService;
 
-    public CategoryService(ICategoryRepository categoryRepository, IAuthenticationService authenticationService)
+    public CategoryService(ICategoryRepository categoryRepository, IUserService authenticationService)
     {
         var mapperConfig = new MapperConfiguration(m =>
         {
@@ -46,7 +46,7 @@ public class CategoryService : ICategoryService
         var categoriesWithUserName = new List<CategoryDto>();
         foreach (var category in categories)
         {
-            var categoryDto = await MapCategoryToDtoAsync(category);
+            var categoryDto = await MapToCategoryDtoAsync(category);
             categoriesWithUserName.Add(categoryDto);
         }
         return categoriesWithUserName;
@@ -65,7 +65,12 @@ public class CategoryService : ICategoryService
         return false;
     }
 
-    private async Task<CategoryDto> MapCategoryToDtoAsync(Category category)
+    public UpsertCategoryDto MapToUpsertCategoryDto(CategoryDto categoryDto)
+    {
+        return mapper.Map<UpsertCategoryDto>(categoryDto);
+    }
+
+    private async Task<CategoryDto> MapToCategoryDtoAsync(Category category)
     {
         var categoryDto = mapper.Map<CategoryDto>(category);
         var createdByUserName = await GetUserNameAsync(category.CreatedBy);

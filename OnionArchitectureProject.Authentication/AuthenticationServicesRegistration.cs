@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Services;
-using OnionArchitectureProject.Domain.AuthenticationService;
+using OnionArchitectureProject.Domain.UserService;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -41,7 +41,7 @@ public static class AuthenticationServicesRegistration
 
         #region Servises
         services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IUserService, UserService>();
         #endregion
 
         return services;
