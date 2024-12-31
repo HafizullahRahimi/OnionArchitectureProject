@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Components.Web
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,11 +13,11 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="OnionArchitectureProject.Web.styles.css" />
     <link rel="icon" type="image/png" href="images/favicon.png" />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="RenderModeForPage" />
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="RenderModeForPage" />
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="sweetalert2/sweetalert2.js"></script>
@@ -24,3 +26,12 @@
 </body>
 
 </html>
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/Account")
+        ? null
+        : InteractiveServer;
+}
