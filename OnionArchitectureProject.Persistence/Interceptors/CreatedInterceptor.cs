@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using OnionArchitectureProject.Domain.Common.BaseEntities;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 public class CreatedInterceptor : SaveChangesInterceptor

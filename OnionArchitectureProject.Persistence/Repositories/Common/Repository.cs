@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnionArchitectureProject.Domain.Common.BaseEntities;
-using OnionArchitectureProject.Domain.Common.BaseRepositories;
+using OnionArchitectureProject.Domain.Base;
+using OnionArchitectureProject.Domain.Base.Repositories;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Common;
 public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TEntity>

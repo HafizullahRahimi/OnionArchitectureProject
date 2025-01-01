@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Domain.Common.BaseEntities;
+﻿namespace OnionArchitectureProject.Domain.Base;
 public class EntityBaseWithoutId : ICreated
 {
     public DateTime CreatedAt { get; set; }

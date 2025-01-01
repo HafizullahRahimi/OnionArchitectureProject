@@ -1,4 +1,4 @@
-﻿using OnionArchitectureProject.Domain.Common.BaseEntities;
+﻿using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Application.Services.CategoryService.Models.UpsertCategoryDto;
 public class UpsertCategoryDto : EditableEntityBase<Guid>

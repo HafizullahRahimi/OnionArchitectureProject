@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Domain.Common.BaseEntities;
+﻿namespace OnionArchitectureProject.Domain.Base;
 public interface IModified
 {
     DateTime? ModifiedAt { get; set; }

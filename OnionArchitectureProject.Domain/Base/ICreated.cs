@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Domain.Common.BaseEntities;
+﻿namespace OnionArchitectureProject.Domain.Base;
 public interface ICreated
 {
     DateTime CreatedAt { get; set; }

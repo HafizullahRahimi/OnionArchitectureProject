@@ -1,4 +1,4 @@
-﻿using OnionArchitectureProject.Domain.Common.BaseEntities;
+﻿using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Application.Services.ProductService.Models;
 public class ProductDto : EditableEntityBase<Guid>

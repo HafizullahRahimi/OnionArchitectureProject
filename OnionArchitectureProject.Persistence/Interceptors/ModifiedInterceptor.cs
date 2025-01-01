@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using OnionArchitectureProject.Domain.Common.BaseEntities;
+using OnionArchitectureProject.Domain.Base;
 using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
