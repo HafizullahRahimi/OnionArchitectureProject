@@ -18,14 +18,6 @@ public static class AuthenticationServicesRegistration
         services.AddScoped<IdentityRedirectManager>();
         services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
-        services.AddAuthorization();
-        services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = IdentityConstants.ApplicationScheme;
-            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-        })
-        .AddIdentityCookies();
-
         var connectionString = configuration
             .GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -34,7 +26,7 @@ public static class AuthenticationServicesRegistration
             options.UseSqlServer(connectionString));
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<AuthenticationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();

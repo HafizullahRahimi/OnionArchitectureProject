@@ -1,7 +1,8 @@
 using OnionArchitectureProject.Application;
-using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Authentication;
+using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Web.Components;
+using OnionArchitectureProject.Web.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+
+    app.UseSeedData(); //Use Seed Data Middleware
 }
 else
 {
