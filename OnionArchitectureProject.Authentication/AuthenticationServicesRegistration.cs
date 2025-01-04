@@ -32,7 +32,6 @@ public static class AuthenticationServicesRegistration
             .AddDefaultTokenProviders();
 
         #region Servises
-        services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
         services.AddScoped<IUserService, UserService>();
         #endregion
 

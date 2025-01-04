@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Web.SeedData;
+namespace OnionArchitectureProject.Authentication.SeedData;
 public class SeedDataMiddleware
 {
     private readonly RequestDelegate _next;

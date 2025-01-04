@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application;
 using OnionArchitectureProject.Authentication;
+using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Web.Components;
-using OnionArchitectureProject.Web.SeedData;
+using OnionArchitectureProject.Web.Components.Account;
+using OnionArchitectureProject.Authentication.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,8 @@ builder.Services.AddAuthentication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplication();
 
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,7 +26,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
 
-    app.UseSeedData(); //Use Seed Data Middleware
+    //app.UseSeedData(); //Use Seed Data Middleware
 }
 else
 {

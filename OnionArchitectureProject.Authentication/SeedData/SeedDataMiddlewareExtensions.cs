@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace OnionArchitectureProject.Web.SeedData;
+namespace OnionArchitectureProject.Authentication.SeedData;
 
 public static class SeedDataMiddlewareExtensions
 {

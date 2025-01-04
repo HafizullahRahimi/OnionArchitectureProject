@@ -1,10 +1,8 @@
-﻿@rendermode InteractiveServer
-
-<div class="dropdown">
+﻿<div class="dropdown">
     <AuthorizeView>
         <a href="#" class="d-flex align-items-center  text-decoration-none dropdown-toggle text-black" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="images/user.png" alt="" width="32" height="32" class="rounded-circle me-2">
-            @context.User.Identity?.Name.Substring(0, 7)
+            @context.User.Identity?.Name
         </a>
         <ul class="dropdown-menu text-small shadow">
             <li><NavLink class="dropdown-item" href="Account/Manage">Profile</NavLink></li>

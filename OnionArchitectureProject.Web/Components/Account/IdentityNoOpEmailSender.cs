@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Authentication.Services;
+namespace OnionArchitectureProject.Web.Components.Account;
 // Remove the "else if (EmailSender is IdentityNoOpEmailSender)" block from RegisterConfirmation.razor after updating with a real implementation.
 public sealed class IdentityNoOpEmailSender : IEmailSender<ApplicationUser>
 {

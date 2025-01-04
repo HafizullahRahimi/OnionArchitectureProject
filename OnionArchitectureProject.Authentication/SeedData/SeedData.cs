@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Web.SeedData;
+namespace OnionArchitectureProject.Authentication.SeedData;
 public static class SeedData
 {
     public static async Task InitializeAsync(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
     {
         var roles = new[] { "System", "Admin", "User" };
         await roleManager.SeedRoles(roles);
-        var systemUserCreated = await userManager.SeedUserWithRole("@System", "system@email.com", "System123!", "System");
+        var systemUserCreated = await userManager.SeedUserWithRole("System", "system@email.com", "System123!", "System");
 
     }
 
