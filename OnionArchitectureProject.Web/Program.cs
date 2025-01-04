@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application;
 using OnionArchitectureProject.Authentication;
 using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Authentication.SeedData;
 using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Web.Components;
 using OnionArchitectureProject.Web.Components.Account;
-using OnionArchitectureProject.Authentication.SeedData;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
 
-    //app.UseSeedData(); //Use Seed Data Middleware
+    app.UseSeedUsersAndRoles(); //Use Seed User sAnd Roles Middleware
 }
 else
 {

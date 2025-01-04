@@ -53,7 +53,7 @@ namespace OnionArchitectureProject.Persistence.Migrations
                     b.HasIndex("IsDeleted")
                         .HasFilter("IsDeleted = 0");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("OnionArchitectureProject.Domain.Products.Product", b =>
@@ -100,7 +100,7 @@ namespace OnionArchitectureProject.Persistence.Migrations
                     b.HasIndex("IsDeleted")
                         .HasFilter("IsDeleted = 0");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("OnionArchitectureProject.Domain.Products.Product", b =>

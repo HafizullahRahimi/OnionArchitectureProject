@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Services.CategoryService;
-using OnionArchitectureProject.Application.Services.ProductService;
+using OnionArchitectureProject.Application.Admin.CategoryService;
+using OnionArchitectureProject.Application.Admin.ProductService;
 using System.Reflection;
 
 namespace OnionArchitectureProject.Application;

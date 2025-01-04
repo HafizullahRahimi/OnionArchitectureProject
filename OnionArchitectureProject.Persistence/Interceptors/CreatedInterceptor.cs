@@ -19,29 +19,22 @@ public class CreatedInterceptor : SaveChangesInterceptor
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-
         if (eventData.Context is null)
         {
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
-
         IEnumerable<EntityEntry<ICreated>> entries =
               eventData
               .Context
               .ChangeTracker.Entries<ICreated>()
               .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Added);
-
         var currentUser = httpContextAccessor.HttpContext.User;
         var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
-        //var currentUserId = "Created by user id";
-
         foreach (EntityEntry<ICreated> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Added;
             softDeletable.Entity.CreatedBy = currentUserId;
-            softDeletable.Entity.CreatedAt = DateTime.Now;
         }
-
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }

@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnionArchitectureProject.Authentication.Account;
+using OnionArchitectureProject.Authentication.Account.UserService;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Authentication.Services;
-using OnionArchitectureProject.Domain.UserService;
+using OnionArchitectureProject.Domain.IServices;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -32,7 +33,7 @@ public static class AuthenticationServicesRegistration
             .AddDefaultTokenProviders();
 
         #region Servises
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserServiceBase, UserServiceBase>();
         #endregion
 
         return services;
