@@ -9,9 +9,9 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
 {
     public readonly ApplicationDbContext DbContext;
 
-    public RepositoryWithFilter(ApplicationDbContext context)
+    public RepositoryWithFilter(IDbContextFactory<ApplicationDbContext> dbcontextFactory)
     {
-        DbContext = context;
+        DbContext = dbcontextFactory.CreateDbContext();
     }
 
     public async Task<List<TEntity>> GetAllAsync(IFilter<TEntity> filter, CancellationToken cancellationToken) =>
@@ -64,9 +64,6 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
 
     public async Task<bool> AnyAsync(IFilter<TEntity> filter, CancellationToken cancellationToken) =>
     await DbContext.Set<TEntity>().AnyAsync(filter.ToExpression(), cancellationToken);
-
-
-
 
     public async Task<TProjection?> GetWithProjectionAsync<TProjection>(IFilter<TEntity> filter, CancellationToken cancellationToken)
     {

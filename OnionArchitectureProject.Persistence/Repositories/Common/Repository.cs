@@ -6,7 +6,7 @@ namespace OnionArchitectureProject.Persistence.Repositories.Common;
 public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TEntity>
     where TEntity : EntityBase<Guid>, new()
 {
-    protected Repository(ApplicationDbContext dbContext) : base(dbContext) { }
+    protected Repository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {

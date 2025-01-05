@@ -1,11 +1,12 @@
-﻿using OnionArchitectureProject.Domain.Products;
+﻿using Microsoft.EntityFrameworkCore;
+using OnionArchitectureProject.Domain.Products;
 using OnionArchitectureProject.Domain.Products.Repositories;
 using OnionArchitectureProject.Persistence.Repositories.Common;
 
 namespace OnionArchitectureProject.Persistence.Repositories.ProductRepository;
 public class ProductRepository : Repository<Product>, IProductRepository
 {
-    public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+    public ProductRepository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }
 
     public async Task<Product?> GetByIdWithCategoryAsync(Guid id, CancellationToken cancellationToken)
     {
