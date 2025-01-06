@@ -1,19 +1,18 @@
 ﻿using AutoMapper;
-using OnionArchitectureProject.Application.Admin.CategoryService;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Application.Admin.CategoryService.Profiles;
-using OnionArchitectureProject.Domain.IServices;
+using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
 public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository categoryRepository;
     private readonly IMapper mapper;
-    private readonly IUserServiceBase authenticationService;
+    private readonly IUserService userService;
 
-    public CategoryService(ICategoryRepository categoryRepository, IUserServiceBase authenticationService)
+    public CategoryService(ICategoryRepository categoryRepository, IUserService userService)
     {
         var mapperConfig = new MapperConfiguration(m =>
         {
@@ -22,7 +21,7 @@ public class CategoryService : ICategoryService
         mapper = mapperConfig.CreateMapper();
 
         this.categoryRepository = categoryRepository;
-        this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
     public async Task<Guid> CreateAsync(UpsertCategoryDto categoryDto, CancellationToken cancellationToken)
@@ -87,5 +86,5 @@ public class CategoryService : ICategoryService
     }
 
     private async Task<string?> GetUserNameAsync(string userId) =>
-        await authenticationService.GetUserNemeByIdAsync(userId);
+        await userService.GetUserNemeByIdAsync(userId);
 }

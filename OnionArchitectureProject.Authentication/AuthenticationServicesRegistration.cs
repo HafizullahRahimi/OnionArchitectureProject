@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
-using OnionArchitectureProject.Authentication.Account.UserService;
+using OnionArchitectureProject.Authentication.Services;
 using OnionArchitectureProject.Domain.Authentication;
-using OnionArchitectureProject.Domain.IServices;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -33,7 +32,7 @@ public static class AuthenticationServicesRegistration
             .AddDefaultTokenProviders();
 
         #region Servises
-        services.AddScoped<IUserServiceBase, UserServiceBase>();
+        services.AddScoped<IUserService, UserService>();
         #endregion
 
         return services;
