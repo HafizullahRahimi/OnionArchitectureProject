@@ -31,6 +31,7 @@ public static class SeedUsersAndRoles
             Console.WriteLine($"Creating system user: {email}");
             var newUser = new ApplicationUser
             {
+                Id = "f37c60d7-47b8-4375-a226-77eaa6fe8885",
                 UserName = userName,
                 Email = email,
                 EmailConfirmed = true
