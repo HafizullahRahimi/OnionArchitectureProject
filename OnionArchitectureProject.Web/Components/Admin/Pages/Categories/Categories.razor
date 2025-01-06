@@ -8,7 +8,6 @@
 
 @inject ICategoryService CategoryService
 @inject ILogger<Categories> Logger
-@* @inject IAuthenticationService AuthenticationService *@
 
 <PageTitle>Categories</PageTitle>
 
@@ -30,11 +29,9 @@ else
     <table class="table table-striped caption-top">
         <thead>
             <tr>
-                @* <th>ID</th> *@
                 <th>Name</th>
                 <th>CreatedAt</th>
                 <th>CreatedBy</th>
-                @* <th>ModifiedAt</th> *@
                 <th>ModifiedBy</th>
                 <th>Settings</th>
             </tr>
@@ -43,21 +40,17 @@ else
             @foreach (var category in categories)
             {
                 <tr>
-                    @* <td>@category.Id</td> *@
                     <td>@category.Name</td>
                     <td>@category.CreatedAt</td>
                     <td>@category.CreatedByUserName</td>
-                    @* <td>@category.ModifiedAt</td> *@
                     <td>@category.ModifiedByUserName</td>
                     <td>
                         <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category))>Edit</a> |
                         <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
-
                     </td>
                 </tr>
             }
-
         </tbody>
     </table>
 }
@@ -71,7 +64,6 @@ else
     private ModalDeleteCategory? deleteModalRef;
     private IEnumerable<CategoryDto>? categories;
     private SweetAlert? sweetAlertRef;
-
 
     protected override async Task OnInitializedAsync()
     {
