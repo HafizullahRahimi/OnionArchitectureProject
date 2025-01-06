@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Account.UserService;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.IServices;
 
 namespace OnionArchitectureProject.Authentication;

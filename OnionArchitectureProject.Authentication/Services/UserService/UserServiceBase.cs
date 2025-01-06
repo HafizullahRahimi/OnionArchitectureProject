@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.IServices;
 
 namespace OnionArchitectureProject.Authentication.Account.UserService;

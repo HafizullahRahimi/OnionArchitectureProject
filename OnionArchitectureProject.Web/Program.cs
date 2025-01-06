@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application;
 using OnionArchitectureProject.Authentication;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Authentication.SeedData;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Persistence;
 using OnionArchitectureProject.Web.Components;
 using OnionArchitectureProject.Web.Components.Account;
