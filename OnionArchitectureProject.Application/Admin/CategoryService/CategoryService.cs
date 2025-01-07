@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
 using OnionArchitectureProject.Application.Admin.CategoryService.Profiles;
 using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Categories;
+using System.Diagnostics;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
 public class CategoryService : ICategoryService
@@ -11,8 +13,9 @@ public class CategoryService : ICategoryService
     private readonly ICategoryRepository categoryRepository;
     private readonly IMapper mapper;
     private readonly IUserService userService;
+    private readonly ILogger<CategoryService> logger;
 
-    public CategoryService(ICategoryRepository categoryRepository, IUserService userService)
+    public CategoryService(ICategoryRepository categoryRepository, IUserService userService, ILogger<CategoryService> logger)
     {
         var mapperConfig = new MapperConfiguration(m =>
         {
@@ -22,6 +25,7 @@ public class CategoryService : ICategoryService
 
         this.categoryRepository = categoryRepository;
         this.userService = userService;
+        this.logger = logger;
     }
 
     public async Task<Guid> CreateAsync(UpsertCategoryDto categoryDto, CancellationToken cancellationToken)
@@ -40,9 +44,12 @@ public class CategoryService : ICategoryService
     public async Task<UpsertCategoryDto?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken) =>
         mapper.Map<UpsertCategoryDto>(await categoryRepository.GetByIdAsync(categoryId, cancellationToken));
 
-    public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken)
+    public async Task<List<CategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken)
     {
+        Stopwatch stopwatch = Stopwatch.StartNew();
         var categories = await categoryRepository.GetAllAsync(cancellationToken);
+        stopwatch.Stop();
+        logger.LogInformation($"Query Repository executed in: {stopwatch.ElapsedMilliseconds} ms");
         var categoriesWithUserName = new List<CategoryDto>();
         foreach (var category in categories)
         {

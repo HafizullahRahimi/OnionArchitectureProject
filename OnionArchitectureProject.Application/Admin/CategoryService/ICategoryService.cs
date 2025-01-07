@@ -4,7 +4,7 @@ using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCa
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
 public interface ICategoryService
 {
-    Task<IEnumerable<CategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken);
+    Task<List<CategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken);
     Task<UpsertCategoryDto?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken);
     Task<Guid> CreateAsync(UpsertCategoryDto categoryDto, CancellationToken cancellationToken);
     Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken);

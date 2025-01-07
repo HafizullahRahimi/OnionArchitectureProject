@@ -5,6 +5,7 @@
 @using OnionArchitectureProject.Application.Admin.CategoryService.Models
 @using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
+@using System.Diagnostics
 
 @inject ICategoryService CategoryService
 @inject ILogger<Categories> Logger
@@ -37,8 +38,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var category in categories)
-            {
+            <Virtualize Items="@categories" Context="category">
                 <tr>
                     <td>@category.Name</td>
                     <td>@category.CreatedAt</td>
@@ -50,7 +50,7 @@ else
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
                     </td>
                 </tr>
-            }
+            </Virtualize>
         </tbody>
     </table>
 }
@@ -62,7 +62,7 @@ else
 @code {
     private ModalUpsetCategory? categoryModalRef;
     private ModalDeleteCategory? deleteModalRef;
-    private IEnumerable<CategoryDto>? categories;
+    private List<CategoryDto>? categories;
     private SweetAlert? sweetAlertRef;
 
     protected override async Task OnInitializedAsync()
@@ -172,7 +172,10 @@ else
 
     private async Task LoadCategoriesAsync()
     {
+        Stopwatch stopwatch = Stopwatch.StartNew();
         categories = await CategoryService.GetCategoriesAsync(CancellationToken.None);
+        stopwatch.Stop();
+        Logger.LogInformation($"Query executed in: {stopwatch.ElapsedMilliseconds} ms");
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
