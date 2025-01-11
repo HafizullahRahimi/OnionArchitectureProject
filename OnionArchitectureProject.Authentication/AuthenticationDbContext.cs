@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
 
 namespace OnionArchitectureProject.Authentication;
-public class AuthenticationDbContext : IdentityDbContext<ApplicationUser>
+public class AuthenticationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public AuthenticationDbContext(DbContextOptions<AuthenticationDbContext> options) : base(options) { }
 

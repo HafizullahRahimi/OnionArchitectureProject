@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Services;
 using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -26,7 +27,7 @@ public static class AuthenticationServicesRegistration
             options.UseSqlServer(connectionString));
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddEntityFrameworkStores<AuthenticationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
