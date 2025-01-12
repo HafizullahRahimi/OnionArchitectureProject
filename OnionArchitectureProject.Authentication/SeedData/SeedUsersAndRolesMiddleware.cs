@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public class SeedUsersAndRolesMiddleware
@@ -19,7 +20,7 @@ public class SeedUsersAndRolesMiddleware
         {
             var services = scope.ServiceProvider;
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
             var users = userManager.Users.ToList();
             var roles = roleManager.Roles.ToList();
 

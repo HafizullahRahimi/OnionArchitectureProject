@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public static class SeedUsersAndRoles
 {
-    public static async Task InitializeAsync(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+    public static async Task InitializeAsync(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
     {
         var roles = new[] { "System", "Admin", "User" };
         await roleManager.SeedRoles(roles);
@@ -12,14 +13,19 @@ public static class SeedUsersAndRoles
 
     }
 
-    private static async Task SeedRoles(this RoleManager<IdentityRole> roleManager, string[] roles)
+    private static async Task SeedRoles(this RoleManager<ApplicationRole> roleManager, string[] roles)
     {
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
                 Console.WriteLine($"Creating role: {role}");
-                await roleManager.CreateAsync(new IdentityRole(role));
+                await roleManager.CreateAsync(new ApplicationRole()
+                {
+                    Name = role,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = "f37c60d7-47b8-4375-a226-77eaa6fe8885"
+                });
             }
         }
     }
