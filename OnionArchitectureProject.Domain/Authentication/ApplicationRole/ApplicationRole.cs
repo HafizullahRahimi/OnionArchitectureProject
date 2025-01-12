@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Domain.Authentication.ApplicationRole;
-public class ApplicationRole : IdentityRole, ICreated, IModified, ISoftDeleted
+public class ApplicationRole : IdentityRole, IEntityBase<string>, ICreated, IModified, ISoftDeleted
 {
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;

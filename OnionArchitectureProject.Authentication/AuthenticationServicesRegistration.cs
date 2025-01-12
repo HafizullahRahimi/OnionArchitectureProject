@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
+using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Authentication.Services;
 using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
@@ -23,7 +24,7 @@ public static class AuthenticationServicesRegistration
             .GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        services.AddDbContext<AuthenticationDbContext>(options =>
+        services.AddDbContextFactory<AuthenticationDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -31,6 +32,10 @@ public static class AuthenticationServicesRegistration
             .AddEntityFrameworkStores<AuthenticationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
+
+        #region Repositories
+        services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
+        #endregion
 
         #region Servises
         services.AddScoped<IUserService, UserService>();

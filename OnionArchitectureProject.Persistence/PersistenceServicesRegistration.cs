@@ -29,10 +29,8 @@ public static class PersistenceServicesRegistration
             );
 
         #region Repositories
-
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-
         #endregion
 
         return services;

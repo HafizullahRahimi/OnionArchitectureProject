@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
 
-    app.UseSeedUsersAndRoles(); //Use Seed User sAnd Roles Middleware
+    //app.UseSeedUsersAndRoles(); //Use Seed User sAnd Roles Middleware
 }
 else
 {
