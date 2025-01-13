@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Authentication.Repositories.Common;
-using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 
 namespace OnionArchitectureProject.Authentication.Repositories;
 public class ApplicationRoleRepository : AuthenticationRepository<ApplicationRole>, IApplicationRoleRepository

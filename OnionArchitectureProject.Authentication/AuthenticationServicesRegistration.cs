@@ -8,7 +8,7 @@ using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Authentication.Services;
 using OnionArchitectureProject.Domain.Authentication;
-using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 namespace OnionArchitectureProject.Authentication;

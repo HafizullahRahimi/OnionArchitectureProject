@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
-using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
+using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public static class SeedUsersAndRoles
