@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Repositories;
-using OnionArchitectureProject.Authentication.Services;
-using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
@@ -36,10 +34,7 @@ public static class AuthenticationServicesRegistration
 
         #region Repositories
         services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
-        #endregion
-
-        #region Servises
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
         #endregion
 
         return services;

@@ -3,19 +3,19 @@ using Microsoft.Extensions.Logging;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
 using OnionArchitectureProject.Application.Admin.CategoryService.Profiles;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 using OnionArchitectureProject.Domain.Categories;
 using System.Diagnostics;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
 public class CategoryService : ICategoryService
 {
-    private readonly ICategoryRepository categoryRepository;
-    private readonly IMapper mapper;
-    private readonly IUserService userService;
     private readonly ILogger<CategoryService> logger;
+    private readonly IMapper mapper;
+    private readonly ICategoryRepository categoryRepository;
+    private readonly IApplicationUserRepository applicationUserRepository;
 
-    public CategoryService(ICategoryRepository categoryRepository, IUserService userService, ILogger<CategoryService> logger)
+    public CategoryService(ICategoryRepository categoryRepository, IApplicationUserRepository applicationUserRepository, ILogger<CategoryService> logger)
     {
         var mapperConfig = new MapperConfiguration(m =>
         {
@@ -24,7 +24,7 @@ public class CategoryService : ICategoryService
         mapper = mapperConfig.CreateMapper();
 
         this.categoryRepository = categoryRepository;
-        this.userService = userService;
+        this.applicationUserRepository = applicationUserRepository;
         this.logger = logger;
     }
 
@@ -93,5 +93,5 @@ public class CategoryService : ICategoryService
     }
 
     private async Task<string?> GetUserNameAsync(string userId) =>
-        await userService.GetUserNemeByIdAsync(userId);
+        await applicationUserRepository.GetUserNameByIdAsync(userId, CancellationToken.None);
 }
