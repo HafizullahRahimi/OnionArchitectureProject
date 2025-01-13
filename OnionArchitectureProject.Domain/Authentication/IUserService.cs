@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 namespace OnionArchitectureProject.Domain.Authentication;
 public interface IUserService

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
 
 namespace OnionArchitectureProject.Authentication.SeedData;

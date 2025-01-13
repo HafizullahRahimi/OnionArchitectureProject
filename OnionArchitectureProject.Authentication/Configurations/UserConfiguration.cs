@@ -1,7 +1,7 @@
 ﻿//using Microsoft.AspNetCore.Identity;
 //using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.Metadata.Builders;
-//using OnionArchitectureProject.Domain.Authentication;
+//using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 //namespace OnionArchitectureProject.Authentication.Configurations;
 //public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 namespace OnionArchitectureProject.Authentication.Services;
 public class UserService : IUserService

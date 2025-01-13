@@ -9,6 +9,7 @@ using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Authentication.Services;
 using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRole;
+using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
