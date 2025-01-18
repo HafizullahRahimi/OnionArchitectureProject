@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
@@ -13,9 +14,9 @@ public class CategoryService : ICategoryService
     private readonly ILogger<CategoryService> logger;
     private readonly IMapper mapper;
     private readonly ICategoryRepository categoryRepository;
-    private readonly IApplicationUserRepository applicationUserRepository;
+    private readonly UserManager<ApplicationUser> userManager;
 
-    public CategoryService(ICategoryRepository categoryRepository, IApplicationUserRepository applicationUserRepository, ILogger<CategoryService> logger)
+    public CategoryService(ICategoryRepository categoryRepository, UserManager<ApplicationUser> userManager, ILogger<CategoryService> logger)
     {
         var mapperConfig = new MapperConfiguration(m =>
         {
@@ -24,7 +25,7 @@ public class CategoryService : ICategoryService
         mapper = mapperConfig.CreateMapper();
 
         this.categoryRepository = categoryRepository;
-        this.applicationUserRepository = applicationUserRepository;
+        this.userManager = userManager;
         this.logger = logger;
     }
 
@@ -80,18 +81,23 @@ public class CategoryService : ICategoryService
     private async Task<CategoryDto> MapToCategoryDtoAsync(Category category)
     {
         var categoryDto = mapper.Map<CategoryDto>(category);
-        var createdByUserName = await GetUserNameAsync(category.CreatedBy);
+        var createdByUserName = await GetUserNemeByIdAsync(category.CreatedBy);
         if (createdByUserName != null)
         {
             categoryDto.CreatedByUserName = createdByUserName;
         }
         if (!string.IsNullOrEmpty(category.ModifiedBy))
         {
-            categoryDto.ModifiedByUserName = await GetUserNameAsync(category.ModifiedBy);
+            categoryDto.ModifiedByUserName = await GetUserNemeByIdAsync(category.ModifiedBy);
         }
         return categoryDto;
     }
 
-    private async Task<string?> GetUserNameAsync(string userId) =>
-        await applicationUserRepository.GetUserNameByIdAsync(userId, CancellationToken.None);
+    private async Task<string?> GetUserNemeByIdAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            return null;
+        var user = await userManager.FindByIdAsync(userId);
+        return user?.UserName ?? null;
+    }
 }

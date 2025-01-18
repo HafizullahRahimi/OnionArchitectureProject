@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
-public class ApplicationUser : IdentityUser, IEntityBase<string>
+public class ApplicationUser : IdentityUser
 {
     //public string FirstName { get; set; } = string.Empty;
     //public string LastName { get; set; } = string.Empty;

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
-using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
@@ -41,11 +40,6 @@ public static class AuthenticationServicesRegistration
             .AddEntityFrameworkStores<AuthenticationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
-
-        #region Repositories
-        services.AddScoped<IApplicationRoleRepository, ApplicationRoleRepository>();
-        services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-        #endregion
 
         return services;
     }

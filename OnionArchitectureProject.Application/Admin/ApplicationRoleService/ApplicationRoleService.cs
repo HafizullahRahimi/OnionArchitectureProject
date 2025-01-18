@@ -101,7 +101,7 @@ public class ApplicationRoleService : IApplicationRoleService
         return roleDto;
     }
 
-    public async Task<string?> GetUserNemeByIdAsync(string userId)
+    private async Task<string?> GetUserNemeByIdAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
             return null;
