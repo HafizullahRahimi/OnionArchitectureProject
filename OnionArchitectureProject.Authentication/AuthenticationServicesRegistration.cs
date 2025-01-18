@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
+using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
@@ -23,8 +24,17 @@ public static class AuthenticationServicesRegistration
             .GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        services.AddDbContextFactory<AuthenticationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+        services.AddSingleton<SoftDeletedInterceptor>();
+        services.AddSingleton<CreatedInterceptor>();
+        services.AddSingleton<ModifiedInterceptor>();
+
+        services.AddDbContextFactory<AuthenticationDbContext>(
+            (sp, option) => option
+            .UseSqlServer(connectionString)
+            .AddInterceptors(sp.GetRequiredService<SoftDeletedInterceptor>())
+            .AddInterceptors(sp.GetRequiredService<CreatedInterceptor>())
+            .AddInterceptors(sp.GetRequiredService<ModifiedInterceptor>())
+            );
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)

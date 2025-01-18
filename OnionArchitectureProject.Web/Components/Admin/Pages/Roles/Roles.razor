@@ -1,0 +1,195 @@
+﻿@page "/Admin/Roles"
+
+@using OnionArchitectureProject.Application.Admin.ApplicationRoleService
+@using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models
+@using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models.UpsertRoleDto
+@using OnionArchitectureProject.Domain.Authentication.ApplicationRoles
+@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
+
+@inject IApplicationRoleService ApplicationRoleService
+@inject ILogger<Roles> Logger
+
+<PageTitle>Roles</PageTitle>
+
+<div>
+    <button type="button" class="btn btn-success float-end me-3" @onclick=OpenUpsertModal>Add role</button>
+    <h1 class="fs-2 text-black">Roles</h1>
+</div>
+
+@if (roles == null)
+{
+    <Spinner />
+}
+else if (!roles.Any())
+{
+    <div>No roles available.</div>
+}
+else
+{
+    <table class="table table-striped caption-top">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>CreatedAt</th>
+                <th>CreatedBy</th>
+                <th>ModifiedBy</th>
+                <th>Settings</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="@roles" Context="role">
+                <tr>
+                    <td>@role.Name</td>
+                    <td>@role.CreatedAt</td>
+                    <td>@role.CreatedByUserName</td>
+                    <td>@role.ModifiedByUserName</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenUpsertModal(role))>Edit</a> |
+                        <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(role))>Delete</a>
+                    </td>
+                </tr>
+            </Virtualize>
+        </tbody>
+    </table>
+}
+
+<ModalUpsertRole @ref=upsertModalRef OnRoleCreated="OnRoleCreated" OnRoleUpdated="OnRoleUpdated" />
+<ModalDeleteRole @ref=deleteModalRef OnRoleDeleted="OnRoleDeleted" />
+<SweetAlert @ref=sweetAlertRef ConfirmButtonText="Ok" />
+
+@code {
+    private ModalUpsertRole? upsertModalRef;
+    private ModalDeleteRole? deleteModalRef;
+    private SweetAlert? sweetAlertRef;
+    private List<RoleDto>? roles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRolesAsync();
+    }
+
+    private async Task OpenUpsertModal()
+    {
+        if (upsertModalRef != null)
+        {
+            await upsertModalRef.OpenModalAsync();
+        }
+    }
+
+    private async Task OpenUpsertModal(RoleDto roleDto)
+    {
+        if (upsertModalRef != null)
+        {
+            var upsertRoleDto = ApplicationRoleService.MapToUpsertRoleDto(roleDto);
+
+            if (upsertRoleDto != null)
+            {
+                await upsertModalRef.OpenModalAsync(roleDto.Id, upsertRoleDto);
+            }
+        }
+    }
+
+    private async Task CloseUpsertModal()
+    {
+        if (upsertModalRef != null)
+        {
+            await upsertModalRef.CloseModalAsync();
+        }
+    }
+
+    private async Task OnRoleCreated(UpsertRoleDto upsertRoleDto)
+    {
+        try
+        {
+            var roleCreated = await ApplicationRoleService.CreateAsync(upsertRoleDto);
+            if (roleCreated)
+            {
+                await LoadRolesAsync();
+                await InvokeAsync(StateHasChanged);
+                await CloseUpsertModal();
+                await ShowAlertAsync($"Role created successfully!", SweetAlertIcon.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message, "Error creating role.");
+        }
+    }
+
+    private async Task OnRoleUpdated((string roleId, UpsertRoleDto upsertRoleDto) args)
+    {
+        if (args.roleId == string.Empty || args.upsertRoleDto == null)
+        {
+            await ShowAlertAsync($"Role not found!", SweetAlertIcon.Warning);
+            return;
+        }
+        try
+        {
+            var roleUpdated = await ApplicationRoleService.UpdateAsync(args.roleId, args.upsertRoleDto);
+            if (roleUpdated)
+            {
+                await LoadRolesAsync();
+                await InvokeAsync(StateHasChanged);
+                await CloseUpsertModal();
+                await ShowAlertAsync($"Role {args.upsertRoleDto.Name} updated successfully!", SweetAlertIcon.Success);
+            }
+            else
+            {
+                await ShowAlertAsync($"Role '{args.upsertRoleDto.Name}' not found!", SweetAlertIcon.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message, "Error updating role.");
+        }
+    }
+
+    private async Task OpenDeleteModal(RoleDto role)
+    {
+        if (deleteModalRef != null)
+        {
+            await deleteModalRef.OpenModalAsync(role);
+        }
+    }
+
+    private async Task OnRoleDeleted(RoleDto role)
+    {
+        if (role.Id == string.Empty)
+        {
+            await ShowAlertAsync($"Role '{role.Name}' not found!", SweetAlertIcon.Warning);
+            return;
+        }
+
+        try
+        {
+            var roleDeleted = await ApplicationRoleService.DeleteAsync(role.Id);
+            if (roleDeleted)
+            {
+                await LoadRolesAsync();
+                await InvokeAsync(StateHasChanged);
+                await ShowAlertAsync($"Role '{role.Name}' deleted successfully!", SweetAlertIcon.Success);
+            }
+            else
+            {
+                await ShowAlertAsync($"Role '{role.Name}' not found!", SweetAlertIcon.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message, "Error deleting role.");
+        }
+    }
+
+    private async Task LoadRolesAsync()
+    {
+        roles = await ApplicationRoleService.GetRolesAsync();
+    }
+
+    private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
+    {
+        if (sweetAlertRef != null)
+        {
+            await sweetAlertRef.ShowAlertAsync(text, icon);
+        }
+    }
+}
