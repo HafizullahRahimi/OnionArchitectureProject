@@ -13,7 +13,7 @@
 <PageTitle>Categories</PageTitle>
 
 <div>
-    <button type="button" class="btn btn-success float-end me-3" @onclick=OpenCategoryModal>Add category</button>
+    <button type="button" class="btn btn-success float-end me-3" @onclick=OpenUpsertModal>Add category</button>
     <h1 class="fs-2 text-black">Categories</h1>
 </div>
 
@@ -45,7 +45,7 @@ else
                     <td>@category.CreatedByUserName</td>
                     <td>@category.ModifiedByUserName</td>
                     <td>
-                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenCategoryModal(category))>Edit</a> |
+                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenUpsertModal(category))>Edit</a> |
                         <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
                     </td>
@@ -55,12 +55,12 @@ else
     </table>
 }
 
-<ModalUpsetCategory @ref=categoryModalRef OnCategoryCreated="OnCategoryCreated" OnCategoryUpdated="OnCategoryUpdated" />
+<ModalUpsertCategory @ref=upsertModalRef OnCategoryCreated="OnCategoryCreated" OnCategoryUpdated="OnCategoryUpdated" />
 <ModalDeleteCategory @ref=deleteModalRef OnCategoryDeleted="OnCategoryDeleted" />
 <SweetAlert @ref=sweetAlertRef ConfirmButtonText="Ok" />
 
 @code {
-    private ModalUpsetCategory? categoryModalRef;
+    private ModalUpsertCategory? upsertModalRef;
     private ModalDeleteCategory? deleteModalRef;
     private List<CategoryDto>? categories;
     private SweetAlert? sweetAlertRef;
@@ -70,45 +70,45 @@ else
         await LoadCategoriesAsync();
     }
 
-    private async Task OpenCategoryModal()
+    private async Task OpenUpsertModal()
     {
-        if (categoryModalRef != null)
+        if (upsertModalRef != null)
         {
-            await categoryModalRef.OpenModalAsync();
+            await upsertModalRef.OpenModalAsync();
         }
     }
 
-    private async Task OpenCategoryModal(CategoryDto categoryDto)
+    private async Task OpenUpsertModal(CategoryDto categoryDto)
     {
-        if (categoryModalRef != null)
+        if (upsertModalRef != null)
         {
-            var category = CategoryService.MapToUpsertCategoryDto(categoryDto);
+            var upsertCategoryDto = CategoryService.MapToUpsertCategoryDto(categoryDto);
 
-            if (category != null)
+            if (upsertCategoryDto != null)
             {
-                await categoryModalRef.OpenModalAsync(category);
+                await upsertModalRef.OpenModalAsync(upsertCategoryDto);
             }
         }
     }
 
-    private async Task CloseCategoryModal()
+    private async Task CloseUpsertModal()
     {
-        if (categoryModalRef != null)
+        if (upsertModalRef != null)
         {
-            await categoryModalRef.CloseModalAsync();
+            await upsertModalRef.CloseModalAsync();
         }
     }
 
-    private async Task OnCategoryCreated(UpsertCategoryDto categoryDto)
+    private async Task OnCategoryCreated(UpsertCategoryDto upsertCategoryDto)
     {
         try
         {
-            var categoryId = await CategoryService.CreateAsync(categoryDto, CancellationToken.None);
-            if (categoryId != Guid.Empty)
+            var categoryCreated = await CategoryService.CreateAsync(upsertCategoryDto, CancellationToken.None);
+            if (categoryCreated)
             {
                 await LoadCategoriesAsync();
                 await InvokeAsync(StateHasChanged);
-                await CloseCategoryModal();
+                await CloseUpsertModal();
                 await ShowAlertAsync($"Category created successfully!", SweetAlertIcon.Success);
             }
         }
@@ -118,21 +118,22 @@ else
         }
     }
 
-    private async Task OnCategoryUpdated(UpsertCategoryDto category)
+    private async Task OnCategoryUpdated(UpsertCategoryDto upsertCategoryDto)
     {
+        if (upsertCategoryDto.Id == Guid.Empty)
+        {
+            await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
+            return;
+        }
         try
         {
-            var categoryUpdated = await CategoryService.UpdateAsync(category, CancellationToken.None);
+            var categoryUpdated = await CategoryService.UpdateAsync(upsertCategoryDto, CancellationToken.None);
             if (categoryUpdated)
             {
                 await LoadCategoriesAsync();
                 await InvokeAsync(StateHasChanged);
-                await CloseCategoryModal();
-                await ShowAlertAsync($"Category {category.Name} updated successfully!", SweetAlertIcon.Success);
-            }
-            else
-            {
-                await ShowAlertAsync($"Category '{category.Name}' not found!", SweetAlertIcon.Warning);
+                await CloseUpsertModal();
+                await ShowAlertAsync($"Category {upsertCategoryDto.Name} updated successfully!", SweetAlertIcon.Success);
             }
         }
         catch (Exception ex)
@@ -141,28 +142,30 @@ else
         }
     }
 
-    private async Task OpenDeleteModal(CategoryDto category)
+    private async Task OpenDeleteModal(CategoryDto categoryDto)
     {
         if (deleteModalRef != null)
         {
-            await deleteModalRef.OpenModalAsync(category);
+            await deleteModalRef.OpenModalAsync(categoryDto);
         }
     }
 
-    private async Task OnCategoryDeleted(CategoryDto category)
+    private async Task OnCategoryDeleted(CategoryDto categoryDto)
     {
-        if (category.Id == Guid.Empty)
+        if (categoryDto.Id == Guid.Empty)
         {
             await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
             return;
         }
-
         try
         {
-            await CategoryService.DeleteAsync(category.Id, CancellationToken.None);
-            await LoadCategoriesAsync();
-            await InvokeAsync(StateHasChanged);
-            await ShowAlertAsync($"Category '{category.Name}' deleted successfully!", SweetAlertIcon.Success);
+            var categoryDeleted =  await CategoryService.DeleteAsync(categoryDto.Id, CancellationToken.None);
+            if (categoryDeleted)
+            {
+                await LoadCategoriesAsync();
+                await InvokeAsync(StateHasChanged);
+                await ShowAlertAsync($"Category '{categoryDto.Name}' deleted successfully!", SweetAlertIcon.Success);   
+            }
         }
         catch (Exception ex)
         {
@@ -172,10 +175,7 @@ else
 
     private async Task LoadCategoriesAsync()
     {
-        Stopwatch stopwatch = Stopwatch.StartNew();
         categories = await CategoryService.GetCategoriesAsync(CancellationToken.None);
-        stopwatch.Stop();
-        Logger.LogInformation($"Query executed in: {stopwatch.ElapsedMilliseconds} ms");
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)

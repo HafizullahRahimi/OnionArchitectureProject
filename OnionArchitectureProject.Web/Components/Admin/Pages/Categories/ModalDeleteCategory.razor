@@ -21,14 +21,11 @@
     private ModalBase? modalRef;
     private CategoryDto categoryToDelete = new();
 
-    public async Task OpenModalAsync(CategoryDto category)
+    public async Task OpenModalAsync(CategoryDto categoryDto)
     {
         if (modalRef != null)
         {
-            // await Task.Delay(5000);
-            // Console.WriteLine($"Category: {category.Name} ");
-            // StateHasChanged(); // Force update to ensure the UI binds to the new value
-            categoryToDelete = category;
+            categoryToDelete = categoryDto;
             await InvokeAsync(StateHasChanged);
             await modalRef.OpenModalAsync();
         }

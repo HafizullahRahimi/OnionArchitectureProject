@@ -1,6 +1,4 @@
-﻿@rendermode InteractiveServer
-
-@using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto
+﻿@using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto
 @using OnionArchitectureProject.Domain.Categories
 
 <ModalBase @ref=modalRef>
@@ -43,7 +41,6 @@
     private UpsertCategoryDto formModel = new();
     private FluentValidationValidator? _fluentValidationValidator;
     private bool isLoading = false;
-    private UpsertCategoryDto? categoryToUpdate;
 
     public async Task OpenModalAsync()
     {
@@ -55,10 +52,10 @@
         }
     }
 
-    public async Task OpenModalAsync(UpsertCategoryDto category)
+    public async Task OpenModalAsync(UpsertCategoryDto upsertCategoryDto)
     {
         modalMode = "update";
-        formModel = category;
+        formModel = upsertCategoryDto;
         if (modalRef != null)
         {
             await modalRef.OpenModalAsync();

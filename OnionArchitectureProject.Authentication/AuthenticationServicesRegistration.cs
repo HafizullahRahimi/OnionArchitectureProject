@@ -27,7 +27,7 @@ public static class AuthenticationServicesRegistration
         services.AddSingleton<CreatedInterceptor>();
         services.AddSingleton<ModifiedInterceptor>();
 
-        services.AddDbContextFactory<AuthenticationDbContext>(
+        services.AddDbContext<AuthenticationDbContext>(
             (sp, option) => option
             .UseSqlServer(connectionString)
             .AddInterceptors(sp.GetRequiredService<SoftDeletedInterceptor>())
