@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Domain.Authentication;
-using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration

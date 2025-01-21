@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Domain.Base;
 
-namespace OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
+namespace OnionArchitectureProject.Domain.Authentication;
 public class ApplicationRole : IdentityRole, ICreated, IModified, ISoftDeleted
 {
     public string? Description { get; set; }

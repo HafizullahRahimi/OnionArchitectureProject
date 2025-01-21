@@ -1,4 +1,4 @@
-﻿using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
+﻿using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models;
 public class RoleDto : ApplicationRole

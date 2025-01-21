@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
+using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication.Configurations;
 public class RoleConfiguration : IEntityTypeConfiguration<ApplicationRole>
