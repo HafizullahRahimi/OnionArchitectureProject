@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;

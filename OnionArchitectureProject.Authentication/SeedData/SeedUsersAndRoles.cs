@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
+using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public static class SeedUsersAndRoles
 {
     public static async Task InitializeAsync(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
     {
-        var roles = new[] { "System", "Admin", "User" };
+        var roles = new[] { "System", "User", "Admin" };
         await roleManager.SeedRoles(roles);
         var systemUserCreated = await userManager.SeedUserWithRole("System", "system@email.com", "System123!", "System");
 

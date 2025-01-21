@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
+using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication.Account;
 public sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IdentityRedirectManager redirectManager)

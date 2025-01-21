@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
+namespace OnionArchitectureProject.Domain.Authentication;
 
 public class ApplicationUser : IdentityUser
 {

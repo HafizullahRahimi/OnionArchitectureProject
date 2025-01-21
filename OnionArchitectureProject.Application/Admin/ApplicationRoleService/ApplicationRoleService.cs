@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models;
 using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models.UpsertRoleDto;
+using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
-using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 
 namespace OnionArchitectureProject.Application.Admin.ApplicationRoleService;
 public class ApplicationRoleService : IApplicationRoleService

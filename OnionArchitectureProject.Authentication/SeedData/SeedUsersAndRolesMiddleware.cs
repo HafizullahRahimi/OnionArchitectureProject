@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Domain.Authentication.ApplicationUsers;
 using OnionArchitectureProject.Domain.Authentication.ApplicationRoles;
+using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public class SeedUsersAndRolesMiddleware
