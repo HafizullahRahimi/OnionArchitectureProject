@@ -6,7 +6,7 @@
 @using OnionArchitectureProject.Domain.Authentication
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 
-@inject IApplicationRoleService ApplicationRoleService
+@inherits OwningComponentBase<IApplicationRoleService>
 @inject ILogger<Roles> Logger
 
 <PageTitle>Roles</PageTitle>
@@ -80,7 +80,7 @@ else
     {
         if (upsertModalRef != null)
         {
-            var upsertRoleDto = ApplicationRoleService.MapToUpsertRoleDto(roleDto);
+            var upsertRoleDto = Service.MapToUpsertRoleDto(roleDto);
 
             if (upsertRoleDto != null)
             {
@@ -101,7 +101,7 @@ else
     {
         try
         {
-            var roleCreated = await ApplicationRoleService.CreateAsync(upsertRoleDto);
+            var roleCreated = await Service.CreateAsync(upsertRoleDto);
             if (roleCreated)
             {
                 await LoadRolesAsync();
@@ -125,7 +125,7 @@ else
         }
         try
         {
-            var roleUpdated = await ApplicationRoleService.UpdateAsync(args.roleId, args.upsertRoleDto);
+            var roleUpdated = await Service.UpdateAsync(args.roleId, args.upsertRoleDto);
             if (roleUpdated)
             {
                 await LoadRolesAsync();
@@ -162,7 +162,7 @@ else
 
         try
         {
-            var roleDeleted = await ApplicationRoleService.DeleteAsync(role.Id);
+            var roleDeleted = await Service.DeleteAsync(role.Id);
             if (roleDeleted)
             {
                 await LoadRolesAsync();
@@ -182,7 +182,7 @@ else
 
     private async Task LoadRolesAsync()
     {
-        roles = await ApplicationRoleService.GetRolesAsync();
+        roles = await Service.GetRolesAsync();
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)

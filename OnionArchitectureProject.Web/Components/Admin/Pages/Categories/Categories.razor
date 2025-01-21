@@ -7,7 +7,7 @@
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 @using System.Diagnostics
 
-@inject ICategoryService CategoryService
+@inherits OwningComponentBase<ICategoryService>
 @inject ILogger<Categories> Logger
 
 <PageTitle>Categories</PageTitle>
@@ -82,7 +82,7 @@ else
     {
         if (upsertModalRef != null)
         {
-            var upsertCategoryDto = CategoryService.MapToUpsertCategoryDto(categoryDto);
+            var upsertCategoryDto = Service.MapToUpsertCategoryDto(categoryDto);
 
             if (upsertCategoryDto != null)
             {
@@ -103,7 +103,7 @@ else
     {
         try
         {
-            var categoryCreated = await CategoryService.CreateAsync(upsertCategoryDto, CancellationToken.None);
+            var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
             if (categoryCreated)
             {
                 await LoadCategoriesAsync();
@@ -127,7 +127,7 @@ else
         }
         try
         {
-            var categoryUpdated = await CategoryService.UpdateAsync(upsertCategoryDto, CancellationToken.None);
+            var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
             if (categoryUpdated)
             {
                 await LoadCategoriesAsync();
@@ -159,7 +159,7 @@ else
         }
         try
         {
-            var categoryDeleted =  await CategoryService.DeleteAsync(categoryDto.Id, CancellationToken.None);
+            var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
             if (categoryDeleted)
             {
                 await LoadCategoriesAsync();
@@ -175,7 +175,7 @@ else
 
     private async Task LoadCategoriesAsync()
     {
-        categories = await CategoryService.GetCategoriesAsync(CancellationToken.None);
+        categories = await Service.GetCategoriesAsync(CancellationToken.None);
     }
 
     private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
