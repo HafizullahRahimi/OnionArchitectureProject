@@ -11,19 +11,19 @@ namespace OnionArchitectureProject.Authentication.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "CreatedAt",
-                table: "AspNetRoles",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
             migrationBuilder.AddColumn<string>(
                 name: "CreatedBy",
                 table: "AspNetRoles",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedDateUtc",
+                table: "AspNetRoles",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<string>(
                 name: "Description",
@@ -38,28 +38,40 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 nullable: false,
                 defaultValue: false);
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "ModifiedAt",
-                table: "AspNetRoles",
-                type: "datetime2",
-                nullable: true);
-
             migrationBuilder.AddColumn<string>(
                 name: "ModifiedBy",
                 table: "AspNetRoles",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedDateUtc",
+                table: "AspNetRoles",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_IsDeleted",
+                table: "AspNetRoles",
+                column: "IsDeleted",
+                filter: "IsDeleted = 0");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CreatedAt",
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetRoles_IsDeleted",
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
                 name: "CreatedBy",
+                table: "AspNetRoles");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedDateUtc",
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
@@ -71,11 +83,11 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
-                name: "ModifiedAt",
+                name: "ModifiedBy",
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
-                name: "ModifiedBy",
+                name: "ModifiedDateUtc",
                 table: "AspNetRoles");
         }
     }

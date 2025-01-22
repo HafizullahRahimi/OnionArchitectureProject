@@ -30,8 +30,9 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>CreatedAt</th>
+                <th>Created(LocalTime)</th>
                 <th>CreatedBy</th>
+                <th>Modified(LocalTime)</th>
                 <th>ModifiedBy</th>
                 <th>Settings</th>
             </tr>
@@ -40,9 +41,18 @@ else
             <Virtualize Items="@roles" Context="role">
                 <tr>
                     <td>@role.Name</td>
-                    <td>@role.CreatedAt</td>
+                    <td>@role.CreatedDateUtc</td>
                     <td>@role.CreatedByUserName</td>
-                    <td>@role.ModifiedByUserName</td>
+                    @if (@role.ModifiedDateUtc != DateTime.MinValue)
+                    {
+                        <td>@role.ModifiedDateUtc</td>
+                        <td>@role.ModifiedByUserName</td>
+                    }
+                    else
+                    {
+                        <td>-</td>
+                        <td>-</td>
+                    }
                     <td>
                         <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenUpsertModal(role))>Edit</a> |
                         <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(role))>Delete</a>

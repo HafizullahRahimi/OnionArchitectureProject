@@ -21,9 +21,7 @@ public static class SeedUsersAndRoles
                 Console.WriteLine($"Creating role: {role}");
                 await roleManager.CreateAsync(new ApplicationRole()
                 {
-                    Name = role,
-                    CreatedAt = DateTime.Now,
-                    CreatedBy = "f37c60d7-47b8-4375-a226-77eaa6fe8885"
+                    Name = role
                 });
             }
         }

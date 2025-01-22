@@ -29,11 +29,12 @@ public class CreatedInterceptor : SaveChangesInterceptor
               .ChangeTracker.Entries<ICreated>()
               .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Added);
         var currentUser = httpContextAccessor.HttpContext.User;
-        var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+        var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "f37c60d7-47b8-4375-a226-77eaa6fe8885";
         foreach (EntityEntry<ICreated> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Added;
             softDeletable.Entity.CreatedBy = currentUserId;
+            softDeletable.Entity.CreatedDateUtc = DateTime.UtcNow;
         }
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }

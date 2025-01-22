@@ -110,10 +110,12 @@ public class CategoryService : ICategoryService
         if (createdByUserName != null)
         {
             categoryDto.CreatedByUserName = createdByUserName;
+            categoryDto.CreatedDateUtc = categoryDto.CreatedDateUtc.ToLocalTime();
         }
         if (!string.IsNullOrEmpty(categoryDto.ModifiedBy))
         {
             categoryDto.ModifiedByUserName = await GetUserNemeByIdAsync(categoryDto.ModifiedBy);
+            categoryDto.ModifiedDateUtc = categoryDto.ModifiedDateUtc.ToLocalTime();
         }
         return categoryDto;
     }

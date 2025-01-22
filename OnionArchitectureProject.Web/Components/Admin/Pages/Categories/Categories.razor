@@ -31,8 +31,9 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>CreatedAt</th>
+                <th>Created(LocalTime)</th>
                 <th>CreatedBy</th>
+                <th>Modified(LocalTime)</th>
                 <th>ModifiedBy</th>
                 <th>Settings</th>
             </tr>
@@ -41,9 +42,18 @@ else
             <Virtualize Items="@categories" Context="category">
                 <tr>
                     <td>@category.Name</td>
-                    <td>@category.CreatedAt</td>
+                    <td>@category.CreatedDateUtc</td>
                     <td>@category.CreatedByUserName</td>
-                    <td>@category.ModifiedByUserName</td>
+                    @if (@category.ModifiedDateUtc != DateTime.MinValue)
+                    {
+                        <td>@category.ModifiedDateUtc</td>
+                        <td>@category.ModifiedByUserName</td>
+                    }
+                    else
+                    {
+                        <td>-</td>
+                        <td>-</td>
+                    }
                     <td>
                         <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenUpsertModal(category))>Edit</a> |
                         <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
@@ -164,7 +174,7 @@ else
             {
                 await LoadCategoriesAsync();
                 await InvokeAsync(StateHasChanged);
-                await ShowAlertAsync($"Category '{categoryDto.Name}' deleted successfully!", SweetAlertIcon.Success);   
+                await ShowAlertAsync($"Category '{categoryDto.Name}' deleted successfully!", SweetAlertIcon.Success);
             }
         }
         catch (Exception ex)

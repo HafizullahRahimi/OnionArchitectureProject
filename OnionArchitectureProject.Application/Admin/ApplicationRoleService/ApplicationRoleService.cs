@@ -20,7 +20,7 @@ public class ApplicationRoleService : IApplicationRoleService
 
     public async Task<List<RoleDto>> GetRolesAsync()
     {
-        var roles = roleManager.Roles;
+        var roles = roleManager.Roles.OrderBy(r => r.CreatedDateUtc);
         var rolesWithUserName = new List<RoleDto>();
         foreach (var role in roles)
         {
@@ -80,6 +80,7 @@ public class ApplicationRoleService : IApplicationRoleService
             throw;
         }
     }
+
     public UpsertRoleDto MapToUpsertRoleDto(RoleDto roleDto)
     {
         return mapper.Map<UpsertRoleDto>(roleDto);
@@ -92,10 +93,12 @@ public class ApplicationRoleService : IApplicationRoleService
         if (createdByUserName != null)
         {
             roleDto.CreatedByUserName = createdByUserName;
+            roleDto.CreatedDateUtc = roleDto.CreatedDateUtc.ToLocalTime();
         }
         if (!string.IsNullOrEmpty(role.ModifiedBy))
         {
             roleDto.ModifiedByUserName = await GetUserNemeByIdAsync(role.ModifiedBy);
+            roleDto.ModifiedDateUtc = roleDto.ModifiedDateUtc.ToLocalTime();
         }
         return roleDto;
     }

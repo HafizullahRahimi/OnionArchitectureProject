@@ -32,7 +32,7 @@ public class ModifiedInterceptor : SaveChangesInterceptor
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             softDeletable.Entity.ModifiedBy = currentUserId;
-            softDeletable.Entity.ModifiedAt = DateTime.Now;
+            softDeletable.Entity.ModifiedDateUtc = DateTime.UtcNow;
         }
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }

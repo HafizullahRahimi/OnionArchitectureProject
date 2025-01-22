@@ -30,7 +30,7 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
         CancellationToken cancellationToken, int numberOfEntities = 0)
     {
         IQueryable<TEntity> query = DbContext.Set<TEntity>()
-            .OrderByDescending(e => e.CreatedAt);
+            .OrderByDescending(e => e.CreatedDateUtc);
 
         if (filter != null)
         {
@@ -79,7 +79,7 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
     {
         return await DbContext.Set<TEntity>()
             .Where(filter.ToExpression())
-            .OrderByDescending(e => e.CreatedAt)
+            .OrderByDescending(e => e.CreatedDateUtc)
             .Select(select)
             .Distinct()
             .Take(numberOfProperties)
