@@ -24,8 +24,7 @@ public class ApplicationRoleService : IApplicationRoleService
         var rolesWithUserName = new List<RoleDto>();
         foreach (var role in roles)
         {
-            var roleDto = await MapToRoleDtoAsync(role);
-            rolesWithUserName.Add(roleDto);
+            rolesWithUserName.Add(await MapToRoleDtoAsync(role));
         }
         return rolesWithUserName;
     }
@@ -89,21 +88,19 @@ public class ApplicationRoleService : IApplicationRoleService
     private async Task<RoleDto> MapToRoleDtoAsync(ApplicationRole role)
     {
         var roleDto = mapper.Map<RoleDto>(role);
-        var createdByUserName = await GetUserNemeByIdAsync(role.CreatedBy);
+        var createdByUserName = await GetUserNameByIdAsync(role.CreatedBy);
         if (createdByUserName != null)
         {
             roleDto.CreatedByUserName = createdByUserName;
-            roleDto.CreatedDateUtc = roleDto.CreatedDateUtc.ToLocalTime();
         }
         if (!string.IsNullOrEmpty(role.ModifiedBy))
         {
-            roleDto.ModifiedByUserName = await GetUserNemeByIdAsync(role.ModifiedBy);
-            roleDto.ModifiedDateUtc = roleDto.ModifiedDateUtc.ToLocalTime();
+            roleDto.ModifiedByUserName = await GetUserNameByIdAsync(role.ModifiedBy);
         }
         return roleDto;
     }
 
-    private async Task<string?> GetUserNemeByIdAsync(string userId)
+    private async Task<string?> GetUserNameByIdAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
             return null;

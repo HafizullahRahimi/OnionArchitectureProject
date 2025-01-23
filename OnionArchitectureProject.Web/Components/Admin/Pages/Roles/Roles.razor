@@ -30,6 +30,7 @@ else
         <thead>
             <tr>
                 <th>Name</th>
+                @* <th>Description</th> *@
                 <th>Created(LocalTime)</th>
                 <th>CreatedBy</th>
                 <th>Modified(LocalTime)</th>
@@ -41,11 +42,12 @@ else
             <Virtualize Items="@roles" Context="role">
                 <tr>
                     <td>@role.Name</td>
-                    <td>@role.CreatedDateUtc</td>
+                    @* <td>@role.Description</td> *@
+                    <td>@role.CreatedLocalTime</td>
                     <td>@role.CreatedByUserName</td>
-                    @if (@role.ModifiedDateUtc != DateTime.MinValue)
+                    @if (@role.ModifiedLocalTime != DateTime.MinValue)
                     {
-                        <td>@role.ModifiedDateUtc</td>
+                        <td>@role.ModifiedLocalTime</td>
                         <td>@role.ModifiedByUserName</td>
                     }
                     else
