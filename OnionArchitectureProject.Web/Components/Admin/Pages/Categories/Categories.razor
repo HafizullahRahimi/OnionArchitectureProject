@@ -111,45 +111,42 @@ else
 
     private async Task OnCategoryCreated(UpsertCategoryDto upsertCategoryDto)
     {
-        try
+        await HandleCategoryOperationAsync(async () =>
         {
             var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
             if (categoryCreated)
             {
                 await LoadCategoriesAsync();
-                await InvokeAsync(StateHasChanged);
                 await CloseUpsertModal();
-                await ShowAlertAsync($"Category created successfully!", SweetAlertIcon.Success);
             }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex.Message, "Error creating category.");
-        }
+            else
+            {
+                throw new Exception("Failed to create category.");
+            }
+        }, "Category created successfully!");
     }
 
     private async Task OnCategoryUpdated(UpsertCategoryDto upsertCategoryDto)
     {
         if (upsertCategoryDto.Id == Guid.Empty)
         {
-            await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
+            await ShowAlertAsync($"Category '{upsertCategoryDto.Name}' not found!", SweetAlertIcon.Error);
             return;
         }
-        try
+
+        await HandleCategoryOperationAsync(async () =>
         {
             var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
             if (categoryUpdated)
             {
                 await LoadCategoriesAsync();
-                await InvokeAsync(StateHasChanged);
                 await CloseUpsertModal();
-                await ShowAlertAsync($"Category {upsertCategoryDto.Name} updated successfully!", SweetAlertIcon.Success);
             }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex.Message, "Error updating category.");
-        }
+            else
+            {
+                throw new Exception($"Category '{upsertCategoryDto.Name}' not found!");
+            }
+        }, $"Category {upsertCategoryDto.Name} updated successfully!");
     }
 
     private async Task OpenDeleteModal(CategoryDto categoryDto)
@@ -167,19 +164,33 @@ else
             await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
             return;
         }
-        try
+
+        await HandleCategoryOperationAsync(async () =>
         {
             var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
             if (categoryDeleted)
             {
                 await LoadCategoriesAsync();
-                await InvokeAsync(StateHasChanged);
-                await ShowAlertAsync($"Category '{categoryDto.Name}' deleted successfully!", SweetAlertIcon.Success);
             }
+            else
+            {
+                throw new Exception($"Failed to delete category '{categoryDto.Name}'.");
+            }
+
+        }, $"Category '{categoryDto.Name}' deleted successfully!");
+    }
+
+    private async Task HandleCategoryOperationAsync(Func<Task> operation, string successMessage)
+    {
+        try
+        {
+            await operation();
+            await InvokeAsync(StateHasChanged);
+            await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex.Message, "Error deleting category.");
+            Logger.LogError($"An error occurred: {ex.Message}");
         }
     }
 

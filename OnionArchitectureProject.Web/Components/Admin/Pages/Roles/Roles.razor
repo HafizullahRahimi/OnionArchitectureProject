@@ -111,21 +111,19 @@ else
 
     private async Task OnRoleCreated(UpsertRoleDto upsertRoleDto)
     {
-        try
+        await HandleRoleOperationAsync(async () =>
         {
             var roleCreated = await Service.CreateAsync(upsertRoleDto);
             if (roleCreated)
             {
                 await LoadRolesAsync();
-                await InvokeAsync(StateHasChanged);
                 await CloseUpsertModal();
-                await ShowAlertAsync($"Role created successfully!", SweetAlertIcon.Success);
             }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex.Message, "Error creating role.");
-        }
+            else
+            {
+                throw new Exception("Failed to create role.");
+            }
+        }, "Role created successfully!");
     }
 
     private async Task OnRoleUpdated((string roleId, UpsertRoleDto upsertRoleDto) args)
@@ -135,25 +133,20 @@ else
             await ShowAlertAsync($"Role not found!", SweetAlertIcon.Warning);
             return;
         }
-        try
+
+        await HandleRoleOperationAsync(async () =>
         {
             var roleUpdated = await Service.UpdateAsync(args.roleId, args.upsertRoleDto);
             if (roleUpdated)
             {
                 await LoadRolesAsync();
-                await InvokeAsync(StateHasChanged);
                 await CloseUpsertModal();
-                await ShowAlertAsync($"Role {args.upsertRoleDto.Name} updated successfully!", SweetAlertIcon.Success);
             }
             else
             {
-                await ShowAlertAsync($"Role '{args.upsertRoleDto.Name}' not found!", SweetAlertIcon.Warning);
+                throw new Exception($"Role '{args.upsertRoleDto.Name}' not found!");
             }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex.Message, "Error updating role.");
-        }
+        }, $"Role {args.upsertRoleDto.Name} updated successfully!");
     }
 
     private async Task OpenDeleteModal(RoleDto role)
@@ -172,23 +165,32 @@ else
             return;
         }
 
-        try
+        await HandleRoleOperationAsync(async () =>
         {
             var roleDeleted = await Service.DeleteAsync(role.Id);
             if (roleDeleted)
             {
                 await LoadRolesAsync();
-                await InvokeAsync(StateHasChanged);
-                await ShowAlertAsync($"Role '{role.Name}' deleted successfully!", SweetAlertIcon.Success);
             }
             else
             {
-                await ShowAlertAsync($"Role '{role.Name}' not found!", SweetAlertIcon.Warning);
+                throw new Exception($"Failed to delete role '{role.Name}'.");
             }
+
+        }, $"Role '{role.Name}' deleted successfully!");
+    }
+
+    private async Task HandleRoleOperationAsync(Func<Task> operation, string successMessage)
+    {
+        try
+        {
+            await operation();
+            await InvokeAsync(StateHasChanged);
+            await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex.Message, "Error deleting role.");
+            Logger.LogError($"An error occurred: {ex.Message}");
         }
     }
 
