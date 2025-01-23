@@ -42,11 +42,11 @@ else
             <Virtualize Items="@categories" Context="category">
                 <tr>
                     <td>@category.Name</td>
-                    <td>@category.CreatedDateUtc</td>
+                    <td>@category.CreatedLocalTime</td>
                     <td>@category.CreatedByUserName</td>
-                    @if (@category.ModifiedDateUtc != DateTime.MinValue)
+                    @if (@category.ModifiedLocalTime != DateTime.MinValue) 
                     {
-                        <td>@category.ModifiedDateUtc</td>
+                        <td>@category.ModifiedLocalTime</td>
                         <td>@category.ModifiedByUserName</td>
                     }
                     else

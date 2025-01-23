@@ -25,7 +25,7 @@ public class CategoryService : ICategoryService
         {
             var categories = await categoryRepository.GetAllAsync(cancellationToken);
             var categoryDtos = mapper.Map<List<CategoryDto>>(categories);
-            if (categoryDtos == null || !categoryDtos.Any())
+            if (categoryDtos == null || categoryDtos.Count == 0)
                 return categoryDtos;
             var categoriesWithUserName = new List<CategoryDto>();
             foreach (var category in categoryDtos)
@@ -106,21 +106,22 @@ public class CategoryService : ICategoryService
 
     private async Task<CategoryDto> GetCategoryDtoWithUserNameAsync(CategoryDto categoryDto)
     {
-        var createdByUserName = await GetUserNemeByIdAsync(categoryDto.CreatedBy);
+        var createdByUserName = await GetUserNameByIdAsync(categoryDto.CreatedByUserName);
         if (createdByUserName != null)
         {
             categoryDto.CreatedByUserName = createdByUserName;
-            categoryDto.CreatedDateUtc = categoryDto.CreatedDateUtc.ToLocalTime();
         }
-        if (!string.IsNullOrEmpty(categoryDto.ModifiedBy))
+
+        var modifiedByUserName = await GetUserNameByIdAsync(categoryDto.ModifiedByUserName);
+
+        if (modifiedByUserName != null)
         {
-            categoryDto.ModifiedByUserName = await GetUserNemeByIdAsync(categoryDto.ModifiedBy);
-            categoryDto.ModifiedDateUtc = categoryDto.ModifiedDateUtc.ToLocalTime();
+            categoryDto.ModifiedByUserName = modifiedByUserName;
         }
         return categoryDto;
     }
 
-    private async Task<string?> GetUserNemeByIdAsync(string userId)
+    private async Task<string?> GetUserNameByIdAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
             return null;

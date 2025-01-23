@@ -11,7 +11,7 @@ public static class ApplicationServicesRegistration
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        //services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddAutoMapper(typeof(RoleProfile));
         services.AddAutoMapper(typeof(CategoryProfile));
 
