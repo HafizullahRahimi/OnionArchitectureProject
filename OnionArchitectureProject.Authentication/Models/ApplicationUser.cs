@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Domain.Base;
 
-namespace OnionArchitectureProject.Domain.Authentication;
+namespace OnionArchitectureProject.Authentication.Models;
 public class ApplicationUser : IdentityUser, ICreated, IModified, ISoftDeleted
 {
     public DateTime CreatedDateUtc { get; set; }

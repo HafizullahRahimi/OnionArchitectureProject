@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Authentication.Models;
 using System.Security.Claims;
 
 namespace OnionArchitectureProject.Web.Components.Account;

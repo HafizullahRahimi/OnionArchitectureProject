@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Authentication.Models;
 
 namespace OnionArchitectureProject.Authentication.SeedData;
 public static class SeedUsersAndRoles

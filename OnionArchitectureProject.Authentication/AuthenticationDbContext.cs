@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Authentication.Models;
 
 namespace OnionArchitectureProject.Authentication;
 public class AuthenticationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>

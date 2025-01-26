@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Web.Components.Account.Pages;
 using OnionArchitectureProject.Web.Components.Account.Pages.Manage;
 using System.Security.Claims;
