@@ -81,7 +81,15 @@
 
         if (!result.Succeeded)
         {
-            identityErrors = result.Errors;
+            // Check if the email is already taken
+            if (result.Errors.Any(e => e.Code == "DuplicateEmail"))
+            {
+                identityErrors = new List<IdentityError> { new IdentityError { Description = $"Email '{Input.Email}' is already taken." } };
+            }
+            else
+            {
+                identityErrors = result.Errors;
+            }
             return;
         }
 

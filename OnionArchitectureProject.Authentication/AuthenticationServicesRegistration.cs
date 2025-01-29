@@ -40,6 +40,11 @@ public static class AuthenticationServicesRegistration
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+        });
+
         return services;
     }
 }
