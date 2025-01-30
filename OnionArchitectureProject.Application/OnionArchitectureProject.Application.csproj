@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OnionArchitectureProject.Authentication\OnionArchitectureProject.Authentication.csproj" />
     <ProjectReference Include="..\OnionArchitectureProject.Domain\OnionArchitectureProject.Domain.csproj" />
   </ItemGroup>
 

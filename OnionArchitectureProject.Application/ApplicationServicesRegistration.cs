@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Admin.ApplicationRoleService;
-using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Profiles;
 using OnionArchitectureProject.Application.Admin.CategoryService;
 using OnionArchitectureProject.Application.Admin.CategoryService.Profiles;
 using OnionArchitectureProject.Application.Admin.ProductService;
-using System.Reflection;
+using OnionArchitectureProject.Application.Admin.RoleService;
+using OnionArchitectureProject.Application.Admin.RoleService.Profiles;
 
 namespace OnionArchitectureProject.Application;
 public static class ApplicationServicesRegistration
@@ -17,6 +16,6 @@ public static class ApplicationServicesRegistration
 
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICategoryService, CategoryService>();
-        services.AddScoped<IApplicationRoleService, ApplicationRoleService>();
+        services.AddScoped<IRoleService, RoleService>();
     }
 }

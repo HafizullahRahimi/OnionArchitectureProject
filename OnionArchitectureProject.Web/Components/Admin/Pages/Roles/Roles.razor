@@ -1,12 +1,12 @@
 ﻿@page "/Admin/Roles"
 
-@using OnionArchitectureProject.Application.Admin.ApplicationRoleService
-@using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models
-@using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models.UpsertRoleDto
+@using OnionArchitectureProject.Application.Admin.RoleService
+@using OnionArchitectureProject.Application.Admin.RoleService.Models
+@using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto
 @using OnionArchitectureProject.Authentication.Models;
 @using OnionArchitectureProject.Web.Components.Shared.SweetAlert
 
-@inherits OwningComponentBase<IApplicationRoleService>
+@inherits OwningComponentBase<IRoleService>
 @inject ILogger<Roles> Logger
 
 <PageTitle>Roles</PageTitle>
@@ -111,42 +111,36 @@ else
 
     private async Task OnRoleCreated(UpsertRoleDto upsertRoleDto)
     {
-        await HandleRoleOperationAsync(async () =>
+        var roleCreated = await Service.CreateAsync(upsertRoleDto);
+        if (roleCreated.Succeeded)
         {
-            var roleCreated = await Service.CreateAsync(upsertRoleDto);
-            if (roleCreated)
+            await HandleRoleOperationAsync(async () =>
             {
                 await LoadRolesAsync();
                 await CloseUpsertModal();
-            }
-            else
-            {
-                throw new Exception("Failed to create role.");
-            }
-        }, "Role created successfully!");
+            }, "Role created successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{roleCreated.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task OnRoleUpdated((string roleId, UpsertRoleDto upsertRoleDto) args)
     {
-        if (args.roleId == string.Empty || args.upsertRoleDto == null)
+        var roleUpdated = await Service.UpdateAsync(args.roleId, args.upsertRoleDto);
+        if (roleUpdated.Succeeded)
         {
-            await ShowAlertAsync($"Role not found!", SweetAlertIcon.Warning);
-            return;
-        }
-
-        await HandleRoleOperationAsync(async () =>
-        {
-            var roleUpdated = await Service.UpdateAsync(args.roleId, args.upsertRoleDto);
-            if (roleUpdated)
+            await HandleRoleOperationAsync(async () =>
             {
                 await LoadRolesAsync();
                 await CloseUpsertModal();
-            }
-            else
-            {
-                throw new Exception($"Role '{args.upsertRoleDto.Name}' not found!");
-            }
-        }, $"Role {args.upsertRoleDto.Name} updated successfully!");
+            }, $"Role {args.upsertRoleDto.Name} updated successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{roleUpdated.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task OpenDeleteModal(RoleDto role)
@@ -159,39 +153,25 @@ else
 
     private async Task OnRoleDeleted(RoleDto role)
     {
-        if (role.Id == string.Empty)
+        var roleDeleted = await Service.DeleteAsync(role.Id);
+        if (roleDeleted.Succeeded)
         {
-            await ShowAlertAsync($"Role '{role.Name}' not found!", SweetAlertIcon.Warning);
-            return;
-        }
-
-        await HandleRoleOperationAsync(async () =>
-        {
-            var roleDeleted = await Service.DeleteAsync(role.Id);
-            if (roleDeleted)
+            await HandleRoleOperationAsync(async () =>
             {
                 await LoadRolesAsync();
-            }
-            else
-            {
-                throw new Exception($"Failed to delete role '{role.Name}'.");
-            }
-
-        }, $"Role '{role.Name}' deleted successfully!");
+            }, $"Role '{role.Name}' deleted successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{roleDeleted.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task HandleRoleOperationAsync(Func<Task> operation, string successMessage)
     {
-        try
-        {
-            await operation();
-            await InvokeAsync(StateHasChanged);
-            await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError($"An error occurred: {ex.Message}");
-        }
+        await operation();
+        await InvokeAsync(StateHasChanged);
+        await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
     }
 
     private async Task LoadRolesAsync()

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models;
-using OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models.UpsertRoleDto;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Application.Admin.RoleService.Models;
+using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
+using OnionArchitectureProject.Application.Authentication.Roles;
 
-namespace OnionArchitectureProject.Application.Admin.ApplicationRoleService.Profiles;
+namespace OnionArchitectureProject.Application.Admin.RoleService.Profiles;
 public class RoleProfile : Profile
 {
     public RoleProfile()
     {
-        CreateMap<ApplicationRole, RoleDto>()
+        CreateMap<Role, RoleDto>()
             .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.CreatedLocalTime, opt =>
             {
@@ -22,7 +22,7 @@ public class RoleProfile : Profile
                 opt.MapFrom(src => src.ModifiedDateUtc.ToLocalTime());
             });
 
-        CreateMap<UpsertRoleDto, ApplicationRole>();
+        CreateMap<UpsertRoleDto, Role>();
         CreateMap<RoleDto, UpsertRoleDto>();
     }
 }

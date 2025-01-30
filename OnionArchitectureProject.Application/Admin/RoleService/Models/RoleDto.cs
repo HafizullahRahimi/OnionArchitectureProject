@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models;
+﻿namespace OnionArchitectureProject.Application.Admin.RoleService.Models;
 public class RoleDto
 {
     public string Id { get; set; }

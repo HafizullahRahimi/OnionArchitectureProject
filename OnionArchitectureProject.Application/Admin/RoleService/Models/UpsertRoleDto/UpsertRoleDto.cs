@@ -1,4 +1,4 @@
-﻿namespace OnionArchitectureProject.Application.Admin.ApplicationRoleService.Models.UpsertRoleDto;
+﻿namespace OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
 public class UpsertRoleDto
 {
     public string Name { get; set; } = string.Empty;

@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Authentication.Repositories.RoleRepository;
+using OnionArchitectureProject.Authentication.Repositories.RoleRepository.Profiles;
+using OnionArchitectureProject.Application.Authentication.Roles;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -44,6 +47,14 @@ public static class AuthenticationServicesRegistration
         {
             options.User.RequireUniqueEmail = true;
         });
+
+        #region Profiles
+        services.AddAutoMapper(typeof(ApplicationRoleProfile));
+        #endregion
+
+        #region Repositories
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        #endregion
 
         return services;
     }

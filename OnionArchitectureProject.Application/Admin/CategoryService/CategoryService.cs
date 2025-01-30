@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
@@ -10,13 +8,11 @@ public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository categoryRepository;
     private readonly IMapper mapper;
-    private readonly UserManager<ApplicationUser> userManager;
 
-    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
         this.categoryRepository = categoryRepository;
         this.mapper = mapper;
-        this.userManager = userManager;
     }
 
     public async Task<List<CategoryDto>?> GetCategoriesAsync(CancellationToken cancellationToken)
@@ -123,9 +119,10 @@ public class CategoryService : ICategoryService
 
     private async Task<string?> GetUserNameByIdAsync(string userId)
     {
-        if (string.IsNullOrEmpty(userId))
-            return null;
-        var user = await userManager.FindByIdAsync(userId);
-        return user?.UserName ?? null;
+        //if (string.IsNullOrEmpty(userId))
+        //    return null;
+        //var user = await userManager.FindByIdAsync(userId);
+        //return user?.UserName ?? null;
+        return "UserName";
     }
 }
