@@ -10,6 +10,8 @@ using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Repositories.RoleRepository;
 using OnionArchitectureProject.Authentication.Repositories.RoleRepository.Profiles;
 using OnionArchitectureProject.Application.Authentication.Roles;
+using OnionArchitectureProject.Authentication.Repositories.UserRepository;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -50,10 +52,12 @@ public static class AuthenticationServicesRegistration
 
         #region Profiles
         services.AddAutoMapper(typeof(ApplicationRoleProfile));
+        services.AddAutoMapper(typeof(ApplicationUserProfile));
         #endregion
 
         #region Repositories
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         #endregion
 
         return services;
