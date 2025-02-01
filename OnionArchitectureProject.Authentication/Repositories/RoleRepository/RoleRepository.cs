@@ -37,6 +37,7 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper ma
 
     public async Task<Role> CreateAsync(Role entity)
     {
+        entity.Id = Guid.NewGuid().ToString();
         var appRole = mapper.Map<ApplicationRole>(entity);
         await roleManager.CreateAsync(appRole);
         return entity;

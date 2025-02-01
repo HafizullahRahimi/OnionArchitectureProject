@@ -50,6 +50,7 @@ public class UserRepository(UserManager<ApplicationUser> userManager, IMapper ma
 
     public async Task<User> CreateAsync(User entity)
     {
+        entity.Id = Guid.NewGuid().ToString();
         var appUser = mapper.Map<ApplicationUser>(entity);
         await userManager.CreateAsync(appUser);
         return entity;
