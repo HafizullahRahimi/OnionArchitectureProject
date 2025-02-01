@@ -4,26 +4,24 @@ using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDt
 using OnionArchitectureProject.Application.Common;
 using OnionArchitectureProject.Application.Authentication.Roles;
 using System.Data;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService;
-public class RoleService(IRoleRepository roleRepository, IMapper mapper) : IRoleService
+public class RoleService(IRoleRepository roleRepository, IMapper mapper, IUserRepository userRepository) : IRoleService
 {
     private readonly IRoleRepository roleRepository = roleRepository;
     private readonly IMapper mapper = mapper;
+    private readonly IUserRepository userRepository = userRepository;
 
     public async Task<List<RoleDto>> GetRolesAsync()
     {
-        //var roles = await roleRepository.GetAllAsync();
-        //var rolesWithUserName = new List<RoleDto>();
-        //foreach (var role in roles)
-        //{
-        //    rolesWithUserName.Add(await MapToRoleDtoAsync(role));
-        //}
-        //return [.. rolesWithUserName.OrderBy(r => r.CreatedLocalTime)];
-
         var roles = await roleRepository.GetAllAsync();
-        var rolesWithUserName = await Task.WhenAll(roles.Select(MapToRoleDtoAsync));
-        return rolesWithUserName.OrderBy(r => r.CreatedLocalTime).ToList();
+        var rolesWithUserName = new List<RoleDto>();
+        foreach (var role in roles)
+        {
+            rolesWithUserName.Add(await MapToRoleDtoAsync(role));
+        }
+        return [.. rolesWithUserName.OrderBy(r => r.CreatedLocalTime)];
     }
 
     public async Task<OperationResult> CreateAsync(UpsertRoleDto upsertRoleDto)
@@ -98,12 +96,6 @@ public class RoleService(IRoleRepository roleRepository, IMapper mapper) : IRole
         return roleDto;
     }
 
-    private async Task<string?> GetUserNameByIdAsync(string userId)
-    {
-        //if (string.IsNullOrEmpty(userId))
-        //    return null;
-        //var user = await userManager.FindByIdAsync(userId);
-        //return user?.UserName ?? null;
-        return "UserName";
-    }
+    private async Task<string?> GetUserNameByIdAsync(string userId) =>
+        await userRepository.GetUserNemeByIdAsync(userId);
 }

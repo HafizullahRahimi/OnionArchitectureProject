@@ -1,7 +1,7 @@
 ﻿using OnionArchitectureProject.Domain.Base.Repositories;
 using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Persistence.Repositories.Common;
+namespace OnionArchitectureProject.Persistence.Models.Base.Repositories;
 public class Filter<TEntity> : IFilter<TEntity>
 {
     private readonly Expression<Func<TEntity, bool>> _expression;

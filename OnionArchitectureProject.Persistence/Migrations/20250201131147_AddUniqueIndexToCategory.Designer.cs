@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnionArchitectureProject.Persistence;
 
@@ -11,9 +12,11 @@ using OnionArchitectureProject.Persistence;
 namespace OnionArchitectureProject.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250201131147_AddUniqueIndexToCategory")]
+    partial class AddUniqueIndexToCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace OnionArchitectureProject.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("OnionArchitectureProject.Domain.Products.Product", b =>
@@ -109,7 +112,7 @@ namespace OnionArchitectureProject.Persistence.Migrations
                     b.HasIndex("IsDeleted")
                         .HasFilter("IsDeleted = 0");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("OnionArchitectureProject.Domain.Products.Product", b =>

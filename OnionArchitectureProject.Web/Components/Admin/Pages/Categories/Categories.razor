@@ -44,7 +44,7 @@ else
                     <td>@category.Name</td>
                     <td>@category.CreatedLocalTime</td>
                     <td>@category.CreatedByUserName</td>
-                    @if (@category.ModifiedLocalTime != DateTime.MinValue) 
+                    @if (@category.ModifiedLocalTime != DateTime.MinValue)
                     {
                         <td>@category.ModifiedLocalTime</td>
                         <td>@category.ModifiedByUserName</td>
@@ -111,42 +111,36 @@ else
 
     private async Task OnCategoryCreated(UpsertCategoryDto upsertCategoryDto)
     {
-        await HandleCategoryOperationAsync(async () =>
+        var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
+        if (categoryCreated.Succeeded)
         {
-            var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
-            if (categoryCreated)
+            await HandleCategoryOperationAsync(async () =>
             {
                 await LoadCategoriesAsync();
                 await CloseUpsertModal();
-            }
-            else
-            {
-                throw new Exception("Failed to create category.");
-            }
-        }, "Category created successfully!");
+            }, "Category created successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{categoryCreated.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task OnCategoryUpdated(UpsertCategoryDto upsertCategoryDto)
     {
-        if (upsertCategoryDto.Id == Guid.Empty)
+        var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
+        if (categoryUpdated.Succeeded)
         {
-            await ShowAlertAsync($"Category '{upsertCategoryDto.Name}' not found!", SweetAlertIcon.Error);
-            return;
-        }
-
-        await HandleCategoryOperationAsync(async () =>
-        {
-            var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
-            if (categoryUpdated)
+            await HandleCategoryOperationAsync(async () =>
             {
                 await LoadCategoriesAsync();
                 await CloseUpsertModal();
-            }
-            else
-            {
-                throw new Exception($"Category '{upsertCategoryDto.Name}' not found!");
-            }
-        }, $"Category {upsertCategoryDto.Name} updated successfully!");
+            }, $"Category {upsertCategoryDto.Name} updated successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{categoryUpdated.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task OpenDeleteModal(CategoryDto categoryDto)
@@ -159,39 +153,25 @@ else
 
     private async Task OnCategoryDeleted(CategoryDto categoryDto)
     {
-        if (categoryDto.Id == Guid.Empty)
+        var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
+        if (categoryDeleted.Succeeded)
         {
-            await ShowAlertAsync("Category not found!.", SweetAlertIcon.Error);
-            return;
-        }
-
-        await HandleCategoryOperationAsync(async () =>
-        {
-            var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
-            if (categoryDeleted)
+            await HandleCategoryOperationAsync(async () =>
             {
                 await LoadCategoriesAsync();
-            }
-            else
-            {
-                throw new Exception($"Failed to delete category '{categoryDto.Name}'.");
-            }
-
-        }, $"Category '{categoryDto.Name}' deleted successfully!");
+            }, $"Category '{categoryDto.Name}' deleted successfully!");
+        }
+        else
+        {
+            await ShowAlertAsync($"{categoryDeleted.Error}", SweetAlertIcon.Warning);
+        }
     }
 
     private async Task HandleCategoryOperationAsync(Func<Task> operation, string successMessage)
     {
-        try
-        {
-            await operation();
-            await InvokeAsync(StateHasChanged);
-            await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError($"An error occurred: {ex.Message}");
-        }
+        await operation();
+        await InvokeAsync(StateHasChanged);
+        await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
     }
 
     private async Task LoadCategoriesAsync()

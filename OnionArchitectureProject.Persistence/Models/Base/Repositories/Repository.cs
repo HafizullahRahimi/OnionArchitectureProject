@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Domain.Base;
 using OnionArchitectureProject.Domain.Base.Repositories;
 
-namespace OnionArchitectureProject.Persistence.Repositories.Common;
+namespace OnionArchitectureProject.Persistence.Models.Base.Repositories;
 public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TEntity>
     where TEntity : EntityBase<Guid>, new()
 {

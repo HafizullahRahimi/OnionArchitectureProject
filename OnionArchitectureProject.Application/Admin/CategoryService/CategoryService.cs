@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
+using OnionArchitectureProject.Application.Common;
+using OnionArchitectureProject.Domain.Authentication.Users;
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
-public class CategoryService : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IUserRepository userRepository) : ICategoryService
 {
-    private readonly ICategoryRepository categoryRepository;
-    private readonly IMapper mapper;
-
-    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
-    {
-        this.categoryRepository = categoryRepository;
-        this.mapper = mapper;
-    }
+    private readonly ICategoryRepository categoryRepository = categoryRepository;
+    private readonly IMapper mapper = mapper;
+    private readonly IUserRepository userRepository = userRepository;
 
     public async Task<List<CategoryDto>?> GetCategoriesAsync(CancellationToken cancellationToken)
     {
@@ -21,8 +18,6 @@ public class CategoryService : ICategoryService
         {
             var categories = await categoryRepository.GetAllAsync(cancellationToken);
             var categoryDtos = mapper.Map<List<CategoryDto>>(categories);
-            if (categoryDtos == null || categoryDtos.Count == 0)
-                return categoryDtos;
             var categoriesWithUserName = new List<CategoryDto>();
             foreach (var category in categoryDtos)
             {
@@ -36,15 +31,18 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<bool> CreateAsync(UpsertCategoryDto upsertCategoryDto, CancellationToken cancellationToken)
+    public async Task<OperationResult> CreateAsync(UpsertCategoryDto upsertCategoryDto, CancellationToken cancellationToken)
     {
         try
         {
-            if (upsertCategoryDto == null)
-                return false;
-            var newCategory = mapper.Map<Category>(upsertCategoryDto);
-            newCategory = await categoryRepository.CreateAsync(newCategory, cancellationToken);
-            return newCategory != null;
+            var categoryExists = await CategoryNameExixtsAsync(upsertCategoryDto.Name, cancellationToken);
+            if (!categoryExists)
+            {
+                var newCategory = mapper.Map<Category>(upsertCategoryDto);
+                await categoryRepository.CreateAsync(newCategory, cancellationToken);
+                return new OperationResult(true, null);
+            }
+            return new OperationResult(false, $"Category '{upsertCategoryDto.Name}' already exists.");
         }
         catch (Exception)
         {
@@ -52,18 +50,22 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<bool> UpdateAsync(UpsertCategoryDto upsertCategoryDto, CancellationToken cancellationToken)
+    public async Task<OperationResult> UpdateAsync(UpsertCategoryDto upsertCategoryDto, CancellationToken cancellationToken)
     {
         try
         {
-            var foundCategory = await GetByIdAsync(upsertCategoryDto.Id, cancellationToken);
-            if (foundCategory != null)
-            {
-                mapper.Map(upsertCategoryDto, foundCategory);
-                await categoryRepository.UpdateAsync(foundCategory, cancellationToken);
-                return true;
-            }
-            return false;
+            var existingCategory = await GetByIdAsync(upsertCategoryDto.Id, cancellationToken);
+            if (existingCategory == null)
+                return new OperationResult(false, "Category not found.");
+
+            var categoryExists = await CategoryNameExixtsAsync(upsertCategoryDto.Name, cancellationToken);
+            if (categoryExists && existingCategory.Name != upsertCategoryDto.Name)
+                return new OperationResult(false, $"Category '{upsertCategoryDto.Name}' already exists.");
+
+            mapper.Map(upsertCategoryDto, existingCategory);
+            await categoryRepository.UpdateAsync(existingCategory, cancellationToken);
+            return new OperationResult(true, null);
+
         }
         catch (Exception)
         {
@@ -71,17 +73,17 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<bool> DeleteAsync(Guid categoryId, CancellationToken cancellationToken)
+    public async Task<OperationResult> DeleteAsync(Guid categoryId, CancellationToken cancellationToken)
     {
         try
         {
-            var existingCategory = await ExistAsync(categoryId, cancellationToken);
-            if (existingCategory)
+            var existingCategory = await GetByIdAsync(categoryId, cancellationToken);
+            if (existingCategory != null)
             {
-                await categoryRepository.DeleteAsync(categoryId, cancellationToken);
-                return true;
+                await categoryRepository.DeleteAsync(existingCategory, cancellationToken);
+                return new OperationResult(true, null);
             }
-            return false;
+            return new OperationResult(false, "Category not found.");
         }
         catch (Exception)
         {
@@ -94,35 +96,22 @@ public class CategoryService : ICategoryService
         return mapper.Map<UpsertCategoryDto>(categoryDto);
     }
 
-    private async Task<Category?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken) =>
-      await categoryRepository.GetByIdAsync(categoryId, cancellationToken);
-
-    private async Task<bool> ExistAsync(Guid categoryId, CancellationToken cancellationToken) =>
-       await categoryRepository.ExistAsync(categoryId, cancellationToken);
-
     private async Task<CategoryDto> GetCategoryDtoWithUserNameAsync(CategoryDto categoryDto)
     {
-        var createdByUserName = await GetUserNameByIdAsync(categoryDto.CreatedByUserName);
-        if (createdByUserName != null)
-        {
-            categoryDto.CreatedByUserName = createdByUserName;
-        }
-
-        var modifiedByUserName = await GetUserNameByIdAsync(categoryDto.ModifiedByUserName);
-
-        if (modifiedByUserName != null)
-        {
-            categoryDto.ModifiedByUserName = modifiedByUserName;
-        }
+        categoryDto.CreatedByUserName = await GetUserNameByIdAsync(categoryDto.CreatedByUserName) ?? categoryDto.CreatedByUserName;
+        categoryDto.ModifiedByUserName = await GetUserNameByIdAsync(categoryDto.ModifiedByUserName) ?? categoryDto.ModifiedByUserName;
         return categoryDto;
     }
 
-    private async Task<string?> GetUserNameByIdAsync(string userId)
+    private async Task<Category?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken) =>
+      await categoryRepository.GetByIdAsync(categoryId, cancellationToken);
+
+    private async Task<bool> CategoryNameExixtsAsync(string categoryName, CancellationToken cancellationToken)
     {
-        //if (string.IsNullOrEmpty(userId))
-        //    return null;
-        //var user = await userManager.FindByIdAsync(userId);
-        //return user?.UserName ?? null;
-        return "UserName";
+        var existingCategory = await categoryRepository.GetByCategoryNameAsync(categoryName, cancellationToken);
+        return existingCategory != null;
     }
+
+    private async Task<string?> GetUserNameByIdAsync(string userId) =>
+           await userRepository.GetUserNemeByIdAsync(userId);
 }

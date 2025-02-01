@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Base.Repositories;
+using OnionArchitectureProject.Domain.Products;
 
-namespace OnionArchitectureProject.Domain.Products.Repositories;
+namespace OnionArchitectureProject.Persistence.Models.Products;
 public class ProductIncludes : IIncludes<Product>
 {
     public IQueryable<Product> ApplyIncludes(IQueryable<Product> query)
