@@ -1,0 +1,100 @@
+﻿@page "/Admin/Users"
+
+@using OnionArchitectureProject.Application.Admin.UserService
+@using OnionArchitectureProject.Domain.Authentication.Users
+
+@inherits OwningComponentBase<IUserService>
+
+<PageTitle>Users</PageTitle>
+
+
+
+<div>
+    <button type="button" class="btn btn-success float-end me-3">Add user</button>
+    <h1 class="fs-2 text-black">Users</h1>
+</div>
+
+@if (users == null)
+{
+    <Spinner />
+}
+else if (!users.Any())
+{
+    <div>No users available.</div>
+}
+else
+{
+    <table class="table table-striped caption-top">
+        <thead>
+            <tr>
+                @*   <th>Created(LocalTime)</th>
+                <th>CreatedBy</th>
+                <th>Modified(LocalTime)</th>
+                <th>ModifiedBy</th> *@
+                <th>UserName</th>
+                <th>Created(LocalTime)</th>
+                <th>EmailConfirmed</th>
+                <th>Settings</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="@users" Context="user">
+                <tr>
+                    @*  <td>@category.Name</td>
+                    <td>@category.CreatedLocalTime</td>
+                    <td>@category.CreatedByUserName</td>
+                    @if (@category.ModifiedLocalTime != DateTime.MinValue) 
+                    {
+                        <td>@category.ModifiedLocalTime</td>
+                        <td>@category.ModifiedByUserName</td>
+                    }
+                    else
+                    {
+                        <td>-</td>
+                        <td>-</td>
+                    } *@
+                    <td>@user.UserName</td>
+                    <td>@user.CreatedDateUtc.ToLocalTime()</td>
+                    <td>
+                        @if (@user.EmailConfirmed)
+                        {
+                            <button type="button" class="btn btn-sm btn-success mx-2" disabled>True</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2">False</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-success mx-2">True</button>
+                            <button type="button" class="btn btn-sm btn-danger ms-2" disabled>False</button>
+                        }
+
+
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary me-2">Edit</a> |
+                        <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
+                        <a class="btn btn-sm btn-outline-danger ms-2">Delete</a>
+                    </td>
+                </tr>
+            </Virtualize>
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+    private List<User>? users;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadusersAsync();
+    }
+
+
+
+    private async Task LoadusersAsync()
+    {
+        users = await Service.GetUsersAsync();
+    }
+}
