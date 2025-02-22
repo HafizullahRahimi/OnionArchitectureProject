@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Categories;
-using OnionArchitectureProject.Persistence.Models.Base.Repositories;
 
 namespace OnionArchitectureProject.Persistence.Models.Categories;
-public class CategoryRepository : Repository<Category>, ICategoryRepository
+public class CategoryRepository : CategoryRepositoryWithFilter, ICategoryRepository
 {
-    public CategoryRepository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory)
+    public CategoryRepository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }
+
+    public async Task<bool> ExistAsync(string categoryName, CancellationToken cancellationToken)
     {
+        var entity = await GetByNameAsync(categoryName, cancellationToken);
+        return entity != null;
     }
 
-    public async Task<Category?> GetByCategoryNameAsync(string categoryName, CancellationToken cancellationToken)
+    private async Task<Category?> GetByNameAsync(string categoryName, CancellationToken cancellationToken)
     {
         return await DbContext.Categories
             .IgnoreQueryFilters()

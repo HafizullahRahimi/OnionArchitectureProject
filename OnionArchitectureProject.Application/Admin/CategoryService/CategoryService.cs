@@ -106,11 +106,8 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
     private async Task<Category?> GetByIdAsync(Guid categoryId, CancellationToken cancellationToken) =>
       await categoryRepository.GetByIdAsync(categoryId, cancellationToken);
 
-    private async Task<bool> CategoryNameExixtsAsync(string categoryName, CancellationToken cancellationToken)
-    {
-        var existingCategory = await categoryRepository.GetByCategoryNameAsync(categoryName, cancellationToken);
-        return existingCategory != null;
-    }
+    private async Task<bool> CategoryNameExixtsAsync(string categoryName, CancellationToken cancellationToken) =>
+        await categoryRepository.ExistAsync(categoryName, cancellationToken);
 
     private async Task<string?> GetUserNameByIdAsync(string userId) =>
            await userRepository.GetUserNemeByIdAsync(userId);
