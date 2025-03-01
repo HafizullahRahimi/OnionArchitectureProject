@@ -9,9 +9,9 @@ using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Repositories.RoleRepository;
 using OnionArchitectureProject.Authentication.Repositories.RoleRepository.Profiles;
-using OnionArchitectureProject.Application.Authentication.Roles;
 using OnionArchitectureProject.Authentication.Repositories.UserRepository;
 using OnionArchitectureProject.Domain.Authentication.Users;
+using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration

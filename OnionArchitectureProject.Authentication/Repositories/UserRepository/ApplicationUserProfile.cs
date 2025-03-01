@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using OnionArchitectureProject.Application.Authentication.Roles;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
 

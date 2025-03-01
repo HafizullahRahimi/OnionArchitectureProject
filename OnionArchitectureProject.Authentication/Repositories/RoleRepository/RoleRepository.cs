@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OnionArchitectureProject.Application.Authentication.Roles;
 using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Authentication.Repositories.RoleRepository;
 public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper mapper) : IRoleRepository

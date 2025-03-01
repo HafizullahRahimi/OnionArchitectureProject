@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
-using OnionArchitectureProject.Application.Authentication.Roles;
+using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService.Profiles;
 public class RoleProfile : Profile

@@ -1,6 +1,6 @@
 ﻿using OnionArchitectureProject.Domain.Base;
 
-namespace OnionArchitectureProject.Application.Authentication.Roles;
+namespace OnionArchitectureProject.Domain.Authentication.Roles;
 public class Role : EditableEntityBase<string>
 {
     public string Name { get; set; } = string.Empty;
