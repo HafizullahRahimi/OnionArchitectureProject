@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Domain.Products;
 using OnionArchitectureProject.Persistence.Interceptors;
-using OnionArchitectureProject.Persistence.Models.Categories;
-using OnionArchitectureProject.Persistence.Models.Products;
+using OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
+using OnionArchitectureProject.Persistence.Repositories.ProductRepositories;
 
 namespace OnionArchitectureProject.Persistence;
 public static class PersistenceServicesRegistration

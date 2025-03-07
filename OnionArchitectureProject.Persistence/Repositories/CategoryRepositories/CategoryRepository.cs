@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Categories;
 
-namespace OnionArchitectureProject.Persistence.Models.Categories;
+namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
 public class CategoryRepository : CategoryRepositoryWithFilter, ICategoryRepository
 {
     public CategoryRepository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }

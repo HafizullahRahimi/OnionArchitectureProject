@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Products;
-using OnionArchitectureProject.Persistence.Models.Base.Repositories;
+using OnionArchitectureProject.Persistence.Repositories.Base;
 
-namespace OnionArchitectureProject.Persistence.Models.Products;
+namespace OnionArchitectureProject.Persistence.Repositories.ProductRepositories;
 public class ProductRepository : Repository<Product>, IProductRepository
 {
     public ProductRepository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }

@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Domain.Categories;
 using System.Linq.Expressions;
 
-namespace OnionArchitectureProject.Persistence.Models.Categories;
+namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
 
 class CategoryFilter : IFilter<Category>
 {
@@ -26,10 +26,10 @@ class CategoryFilter : IFilter<Category>
            (name == null || c.Name == name) &&
            (createdBy == null || c.CreatedBy == createdBy) &&
            (createdAt == null ||
-           (c.CreatedDateUtc.Date == createdAt.Value.Date &&
+           c.CreatedDateUtc.Date == createdAt.Value.Date &&
             c.CreatedDateUtc.Hour == createdAt.Value.Hour &&
             c.CreatedDateUtc.Minute == createdAt.Value.Minute &&
-            c.CreatedDateUtc.Second == createdAt.Value.Second)) &&
+            c.CreatedDateUtc.Second == createdAt.Value.Second) &&
            (modifiedBy == null || c.ModifiedBy == modifiedBy) &&
            (modifiedAt == null || c.ModifiedDateUtc == modifiedAt);
     }

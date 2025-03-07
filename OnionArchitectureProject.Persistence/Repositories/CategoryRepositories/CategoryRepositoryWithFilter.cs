@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Categories;
-using OnionArchitectureProject.Persistence.Models.Base.Repositories;
+using OnionArchitectureProject.Persistence.Repositories.Base;
 
-namespace OnionArchitectureProject.Persistence.Models.Categories;
-
+namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
 public class CategoryRepositoryWithFilter : Repository<Category>, ICategoryRepositoryWithFilter
 {
     private IQueryable<Category> query = Enumerable.Empty<Category>().AsQueryable();
