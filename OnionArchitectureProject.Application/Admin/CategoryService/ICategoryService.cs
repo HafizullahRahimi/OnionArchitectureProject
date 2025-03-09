@@ -1,6 +1,6 @@
 ﻿using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Application.Common;
+using OnionArchitectureProject.Application.Common.Models;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
 public interface ICategoryService

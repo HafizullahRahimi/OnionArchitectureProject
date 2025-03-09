@@ -4,8 +4,10 @@ public interface ICategoryRepositoryWithFilter
 {
     ICategoryRepositoryWithFilter WithName(string name);
     ICategoryRepositoryWithFilter WithCreatedBy(string userId);
-    ICategoryRepositoryWithFilter WithCreatedAt(DateTime date);
     ICategoryRepositoryWithFilter WithModifiedBy(string userId);
-    ICategoryRepositoryWithFilter WithModifiedAt(DateTime date);
+    ICategoryRepositoryWithFilter WithCreatedAtUtcDate(DateOnly utcDate);
+    ICategoryRepositoryWithFilter WithCreatedAtUtcTime(TimeOnly utcTime);
+    ICategoryRepositoryWithFilter WithModifiedAtUtcDate(DateOnly utcDate);
+    ICategoryRepositoryWithFilter WithModifiedAtUtcTime(TimeOnly utcTime);
     Task<List<Category>> ToListAsync(CancellationToken cancellationToken);
 }

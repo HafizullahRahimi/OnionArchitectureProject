@@ -1,6 +1,6 @@
 ﻿using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
-using OnionArchitectureProject.Application.Common;
+using OnionArchitectureProject.Application.Common.Models;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService;
 public interface IRoleService

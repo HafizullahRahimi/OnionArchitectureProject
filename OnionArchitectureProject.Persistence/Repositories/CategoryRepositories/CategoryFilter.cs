@@ -4,33 +4,49 @@ using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
 
-class CategoryFilter : IFilter<Category>
+public class CategoryFilter : IFilter<Category>
 {
     private readonly string? name;
     private readonly string? createdBy;
-    private readonly DateTime? createdAt;
+    private readonly DateOnly? createdUtcDate;
+    private readonly TimeOnly? createdUtcTime;
     private readonly string? modifiedBy;
-    private readonly DateTime? modifiedAt;
+    private readonly DateOnly? modifiedUtcDate;
+    private readonly TimeOnly? modifiedUtcTime;
 
-    public CategoryFilter(string? name, string? createdBy, DateTime? createdAt, string? modifiedBy, DateTime? modifiedAt)
+    public CategoryFilter(
+        string? name,
+        string? createdBy,
+        DateOnly? createdUtcDate,
+        TimeOnly? createdUtcTime,
+        string? modifiedBy,
+        DateOnly? modifiedUtcDate,
+        TimeOnly? modifiedUtcTime)
     {
         this.name = name;
         this.createdBy = createdBy;
-        this.createdAt = createdAt;
+        this.createdUtcDate = createdUtcDate;
+        this.createdUtcTime = createdUtcTime;
         this.modifiedBy = modifiedBy;
-        this.modifiedAt = modifiedAt;
+        this.modifiedUtcDate = modifiedUtcDate;
+        this.modifiedUtcTime = modifiedUtcTime;
     }
+
     public Expression<Func<Category, bool>> ToExpression()
     {
         return c =>
-           (name == null || c.Name == name) &&
-           (createdBy == null || c.CreatedBy == createdBy) &&
-           (createdAt == null ||
-           c.CreatedDateUtc.Date == createdAt.Value.Date &&
-            c.CreatedDateUtc.Hour == createdAt.Value.Hour &&
-            c.CreatedDateUtc.Minute == createdAt.Value.Minute &&
-            c.CreatedDateUtc.Second == createdAt.Value.Second) &&
-           (modifiedBy == null || c.ModifiedBy == modifiedBy) &&
-           (modifiedAt == null || c.ModifiedDateUtc == modifiedAt);
+           (name == null || c.Name.Equals(name)) &&
+           (createdBy == null || c.CreatedBy.Equals(createdBy)) &&
+           (createdUtcDate == null || DateOnly.FromDateTime(c.CreatedDateUtc) == createdUtcDate) &&
+           (createdUtcTime == null ||
+                (c.CreatedDateUtc.Hour == createdUtcTime.Value.Hour &&
+                 c.CreatedDateUtc.Minute == createdUtcTime.Value.Minute &&
+                 c.CreatedDateUtc.Second == createdUtcTime.Value.Second)) &&
+           (modifiedBy == null || c.ModifiedBy.Equals(modifiedBy)) &&
+           (modifiedUtcDate == null || DateOnly.FromDateTime(c.ModifiedDateUtc) == modifiedUtcDate) &&
+           (modifiedUtcTime == null ||
+                (c.ModifiedDateUtc.Hour == modifiedUtcTime.Value.Hour &&
+                 c.ModifiedDateUtc.Minute == modifiedUtcTime.Value.Minute &&
+                 c.ModifiedDateUtc.Second == modifiedUtcTime.Value.Second));
     }
 }

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
-using OnionArchitectureProject.Application.Common;
 using System.Data;
 using OnionArchitectureProject.Domain.Authentication.Users;
 using OnionArchitectureProject.Domain.Authentication.Roles;
+using OnionArchitectureProject.Application.Common.Models;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService;
 public class RoleService(IRoleRepository roleRepository, IMapper mapper, IUserRepository userRepository) : IRoleService

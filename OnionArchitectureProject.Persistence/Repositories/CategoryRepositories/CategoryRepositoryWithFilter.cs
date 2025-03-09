@@ -3,16 +3,21 @@ using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Persistence.Repositories.Base;
 
 namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories;
+
 public class CategoryRepositoryWithFilter : Repository<Category>, ICategoryRepositoryWithFilter
 {
-    private IQueryable<Category> query = Enumerable.Empty<Category>().AsQueryable();
     private string? name;
     private string? createdBy;
-    private DateTime? createdAt;
+    private DateOnly? createdUtcDate;
+    private TimeOnly? createdUtcTime;
     private string? modifiedBy;
-    private DateTime? modifiedAt;
+    private DateOnly? modifiedUtcDate;
+    private TimeOnly? modifiedUtcTime;
 
-    protected CategoryRepositoryWithFilter(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }
+    protected CategoryRepositoryWithFilter(IDbContextFactory<ApplicationDbContext> dbcontextFactory)
+        : base(dbcontextFactory)
+    {
+    }
 
     public ICategoryRepositoryWithFilter WithName(string name)
     {
@@ -26,9 +31,15 @@ public class CategoryRepositoryWithFilter : Repository<Category>, ICategoryRepos
         return this;
     }
 
-    public ICategoryRepositoryWithFilter WithCreatedAt(DateTime date)
+    public ICategoryRepositoryWithFilter WithCreatedAtUtcDate(DateOnly utcDate)
     {
-        createdAt = date;
+        createdUtcDate = utcDate;
+        return this;
+    }
+
+    public ICategoryRepositoryWithFilter WithCreatedAtUtcTime(TimeOnly utcTime)
+    {
+        createdUtcTime = utcTime;
         return this;
     }
 
@@ -38,45 +49,28 @@ public class CategoryRepositoryWithFilter : Repository<Category>, ICategoryRepos
         return this;
     }
 
-    public ICategoryRepositoryWithFilter WithModifiedAt(DateTime date)
+    public ICategoryRepositoryWithFilter WithModifiedAtUtcDate(DateOnly utcDate)
     {
-        modifiedAt = date;
+        modifiedUtcDate = utcDate;
+        return this;
+    }
+
+    public ICategoryRepositoryWithFilter WithModifiedAtUtcTime(TimeOnly utcTime)
+    {
+        modifiedUtcTime = utcTime;
         return this;
     }
 
     public async Task<List<Category>> ToListAsync(CancellationToken cancellationToken)
     {
-        var filter = new CategoryFilter(name, createdBy, createdAt, modifiedBy, modifiedAt);
+        var filter = new CategoryFilter(
+            name,
+            createdBy,
+            createdUtcDate,
+            createdUtcTime,
+            modifiedBy,
+            modifiedUtcDate,
+            modifiedUtcTime);
         return await GetAllAsync(filter, cancellationToken);
-
-        //var categories = await GetAllAsync(cancellationToken);
-        //query = categories.AsQueryable();
-
-        //if (!string.IsNullOrWhiteSpace(name))
-        //{
-        //    query = query.Where(c => c.Name == name);
-        //}
-
-        //if (!string.IsNullOrWhiteSpace(createdBy))
-        //{
-        //    query = query.Where(c => c.CreatedBy == createdBy);
-        //}
-
-        //if (!string.IsNullOrWhiteSpace(modifiedBy))
-        //{
-        //    query = query.Where(c => c.ModifiedBy == modifiedBy);
-        //}
-
-        //if (createdAt != null)
-        //{
-        //    query = query.Where(c => c.CreatedDateUtc == createdAt);
-        //}
-
-        //if (modifiedAt != null)
-        //{
-        //    query = query.Where(c => c.ModifiedDateUtc == modifiedAt);
-        //}
-
-        //return query.ToList();
     }
 }
