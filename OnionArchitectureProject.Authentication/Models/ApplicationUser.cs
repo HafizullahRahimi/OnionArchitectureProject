@@ -2,11 +2,11 @@
 using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Authentication.Models;
-public class ApplicationUser : IdentityUser, ICreated, IModified, ISoftDeleted
+public class ApplicationUser : IdentityUser, ICreatedEntity, IModifiedEntity, ISoftDeletableEntity
 {
-    public DateTime CreatedDateUtc { get; set; }
+    public DateTime CreatedUtcDate { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
-    public DateTime ModifiedDateUtc { get; set; }
+    public DateTime ModifiedUtcDate { get; set; }
     public string ModifiedBy { get; set; } = string.Empty;
     public bool IsDeleted { get; set; }
 }

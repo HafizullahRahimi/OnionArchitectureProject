@@ -21,7 +21,7 @@ public class RoleService(IRoleRepository roleRepository, IMapper mapper, IUserRe
         {
             rolesWithUserName.Add(await MapToRoleDtoAsync(role));
         }
-        return [.. rolesWithUserName.OrderBy(r => r.CreatedLocalTime)];
+        return rolesWithUserName;
     }
 
     public async Task<OperationResult> CreateAsync(UpsertRoleDto upsertRoleDto)

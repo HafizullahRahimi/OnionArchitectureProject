@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Base;
 public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
-    where TEntity : EntityBase<Guid>, new()
+    where TEntity : CreatedEntity<Guid>, new()
 {
     public readonly ApplicationDbContext DbContext;
 
@@ -30,7 +30,7 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
         CancellationToken cancellationToken, int numberOfEntities = 0)
     {
         IQueryable<TEntity> query = DbContext.Set<TEntity>()
-            .OrderByDescending(e => e.CreatedDateUtc);
+            .OrderByDescending(e => e.CreatedUtcDate);
 
         if (filter != null)
         {
@@ -79,7 +79,7 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
     {
         return await DbContext.Set<TEntity>()
             .Where(filter.ToExpression())
-            .OrderByDescending(e => e.CreatedDateUtc)
+            .OrderByDescending(e => e.CreatedUtcDate)
             .Select(select)
             .Distinct()
             .Take(numberOfProperties)

@@ -1,6 +1,7 @@
 ﻿namespace OnionArchitectureProject.Domain.Base;
-public interface ICreated
+
+public interface ICreatedEntity
 {
-    DateTime CreatedDateUtc { get; set; }
+    DateTime CreatedUtcDate { get; set; }
     string CreatedBy { get; set; }
 }

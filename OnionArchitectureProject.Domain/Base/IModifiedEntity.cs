@@ -1,6 +1,7 @@
 ﻿namespace OnionArchitectureProject.Domain.Base;
-public interface IModified
+
+public interface IModifiedEntity
 {
-    DateTime ModifiedDateUtc { get; set; }
+    DateTime ModifiedUtcDate { get; set; }
     string ModifiedBy { get; set; }
 }

@@ -12,7 +12,7 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper ma
 
     public async Task<List<Role>> GetAllAsync()
     {
-        var appRoles = await roleManager.Roles.ToListAsync();
+        var appRoles = await roleManager.Roles.OrderBy(r => r.CreatedUtcDate).ToListAsync();
         return mapper.Map<List<Role>>(appRoles);
     }
 

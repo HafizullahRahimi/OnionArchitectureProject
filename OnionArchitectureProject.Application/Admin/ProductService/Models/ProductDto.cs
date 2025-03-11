@@ -1,7 +1,7 @@
 ﻿using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Application.Admin.ProductService.Models;
-public class ProductDto : EditableEntityBase<Guid>
+public class ProductDto : FullAuditedEntity<Guid>
 {
     public string Name { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;

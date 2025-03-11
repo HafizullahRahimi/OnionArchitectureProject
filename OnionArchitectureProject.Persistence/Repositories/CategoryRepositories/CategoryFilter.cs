@@ -37,16 +37,16 @@ public class CategoryFilter : IFilter<Category>
         return c =>
            (name == null || c.Name.Equals(name)) &&
            (createdBy == null || c.CreatedBy.Equals(createdBy)) &&
-           (createdUtcDate == null || DateOnly.FromDateTime(c.CreatedDateUtc) == createdUtcDate) &&
+           (createdUtcDate == null || DateOnly.FromDateTime(c.CreatedUtcDate) == createdUtcDate) &&
            (createdUtcTime == null ||
-                (c.CreatedDateUtc.Hour == createdUtcTime.Value.Hour &&
-                 c.CreatedDateUtc.Minute == createdUtcTime.Value.Minute &&
-                 c.CreatedDateUtc.Second == createdUtcTime.Value.Second)) &&
+                (c.CreatedUtcDate.Hour == createdUtcTime.Value.Hour &&
+                 c.CreatedUtcDate.Minute == createdUtcTime.Value.Minute &&
+                 c.CreatedUtcDate.Second == createdUtcTime.Value.Second)) &&
            (modifiedBy == null || c.ModifiedBy.Equals(modifiedBy)) &&
-           (modifiedUtcDate == null || DateOnly.FromDateTime(c.ModifiedDateUtc) == modifiedUtcDate) &&
+           (modifiedUtcDate == null || DateOnly.FromDateTime(c.ModifiedUtcDate) == modifiedUtcDate) &&
            (modifiedUtcTime == null ||
-                (c.ModifiedDateUtc.Hour == modifiedUtcTime.Value.Hour &&
-                 c.ModifiedDateUtc.Minute == modifiedUtcTime.Value.Minute &&
-                 c.ModifiedDateUtc.Second == modifiedUtcTime.Value.Second));
+                (c.ModifiedUtcDate.Hour == modifiedUtcTime.Value.Hour &&
+                 c.ModifiedUtcDate.Minute == modifiedUtcTime.Value.Minute &&
+                 c.ModifiedUtcDate.Second == modifiedUtcTime.Value.Second));
     }
 }

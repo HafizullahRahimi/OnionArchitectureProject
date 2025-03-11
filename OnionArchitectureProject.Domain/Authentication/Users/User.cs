@@ -1,7 +1,7 @@
 ﻿using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Domain.Authentication.Users;
-public class User : EditableEntityBase<string>
+public class User : FullAuditedEntity<string>
 {
     public string UserName { get; set; } = string.Empty;
     //public string NormalizedUserName { get; set; }

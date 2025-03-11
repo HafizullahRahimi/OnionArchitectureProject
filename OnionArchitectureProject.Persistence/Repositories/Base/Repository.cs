@@ -4,13 +4,15 @@ using OnionArchitectureProject.Domain.Base.Repositories;
 
 namespace OnionArchitectureProject.Persistence.Repositories.Base;
 public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TEntity>
-    where TEntity : EntityBase<Guid>, new()
+    where TEntity : CreatedEntity<Guid>, new()
 {
     protected Repository(IDbContextFactory<ApplicationDbContext> dbcontextFactory) : base(dbcontextFactory) { }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await DbContext.Set<TEntity>().ToListAsync(cancellationToken);
+        return await DbContext.Set<TEntity>()
+            .OrderByDescending(e => e.CreatedUtcDate)
+            .ToListAsync(cancellationToken);
     }
 
     public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)

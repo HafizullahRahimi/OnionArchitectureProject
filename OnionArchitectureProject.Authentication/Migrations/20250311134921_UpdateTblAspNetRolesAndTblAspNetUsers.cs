@@ -6,11 +6,46 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnionArchitectureProject.Authentication.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTblAspNetRoles : Migration
+    public partial class UpdateTblAspNetRolesAndTblAspNetUsers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "CreatedBy",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedUtcDate",
+                table: "AspNetUsers",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsDeleted",
+                table: "AspNetUsers",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ModifiedBy",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedUtcDate",
+                table: "AspNetUsers",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
             migrationBuilder.AddColumn<string>(
                 name: "CreatedBy",
                 table: "AspNetRoles",
@@ -19,7 +54,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 defaultValue: "");
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "CreatedDateUtc",
+                name: "CreatedUtcDate",
                 table: "AspNetRoles",
                 type: "datetime2",
                 nullable: false,
@@ -46,7 +81,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 defaultValue: "");
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "ModifiedDateUtc",
+                name: "ModifiedUtcDate",
                 table: "AspNetRoles",
                 type: "datetime2",
                 nullable: false,
@@ -68,10 +103,30 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             migrationBuilder.DropColumn(
                 name: "CreatedBy",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedUtcDate",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "IsDeleted",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedBy",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedUtcDate",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedBy",
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
-                name: "CreatedDateUtc",
+                name: "CreatedUtcDate",
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
@@ -87,7 +142,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                 table: "AspNetRoles");
 
             migrationBuilder.DropColumn(
-                name: "ModifiedDateUtc",
+                name: "ModifiedUtcDate",
                 table: "AspNetRoles");
         }
     }

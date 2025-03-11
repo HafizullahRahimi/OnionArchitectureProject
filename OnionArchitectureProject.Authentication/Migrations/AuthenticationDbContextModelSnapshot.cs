@@ -128,7 +128,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OnionArchitectureProject.Domain.Authentication.ApplicationRole", b =>
+            modelBuilder.Entity("OnionArchitectureProject.Authentication.Models.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -141,7 +141,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDateUtc")
+                    b.Property<DateTime>("CreatedUtcDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -154,7 +154,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ModifiedDateUtc")
+                    b.Property<DateTime>("ModifiedUtcDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -178,7 +178,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("OnionArchitectureProject.Domain.Authentication.ApplicationUser", b =>
+            modelBuilder.Entity("OnionArchitectureProject.Authentication.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -194,7 +194,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDateUtc")
+                    b.Property<DateTime>("CreatedUtcDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -217,7 +217,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ModifiedDateUtc")
+                    b.Property<DateTime>("ModifiedUtcDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
@@ -262,7 +262,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationRole", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -271,7 +271,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationUser", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +280,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationUser", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -289,13 +289,13 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationRole", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationUser", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -304,7 +304,7 @@ namespace OnionArchitectureProject.Authentication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("OnionArchitectureProject.Domain.Authentication.ApplicationUser", null)
+                    b.HasOne("OnionArchitectureProject.Authentication.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

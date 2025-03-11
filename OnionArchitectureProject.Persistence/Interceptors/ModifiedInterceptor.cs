@@ -22,17 +22,17 @@ public class ModifiedInterceptor : SaveChangesInterceptor
         {
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
-        IEnumerable<EntityEntry<IModified>> entries =
+        IEnumerable<EntityEntry<IModifiedEntity>> entries =
               eventData
               .Context
-              .ChangeTracker.Entries<IModified>()
+              .ChangeTracker.Entries<IModifiedEntity>()
               .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Modified);
         var currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
-        foreach (EntityEntry<IModified> softDeletable in entries)
+        foreach (EntityEntry<IModifiedEntity> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             softDeletable.Entity.ModifiedBy = currentUserId;
-            softDeletable.Entity.ModifiedDateUtc = DateTime.UtcNow;
+            softDeletable.Entity.ModifiedUtcDate = DateTime.UtcNow;
         }
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }

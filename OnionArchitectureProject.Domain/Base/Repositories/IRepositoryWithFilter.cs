@@ -16,8 +16,6 @@ public interface IRepositoryWithFilter<TEntity>
         IIncludes<TEntity>? includes = null);
     Task<bool> AnyAsync(IFilter<TEntity> filter, CancellationToken cancellationToken);
 
-
-
     Task<TProjection?> GetWithProjectionAsync<TProjection>(IFilter<TEntity> filter, CancellationToken cancellationToken);
     Task<List<TProjection>> GetListWithProjectionAsync<TProjection>(IFilter<TEntity> filter,
         CancellationToken cancellationToken);

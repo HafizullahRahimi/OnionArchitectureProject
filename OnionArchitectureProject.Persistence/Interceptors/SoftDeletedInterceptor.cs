@@ -14,12 +14,12 @@ public class SoftDeletedInterceptor : SaveChangesInterceptor
         {
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
-        IEnumerable<EntityEntry<ISoftDeleted>> entries =
+        IEnumerable<EntityEntry<ISoftDeletableEntity>> entries =
             eventData
             .Context
-            .ChangeTracker.Entries<ISoftDeleted>()
+            .ChangeTracker.Entries<ISoftDeletableEntity>()
             .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Deleted);
-        foreach (EntityEntry<ISoftDeleted> softDeletable in entries)
+        foreach (EntityEntry<ISoftDeletableEntity> softDeletable in entries)
         {
             softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             softDeletable.Entity.IsDeleted = true;

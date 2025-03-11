@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Domain.Products;
-public class Product : EditableEntityBase<Guid>
+public class Product : FullAuditedEntity<Guid>
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

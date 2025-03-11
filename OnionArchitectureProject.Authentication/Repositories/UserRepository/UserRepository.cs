@@ -12,7 +12,7 @@ public class UserRepository(UserManager<ApplicationUser> userManager, IMapper ma
 
     public async Task<List<User>> GetAllAsync()
     {
-        var appUsers = await userManager.Users.ToListAsync();
+        var appUsers = await userManager.Users.OrderBy(u => u.CreatedUtcDate).ToListAsync();
         return mapper.Map<List<User>>(appUsers);
     }
 
