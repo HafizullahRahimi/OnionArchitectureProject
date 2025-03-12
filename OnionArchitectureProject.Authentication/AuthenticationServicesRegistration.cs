@@ -12,6 +12,8 @@ using OnionArchitectureProject.Authentication.Repositories.RoleRepository.Profil
 using OnionArchitectureProject.Authentication.Repositories.UserRepository;
 using OnionArchitectureProject.Domain.Authentication.Users;
 using OnionArchitectureProject.Domain.Authentication.Roles;
+using OnionArchitectureProject.Authentication.Repositories.AuthenticationRepository;
+using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -56,6 +58,7 @@ public static class AuthenticationServicesRegistration
         #endregion
 
         #region Repositories
+        services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         #endregion

@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
-using System.Data;
-using OnionArchitectureProject.Domain.Authentication.Users;
-using OnionArchitectureProject.Domain.Authentication.Roles;
 using OnionArchitectureProject.Application.Common.Models;
+using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService;
-public class RoleService(IRoleRepository roleRepository, IMapper mapper, IUserRepository userRepository) : IRoleService
+public class RoleService(IAuthenticationRepository authenticationRepository, IRoleRepository roleRepository, IMapper mapper) : IRoleService
 {
+    private readonly IAuthenticationRepository authenticationRepository = authenticationRepository;
     private readonly IRoleRepository roleRepository = roleRepository;
     private readonly IMapper mapper = mapper;
-    private readonly IUserRepository userRepository = userRepository;
 
     public async Task<List<RoleDto>> GetRolesAsync()
     {
@@ -97,5 +96,5 @@ public class RoleService(IRoleRepository roleRepository, IMapper mapper, IUserRe
     }
 
     private async Task<string?> GetUserNameByIdAsync(string userId) =>
-        await userRepository.GetUserNemeByIdAsync(userId);
+        await authenticationRepository.GetUserNemeByUserIdAsync(userId);
 }
