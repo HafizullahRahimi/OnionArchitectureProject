@@ -4,15 +4,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnionArchitectureProject.Application.Admin.RoleService;
+using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Authentication.Repositories.RoleRepository;
-using OnionArchitectureProject.Authentication.Repositories.RoleRepository.Profiles;
-using OnionArchitectureProject.Authentication.Repositories.UserRepository;
-using OnionArchitectureProject.Domain.Authentication.Users;
-using OnionArchitectureProject.Domain.Authentication.Roles;
 using OnionArchitectureProject.Authentication.Repositories.AuthenticationRepository;
+using OnionArchitectureProject.Authentication.Services.RoleService;
+using OnionArchitectureProject.Authentication.Services.UserService;
 using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication;
@@ -59,8 +58,11 @@ public static class AuthenticationServicesRegistration
 
         #region Repositories
         services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
-        services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        #endregion
+
+        #region Services
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserService, UserService>();
         #endregion
 
         return services;

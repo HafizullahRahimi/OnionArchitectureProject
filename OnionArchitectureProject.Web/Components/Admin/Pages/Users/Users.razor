@@ -1,13 +1,11 @@
 ﻿@page "/Admin/Users"
 
 @using OnionArchitectureProject.Application.Admin.UserService
-@using OnionArchitectureProject.Domain.Authentication.Users
+@using OnionArchitectureProject.Application.Admin.UserService.Models
 
 @inherits OwningComponentBase<IUserService>
 
 <PageTitle>Users</PageTitle>
-
-
 
 <div>
     <button type="button" class="btn btn-success float-end me-3">Add user</button>
@@ -54,7 +52,7 @@ else
                         <td>-</td>
                     } *@
                     <td>@user.UserName</td>
-                    <td>@user.CreatedUtcDate.ToLocalTime()</td>
+                    <td>@user.CreatedLocalTime</td>
                     <td>
                         @if (@user.EmailConfirmed)
                         {
@@ -83,7 +81,7 @@ else
 
 
 @code {
-    private List<User>? users;
+    private List<UserDto>? users;
 
 
     protected override async Task OnInitializedAsync()
