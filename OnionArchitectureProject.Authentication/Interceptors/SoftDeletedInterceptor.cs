@@ -1,29 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Base;
 
 namespace OnionArchitectureProject.Authentication.Interceptors;
-public class SoftDeletedInterceptor : SaveChangesInterceptor
+
+public class SoftDeletedInterceptor : BaseInterceptor
 {
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-        DbContextEventData eventData,
-        InterceptionResult<int> result,
-        CancellationToken cancellationToken = default)
+    protected override void ProcessEntities(DbContextEventData eventData)
     {
-        if (eventData.Context is null)
+        var entries = eventData.Context!.ChangeTracker
+            .Entries<ISoftDeletableEntity>()
+            .Where(e => e.State == EntityState.Deleted);
+
+        foreach (var entry in entries)
         {
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+            entry.State = EntityState.Modified;
+            entry.Entity.IsDeleted = true;
         }
-        IEnumerable<EntityEntry<ISoftDeletableEntity>> entries =
-            eventData
-            .Context
-            .ChangeTracker.Entries<ISoftDeletableEntity>()
-            .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Deleted);
-        foreach (EntityEntry<ISoftDeletableEntity> softDeletable in entries)
-        {
-            softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            softDeletable.Entity.IsDeleted = true;
-        }
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }

@@ -33,10 +33,6 @@ public static class PersistenceServicesRegistration
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         #endregion
 
-        #region Services
-        services.AddHttpContextAccessor();
-        #endregion
-
         return services;
     }
 }
