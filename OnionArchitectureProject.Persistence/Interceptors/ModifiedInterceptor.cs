@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Base;
-using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 
@@ -19,12 +18,9 @@ public class ModifiedInterceptor : BaseInterceptor
             .Entries<IModifiedEntity>()
             .Where(e => e.State == EntityState.Modified);
 
-        var currentUserId = httpContextAccessor?.HttpContext?.User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
-
         foreach (var entry in entries)
         {
-            entry.Entity.ModifiedBy = currentUserId;
+            entry.Entity.ModifiedBy = CurrentUserId;
             entry.Entity.ModifiedUtcDate = DateTime.UtcNow;
         }
     }

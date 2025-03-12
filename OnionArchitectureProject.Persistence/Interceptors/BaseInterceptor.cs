@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 
@@ -11,6 +12,9 @@ public abstract class BaseInterceptor : SaveChangesInterceptor
     {
         this.httpContextAccessor = httpContextAccessor;
     }
+
+    public string CurrentUserId => httpContextAccessor?.HttpContext?.User
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
 
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,

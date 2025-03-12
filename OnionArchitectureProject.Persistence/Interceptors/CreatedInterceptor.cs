@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Base;
-using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
 
@@ -19,12 +18,9 @@ public class CreatedInterceptor : BaseInterceptor
             .Entries<ICreatedEntity>()
             .Where(e => e.State == EntityState.Added);
 
-        var currentUserId = httpContextAccessor?.HttpContext?.User
-            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "f37c60d7-47b8-4375-a226-77eaa6fe8885";
-
         foreach (var entry in entries)
         {
-            entry.Entity.CreatedBy = currentUserId;
+            entry.Entity.CreatedBy = CurrentUserId;
             entry.Entity.CreatedUtcDate = DateTime.UtcNow;
         }
     }
