@@ -1,39 +1,31 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using OnionArchitectureProject.Domain.Base;
 using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
-public class ModifiedInterceptor : SaveChangesInterceptor
-{
-    private readonly IHttpContextAccessor httpContextAccessor;
 
+public class ModifiedInterceptor : BaseInterceptor
+{
     public ModifiedInterceptor(IHttpContextAccessor httpContextAccessor)
+        : base(httpContextAccessor)
     {
-        this.httpContextAccessor = httpContextAccessor;
     }
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-        DbContextEventData eventData,
-        InterceptionResult<int> result,
-        CancellationToken cancellationToken = default)
+
+    protected override void ProcessEntities(DbContextEventData eventData)
     {
-        if (eventData.Context is null)
+        var entries = eventData.Context!.ChangeTracker
+            .Entries<IModifiedEntity>()
+            .Where(e => e.State == EntityState.Modified);
+
+        var currentUserId = httpContextAccessor?.HttpContext?.User
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+
+        foreach (var entry in entries)
         {
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+            entry.Entity.ModifiedBy = currentUserId;
+            entry.Entity.ModifiedUtcDate = DateTime.UtcNow;
         }
-        IEnumerable<EntityEntry<IModifiedEntity>> entries =
-              eventData
-              .Context
-              .ChangeTracker.Entries<IModifiedEntity>()
-              .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Modified);
-        var currentUserId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
-        foreach (EntityEntry<IModifiedEntity> softDeletable in entries)
-        {
-            softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            softDeletable.Entity.ModifiedBy = currentUserId;
-            softDeletable.Entity.ModifiedUtcDate = DateTime.UtcNow;
-        }
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }

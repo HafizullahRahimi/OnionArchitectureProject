@@ -1,41 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 using OnionArchitectureProject.Domain.Base;
+using System.Security.Claims;
 
 namespace OnionArchitectureProject.Persistence.Interceptors;
-public class CreatedInterceptor : SaveChangesInterceptor
-{
-    private readonly IHttpContextAccessor httpContextAccessor;
 
+public class CreatedInterceptor : BaseInterceptor
+{
     public CreatedInterceptor(IHttpContextAccessor httpContextAccessor)
+        : base(httpContextAccessor)
     {
-        this.httpContextAccessor = httpContextAccessor;
     }
 
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-        DbContextEventData eventData,
-        InterceptionResult<int> result,
-        CancellationToken cancellationToken = default)
+    protected override void ProcessEntities(DbContextEventData eventData)
     {
-        if (eventData.Context is null)
+        var entries = eventData.Context!.ChangeTracker
+            .Entries<ICreatedEntity>()
+            .Where(e => e.State == EntityState.Added);
+
+        var currentUserId = httpContextAccessor?.HttpContext?.User
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "f37c60d7-47b8-4375-a226-77eaa6fe8885";
+
+        foreach (var entry in entries)
         {
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+            entry.Entity.CreatedBy = currentUserId;
+            entry.Entity.CreatedUtcDate = DateTime.UtcNow;
         }
-        IEnumerable<EntityEntry<ICreatedEntity>> entries =
-              eventData
-              .Context
-              .ChangeTracker.Entries<ICreatedEntity>()
-              .Where(_ => _.State == Microsoft.EntityFrameworkCore.EntityState.Added);
-        var currentUser = httpContextAccessor.HttpContext.User;
-        var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "f37c60d7-47b8-4375-a226-77eaa6fe8885";
-        foreach (EntityEntry<ICreatedEntity> softDeletable in entries)
-        {
-            softDeletable.State = Microsoft.EntityFrameworkCore.EntityState.Added;
-            softDeletable.Entity.CreatedBy = currentUserId;
-            softDeletable.Entity.CreatedUtcDate = DateTime.UtcNow;
-        }
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }
