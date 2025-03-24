@@ -2,9 +2,9 @@
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication;
 
-namespace OnionArchitectureProject.Authentication.Repositories.AuthenticationRepository;
+namespace OnionArchitectureProject.Authentication.Repositories;
 
-public class AuthenticationRepository(UserManager<ApplicationUser> userManager) : IAuthenticationRepository
+public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRepository
 {
     private readonly UserManager<ApplicationUser> userManager = userManager;
 

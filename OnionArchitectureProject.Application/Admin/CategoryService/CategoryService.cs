@@ -6,9 +6,9 @@ using OnionArchitectureProject.Domain.Authentication;
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
-public class CategoryService(IAuthenticationRepository authenticationRepository, ICategoryRepository categoryRepository, IMapper mapper) : ICategoryService
+public class CategoryService(IUserRepository userRepository, ICategoryRepository categoryRepository, IMapper mapper) : ICategoryService
 {
-    private readonly IAuthenticationRepository authenticationRepository = authenticationRepository;
+    private readonly IUserRepository userRepository = userRepository;
     private readonly ICategoryRepository categoryRepository = categoryRepository;
     private readonly IMapper mapper = mapper;
 
@@ -129,5 +129,5 @@ public class CategoryService(IAuthenticationRepository authenticationRepository,
         await categoryRepository.ExistAsync(categoryName, cancellationToken);
 
     private async Task<string?> GetUserNameByIdAsync(string userId) =>
-           await authenticationRepository.GetUserNemeByUserIdAsync(userId);
+           await userRepository.GetUserNemeByUserIdAsync(userId);
 }

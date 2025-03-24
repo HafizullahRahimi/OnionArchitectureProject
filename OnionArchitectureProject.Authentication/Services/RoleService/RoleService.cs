@@ -9,10 +9,10 @@ using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication.Services.RoleService;
-public class RoleService(RoleManager<ApplicationRole> roleManager, IAuthenticationRepository authenticationRepository, IMapper mapper) : IRoleService
+public class RoleService(RoleManager<ApplicationRole> roleManager, IUserRepository authenticationRepository, IMapper mapper) : IRoleService
 {
     private readonly RoleManager<ApplicationRole> roleManager = roleManager;
-    private readonly IAuthenticationRepository authenticationRepository = authenticationRepository;
+    private readonly IUserRepository authenticationRepository = authenticationRepository;
     private readonly IMapper mapper = mapper;
 
     public async Task<List<RoleDto>> GetRolesAsync()

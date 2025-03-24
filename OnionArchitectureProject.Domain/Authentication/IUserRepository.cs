@@ -1,6 +1,6 @@
 ﻿namespace OnionArchitectureProject.Domain.Authentication;
 
-public interface IAuthenticationRepository
+public interface IUserRepository
 {
     Task<string?> GetUserNemeByUserIdAsync(string userId);
 }

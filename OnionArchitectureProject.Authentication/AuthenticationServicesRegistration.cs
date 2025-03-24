@@ -9,7 +9,7 @@ using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Authentication.Repositories.AuthenticationRepository;
+using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Authentication.Services.RoleService;
 using OnionArchitectureProject.Authentication.Services.UserService;
 using OnionArchitectureProject.Domain.Authentication;
@@ -57,7 +57,7 @@ public static class AuthenticationServicesRegistration
         #endregion
 
         #region Repositories
-        services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         #endregion
 
         #region Services
