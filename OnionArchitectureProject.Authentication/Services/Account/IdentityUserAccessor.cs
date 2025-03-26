@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Authentication.Account;
+namespace OnionArchitectureProject.Authentication.Services.Account;
 public sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IdentityRedirectManager redirectManager)
 {
     public async Task<ApplicationUser> GetRequiredUserAsync(HttpContext context)

@@ -6,12 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Admin.RoleService;
 using OnionArchitectureProject.Application.Admin.UserService;
-using OnionArchitectureProject.Authentication.Account;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Authentication.Repositories;
-using OnionArchitectureProject.Authentication.Services.RoleService;
-using OnionArchitectureProject.Authentication.Services.UserService;
+using OnionArchitectureProject.Authentication.Services.Account;
+using OnionArchitectureProject.Authentication.Services.Admin.RoleService;
+using OnionArchitectureProject.Authentication.Services.Admin.UserService;
 using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication;

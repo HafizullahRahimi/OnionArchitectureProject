@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics.CodeAnalysis;
 
-namespace OnionArchitectureProject.Authentication.Account;
+namespace OnionArchitectureProject.Authentication.Services.Account;
 public sealed class IdentityRedirectManager(NavigationManager navigationManager)
 {
     public const string StatusCookieName = "Identity.StatusMessage";

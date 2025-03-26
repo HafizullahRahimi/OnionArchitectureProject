@@ -3,7 +3,7 @@ using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Authentication.Services.RoleService;
+namespace OnionArchitectureProject.Authentication.Services.Admin.RoleService;
 public class ApplicationRoleProfile : Profile
 {
     public ApplicationRoleProfile()

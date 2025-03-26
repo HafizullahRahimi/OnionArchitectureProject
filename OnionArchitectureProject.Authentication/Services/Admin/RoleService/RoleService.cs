@@ -8,7 +8,7 @@ using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication;
 
-namespace OnionArchitectureProject.Authentication.Services.RoleService;
+namespace OnionArchitectureProject.Authentication.Services.Admin.RoleService;
 public class RoleService(RoleManager<ApplicationRole> roleManager, IUserRepository authenticationRepository, IMapper mapper) : IRoleService
 {
     private readonly RoleManager<ApplicationRole> roleManager = roleManager;

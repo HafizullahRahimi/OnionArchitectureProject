@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Authentication.Services.UserService;
+namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
 public class ApplicationUserProfile : Profile
 {
     public ApplicationUserProfile()
