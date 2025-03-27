@@ -2,7 +2,7 @@
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Authentication.Models;
 
-namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
+namespace OnionArchitectureProject.Authentication.Services.Admin.UserService.Models;
 public class ApplicationUserProfile : Profile
 {
     public ApplicationUserProfile()
@@ -20,5 +20,7 @@ public class ApplicationUserProfile : Profile
                opt.PreCondition(src => src.ModifiedUtcDate != DateTime.MinValue);
                opt.MapFrom(src => src.ModifiedUtcDate.ToLocalTime());
            });
+
+        CreateMap<CreateUserDto, ApplicationUser>();
     }
 }

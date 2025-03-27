@@ -1,0 +1,84 @@
+@using Blazored.FluentValidation
+@using OnionArchitectureProject.Application.Admin.UserService.Models
+
+<ModalBase @ref="_modalRef">
+	<EditForm Model="@_createUserDto" OnValidSubmit="HandleValidSubmit">
+		<FluentValidationValidator @ref="_fluentValidationValidator" />
+		<div class="modal-header">
+			<h5 class="modal-title">
+				<i class="bi bi-person-plus me-2"></i>Add New User
+			</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<div class="mb-3">
+				<label for="userName" class="form-label">Username</label>
+				<InputText @bind-Value="_createUserDto.UserName" class="form-control" id="userName" />
+				<ValidationMessage For="@(() => _createUserDto.UserName)" class="text-danger small" />
+			</div>
+			<div class="mb-3">
+				<label for="email" class="form-label">Email</label>
+				<InputText @bind-Value="_createUserDto.Email" class="form-control" id="email" />
+				<ValidationMessage For="@(() => _createUserDto.Email)" class="text-danger small" />
+			</div>
+			<div class="mb-3">
+				<label for="password" class="form-label">Password</label>
+				<InputText type="password" @bind-Value="_createUserDto.Password" class="form-control" id="password" />
+				<ValidationMessage For="@(() => _createUserDto.Password)" class="text-danger small" />
+				<div class="form-text">
+					Password must be at least 8 characters long and contain uppercase, lowercase, number, and special
+					character.
+				</div>
+			</div>
+			<div class="mb-3">
+				<label for="confirmPassword" class="form-label">Confirm Password</label>
+				<InputText type="password" @bind-Value="_createUserDto.ConfirmPassword" class="form-control"
+					id="confirmPassword" />
+				<ValidationMessage For="@(() => _createUserDto.ConfirmPassword)" class="text-danger small" />
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+				<i class="bi bi-x-circle me-2"></i>Cancel
+			</button>
+			<button type="submit" class="btn btn-primary">
+				<i class="bi bi-check-circle me-2"></i>Create
+			</button>
+		</div>
+	</EditForm>
+</ModalBase>
+
+@code {
+	[Parameter]
+	public EventCallback<CreateUserDto> OnUserCreated { get; set; }
+
+	private ModalBase? _modalRef;
+	private FluentValidationValidator? _fluentValidationValidator;
+	private CreateUserDto _createUserDto = new();
+
+	public async Task OpenModalAsync()
+	{
+		if (_modalRef != null)
+		{
+			_createUserDto = new CreateUserDto();
+			await InvokeAsync(StateHasChanged);
+			await _modalRef.OpenModalAsync();
+		}
+	}
+
+	public async Task CloseModalAsync()
+	{
+		if (_modalRef != null)
+		{
+			await _modalRef.CloseModalAsync();
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		if (await _fluentValidationValidator!.ValidateAsync())
+		{
+			await OnUserCreated.InvokeAsync(_createUserDto);
+		}
+	}
+}
