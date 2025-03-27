@@ -10,4 +10,5 @@ public interface IRoleService
     Task<OperationResult> UpdateAsync(string roleId, UpsertRoleDto upsertRoleDto);
     Task<OperationResult> DeleteAsync(string roleId);
     UpsertRoleDto MapToUpsertRoleDto(RoleDto roleDto);
+    Task<bool> ExistsByRoleNameAsync(string roleName, CancellationToken cancellationToken);
 }
