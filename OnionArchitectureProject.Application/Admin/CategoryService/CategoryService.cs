@@ -129,5 +129,5 @@ public class CategoryService(IUserRepository userRepository, ICategoryRepository
         await categoryRepository.ExistAsync(categoryName, cancellationToken);
 
     private async Task<string?> GetUserNameByIdAsync(string userId) =>
-           await userRepository.GetUserNemeByUserIdAsync(userId);
+           await userRepository.GetUserNameByUserIdAsync(userId);
 }

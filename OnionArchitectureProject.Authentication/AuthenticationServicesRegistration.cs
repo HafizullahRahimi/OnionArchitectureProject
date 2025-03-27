@@ -12,6 +12,7 @@ using OnionArchitectureProject.Authentication.Repositories;
 using OnionArchitectureProject.Authentication.Services.Account;
 using OnionArchitectureProject.Authentication.Services.Admin.RoleService;
 using OnionArchitectureProject.Authentication.Services.Admin.UserService;
+using OnionArchitectureProject.Authentication.Services.Admin.UserService.Models;
 using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Authentication;
@@ -32,7 +33,7 @@ public static class AuthenticationServicesRegistration
         services.AddSingleton<CreatedInterceptor>();
         services.AddSingleton<ModifiedInterceptor>();
 
-        services.AddDbContext<AuthenticationDbContext>(
+        services.AddDbContextFactory<AuthenticationDbContext>(
             (sp, option) => option
             .UseSqlServer(connectionString)
             .AddInterceptors(sp.GetRequiredService<SoftDeletedInterceptor>())

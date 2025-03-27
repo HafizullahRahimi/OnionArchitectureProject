@@ -99,7 +99,7 @@ public class RoleService(RoleManager<ApplicationRole> roleManager, IUserReposito
     }
 
     private async Task<string?> GetUserNameByIdAsync(string userId) =>
-        await authenticationRepository.GetUserNemeByUserIdAsync(userId);
+        await authenticationRepository.GetUserNameByUserIdAsync(userId);
 
     private async Task<bool> RoleNameExistsAsync(string roleName)
     {
