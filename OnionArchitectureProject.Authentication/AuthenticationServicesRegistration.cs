@@ -58,6 +58,7 @@ public static class AuthenticationServicesRegistration
         #endregion
 
         #region Repositories
+        services.AddScoped<IUserValidationService, UserValidationService>();
         services.AddScoped<IUserRepository, UserRepository>();
         #endregion
 

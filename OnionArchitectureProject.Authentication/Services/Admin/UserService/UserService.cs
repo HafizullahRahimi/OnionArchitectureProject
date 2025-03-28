@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Application.Common.Models;
@@ -12,15 +13,19 @@ public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly IUserValidationService _userValidationService;
     private readonly IUserRepository _userRepository;
 
     public UserService(
         UserManager<ApplicationUser> userManager,
         IMapper mapper,
+        IServiceScopeFactory scopeFactory,
+        IUserValidationService userValidationService,
         IUserRepository userRepository)
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _userValidationService = userValidationService ?? throw new ArgumentNullException(nameof(userValidationService));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
@@ -47,14 +52,14 @@ public class UserService : IUserService
     {
         try
         {
-            var userExists = await _userRepository.ExistsByUserNameAsync(createUserDto.UserName, CancellationToken.None);
-            if (userExists)
+            var userExists = await _userValidationService.IsUserNameUniqueAsync(createUserDto.UserName, CancellationToken.None);
+            if (!userExists)
             {
                 return new OperationResult(false, $"User '{createUserDto.UserName}' already exists.");
             }
 
-            var emailExists = await _userRepository.ExistsByEmailAsync(createUserDto.Email, CancellationToken.None);
-            if (emailExists)
+            var emailExists = await _userValidationService.IsEmailUniqueAsync(createUserDto.Email, CancellationToken.None);
+            if (!emailExists)
             {
                 return new OperationResult(false, $"Email '{createUserDto.Email}' is already registered.");
             }

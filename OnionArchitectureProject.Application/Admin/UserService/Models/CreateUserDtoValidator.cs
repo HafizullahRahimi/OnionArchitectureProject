@@ -1,15 +1,14 @@
 ﻿using FluentValidation;
-using OnionArchitectureProject.Domain.Authentication;
 
 namespace OnionArchitectureProject.Application.Admin.UserService.Models;
 
 public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
 {
-    private readonly IUserRepository userRepository;
+    private readonly IUserValidationService _userValidationService;
 
-    public CreateUserDtoValidator(IUserRepository userRepository)
+    public CreateUserDtoValidator(IUserValidationService userValidationService)
     {
-        this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _userValidationService = userValidationService ?? throw new ArgumentNullException(nameof(userValidationService));
 
         ConfigureUserNameRules();
         ConfigureEmailRules();
@@ -23,7 +22,8 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .MinimumLength(3).WithMessage("Username must be at least 3 characters")
             .MaximumLength(50).WithMessage("Username must not exceed 50 characters")
             .Matches("^[a-zA-Z0-9_-]+$").WithMessage("Username can only contain letters, numbers, underscores, and hyphens")
-            .MustAsync(async (userName, cancellation) => !await userRepository.ExistsByUserNameAsync(userName, cancellation))
+            .MustAsync(async (userName, cancellation) =>
+                await _userValidationService.IsUserNameUniqueAsync(userName, cancellation))
             .WithMessage("The username '{PropertyValue}' is already in use. Please choose a different username.");
     }
 
@@ -33,7 +33,8 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("A valid email address is required")
             .MaximumLength(100).WithMessage("Email must not exceed 100 characters")
-            .MustAsync(async (email, cancellation) => !await userRepository.ExistsByEmailAsync(email, cancellation))
+            .MustAsync(async (email, cancellation) =>
+                await _userValidationService.IsEmailUniqueAsync(email, cancellation))
             .WithMessage("The email '{PropertyValue}' is already registered. Please use a different email address.");
     }
 

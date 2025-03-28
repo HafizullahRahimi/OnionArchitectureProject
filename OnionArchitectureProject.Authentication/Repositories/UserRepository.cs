@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication;
 
@@ -6,56 +7,18 @@ namespace OnionArchitectureProject.Authentication.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly IDbContextFactory<AuthenticationDbContext> dbContextFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public UserRepository(IDbContextFactory<AuthenticationDbContext> dbContextFactory)
+    public UserRepository(IServiceScopeFactory scopeFactory)
     {
-        this.dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
+        _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
     }
 
     public async Task<string?> GetUserNameByUserIdAsync(string userId)
     {
-        ArgumentNullException.ThrowIfNull(userId);
-        var appUser = await GetByUserIdAsync(userId, CancellationToken.None);
-        return appUser?.UserName;
-    }
-
-    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(email);
-        return await GetByEmailAsync(email, cancellationToken) != null;
-    }
-
-    public async Task<bool> ExistsByUserNameAsync(string userName, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(userName);
-        return await GetByUserNameAsync(userName, cancellationToken) != null;
-    }
-
-    public async Task<bool> ExistsByUserIdAsync(string userId, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(userId);
-        return await GetByUserIdAsync(userId, cancellationToken) != null;
-    }
-
-    private async Task<ApplicationUser?> GetByUserIdAsync(string userId, CancellationToken cancellationToken)
-    {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        return await dbContext.Set<ApplicationUser>()
-            .SingleOrDefaultAsync(c => c.Id == userId, cancellationToken);
-    }
-
-    private async Task<ApplicationUser?> GetByUserNameAsync(string userName, CancellationToken cancellationToken)
-    {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        return await dbContext.Set<ApplicationUser>()
-            .SingleOrDefaultAsync(c => c.UserName == userName, cancellationToken);
-    }
-
-    private async Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken cancellationToken)
-    {
-        using var dbContext = dbContextFactory.CreateDbContext();
-        return await dbContext.Set<ApplicationUser>()
-            .SingleOrDefaultAsync(c => c.Email == email, cancellationToken);
+        using var scope = _scopeFactory.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByIdAsync(userId);
+        return user?.UserName;
     }
 }
