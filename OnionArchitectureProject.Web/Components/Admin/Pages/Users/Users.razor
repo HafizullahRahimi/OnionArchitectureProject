@@ -15,19 +15,19 @@
 	</button>
 </div>
 
-@if (_isLoading)
+@if (isLoading)
 {
 	<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
 		<Spinner />
 	</div>
 }
-else if (_error != null)
+else if (error != null)
 {
 	<div class="alert alert-danger" role="alert">
-		<i class="bi bi-exclamation-triangle me-2"></i>@_error
+		<i class="bi bi-exclamation-triangle me-2"></i>@error
 	</div>
 }
-else if (!_users?.Any() ?? true)
+else if (!users?.Any() ?? true)
 {
 	<div class="alert alert-info" role="alert">
 		<i class="bi bi-info-circle me-2"></i>No users available.
@@ -48,7 +48,7 @@ else
 				</tr>
 			</thead>
 			<tbody>
-				<Virtualize Items="@_users" Context="user">
+				<Virtualize Items="@users" Context="user">
 					<tr>
 						<td>@user.UserName</td>
 						<td>@user.CreatedLocalTime.ToString("g")</td>
@@ -75,15 +75,15 @@ else
 	</div>
 }
 
-<ModalCreateUser @ref="_modalCreateUserRef" OnUserCreated="HandleUserCreated" />
-<SweetAlert @ref="_sweetAlertRef" ConfirmButtonText="Ok" />
+<ModalCreateUser @ref="modalCreateUserRef" OnUserCreated="HandleUserCreated" />
+<SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
-	private List<UserDto>? _users;
-	private ModalCreateUser? _modalCreateUserRef;
-	private SweetAlert? _sweetAlertRef;
-	private bool _isLoading;
-	private string? _error;
+	private List<UserDto>? users;
+	private ModalCreateUser? modalCreateUserRef;
+	private SweetAlert? sweetAlertRef;
+	private bool isLoading;
+	private string? error;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -92,17 +92,17 @@ else
 
 	private async Task OpenCreateModal()
 	{
-		if (_modalCreateUserRef != null)
+		if (modalCreateUserRef != null)
 		{
-			await _modalCreateUserRef.OpenModalAsync();
+			await modalCreateUserRef.OpenModalAsync();
 		}
 	}
 
 	private async Task CloseCreateModal()
 	{
-		if (_modalCreateUserRef != null)
+		if (modalCreateUserRef != null)
 		{
-			await _modalCreateUserRef.CloseModalAsync();
+			await modalCreateUserRef.CloseModalAsync();
 		}
 	}
 
@@ -110,7 +110,7 @@ else
 	{
 		try
 		{
-			_isLoading = true;
+			isLoading = true;
 			StateHasChanged();
 
 			var result = await Service.CreateAsync(createUserDto);
@@ -133,7 +133,7 @@ else
 		}
 		finally
 		{
-			_isLoading = false;
+			isLoading = false;
 			StateHasChanged();
 		}
 	}
@@ -155,28 +155,28 @@ else
 	{
 		try
 		{
-			_isLoading = true;
-			_error = null;
+			isLoading = true;
+			error = null;
 			StateHasChanged();
 
-			_users = await Service.GetUsersAsync();
+			users = await Service.GetUsersAsync();
 		}
 		catch (Exception ex)
 		{
-			_error = $"Failed to load users: {ex.Message}";
+			error = $"Failed to load users: {ex.Message}";
 		}
 		finally
 		{
-			_isLoading = false;
+			isLoading = false;
 			StateHasChanged();
 		}
 	}
 
 	private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
 	{
-		if (_sweetAlertRef != null)
+		if (sweetAlertRef != null)
 		{
-			await _sweetAlertRef.ShowAlertAsync(text, icon);
+			await sweetAlertRef.ShowAlertAsync(text, icon);
 		}
 	}
 }

@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
 using OnionArchitectureProject.Application.Common.Models;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.Users;
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
-public class CategoryService(IUserRepository userRepository, ICategoryRepository categoryRepository, IMapper mapper) : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IServiceScopeFactory scopeFactory) : ICategoryService
 {
-    private readonly IUserRepository userRepository = userRepository;
     private readonly ICategoryRepository categoryRepository = categoryRepository;
     private readonly IMapper mapper = mapper;
+    private readonly IServiceScopeFactory scopeFactory = scopeFactory;
 
     public async Task<List<CategoryDto>?> GetCategoriesAsync(CancellationToken cancellationToken)
     {
@@ -128,6 +129,11 @@ public class CategoryService(IUserRepository userRepository, ICategoryRepository
     private async Task<bool> CategoryNameExixtsAsync(string categoryName, CancellationToken cancellationToken) =>
         await categoryRepository.ExistAsync(categoryName, cancellationToken);
 
-    private async Task<string?> GetUserNameByIdAsync(string userId) =>
-           await userRepository.GetUserNameByUserIdAsync(userId);
+    private async Task<string?> GetUserNameByIdAsync(string userId)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var user = await userRepository.GetByIdAsync(userId);
+        return user?.UserName;
+    }
 }

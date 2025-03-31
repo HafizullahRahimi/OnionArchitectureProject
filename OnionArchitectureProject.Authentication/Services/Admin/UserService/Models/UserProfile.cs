@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication.Services.Admin.UserService.Models;
-public class ApplicationUserProfile : Profile
+public class UserProfile : Profile
 {
-    public ApplicationUserProfile()
+    public UserProfile()
     {
-        CreateMap<ApplicationUser, UserDto>()
+        CreateMap<User, UserDto>()
            .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedBy))
            .ForMember(dest => dest.CreatedLocalTime, opt =>
            {
@@ -21,6 +21,6 @@ public class ApplicationUserProfile : Profile
                opt.MapFrom(src => src.ModifiedUtcDate.ToLocalTime());
            });
 
-        CreateMap<CreateUserDto, ApplicationUser>();
+        CreateMap<CreateUserDto, User>();
     }
 }

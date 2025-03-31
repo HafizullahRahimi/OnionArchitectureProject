@@ -8,12 +8,12 @@ using OnionArchitectureProject.Application.Admin.RoleService;
 using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Authentication.Interceptors;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Authentication.Repositories;
+using OnionArchitectureProject.Authentication.Repositories.UserRepository;
 using OnionArchitectureProject.Authentication.Services.Account;
 using OnionArchitectureProject.Authentication.Services.Admin.RoleService;
 using OnionArchitectureProject.Authentication.Services.Admin.UserService;
 using OnionArchitectureProject.Authentication.Services.Admin.UserService.Models;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication;
 public static class AuthenticationServicesRegistration
@@ -53,8 +53,9 @@ public static class AuthenticationServicesRegistration
         });
 
         #region Profiles
-        services.AddAutoMapper(typeof(ApplicationRoleProfile));
         services.AddAutoMapper(typeof(ApplicationUserProfile));
+        services.AddAutoMapper(typeof(UserProfile));
+        services.AddAutoMapper(typeof(ApplicationRoleProfile));
         #endregion
 
         #region Repositories

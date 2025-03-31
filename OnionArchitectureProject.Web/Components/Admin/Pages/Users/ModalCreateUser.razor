@@ -1,9 +1,9 @@
 @using Blazored.FluentValidation
 @using OnionArchitectureProject.Application.Admin.UserService.Models
 
-<ModalBase @ref="_modalRef">
-	<EditForm Model="@_createUserDto" OnValidSubmit="HandleValidSubmit">
-		<FluentValidationValidator @ref="_fluentValidationValidator" />
+<ModalBase @ref="modalRef">
+	<EditForm Model="@createUserDto" OnValidSubmit="HandleValidSubmit">
+		<FluentValidationValidator @ref="fluentValidationValidator" />
 		<div class="modal-header">
 			<h5 class="modal-title">
 				<i class="bi bi-person-plus me-2"></i>Add New User
@@ -13,18 +13,18 @@
 		<div class="modal-body">
 			<div class="mb-3">
 				<label for="userName" class="form-label">Username</label>
-				<InputText @bind-Value="_createUserDto.UserName" class="form-control" id="userName" />
-				<ValidationMessage For="@(() => _createUserDto.UserName)" class="text-danger small" />
+				<InputText @bind-Value="createUserDto.UserName" class="form-control" id="userName" />
+				<ValidationMessage For="@(() => createUserDto.UserName)" class="text-danger small" />
 			</div>
 			<div class="mb-3">
 				<label for="email" class="form-label">Email</label>
-				<InputText @bind-Value="_createUserDto.Email" class="form-control" id="email" />
-				<ValidationMessage For="@(() => _createUserDto.Email)" class="text-danger small" />
+				<InputText @bind-Value="createUserDto.Email" class="form-control" id="email" />
+				<ValidationMessage For="@(() => createUserDto.Email)" class="text-danger small" />
 			</div>
 			<div class="mb-3">
 				<label for="password" class="form-label">Password</label>
-				<InputText type="password" @bind-Value="_createUserDto.Password" class="form-control" id="password" />
-				<ValidationMessage For="@(() => _createUserDto.Password)" class="text-danger small" />
+				<InputText type="password" @bind-Value="createUserDto.Password" class="form-control" id="password" />
+				<ValidationMessage For="@(() => createUserDto.Password)" class="text-danger small" />
 				<div class="form-text">
 					Password must be at least 8 characters long and contain uppercase, lowercase, number, and special
 					character.
@@ -32,9 +32,15 @@
 			</div>
 			<div class="mb-3">
 				<label for="confirmPassword" class="form-label">Confirm Password</label>
-				<InputText type="password" @bind-Value="_createUserDto.ConfirmPassword" class="form-control"
+				<InputText type="password" @bind-Value="createUserDto.ConfirmPassword" class="form-control"
 					id="confirmPassword" />
-				<ValidationMessage For="@(() => _createUserDto.ConfirmPassword)" class="text-danger small" />
+				<ValidationMessage For="@(() => createUserDto.ConfirmPassword)" class="text-danger small" />
+			</div>
+			<div class="checkbox mb-3">
+				<label class="form-label">
+					<InputCheckbox @bind-Value="createUserDto.EmailConfirmed" class="darker-border-checkbox form-check-input" />
+					Email confirmed
+				</label>
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -52,33 +58,33 @@
 	[Parameter]
 	public EventCallback<CreateUserDto> OnUserCreated { get; set; }
 
-	private ModalBase? _modalRef;
-	private FluentValidationValidator? _fluentValidationValidator;
-	private CreateUserDto _createUserDto = new();
+	private ModalBase? modalRef;
+	private FluentValidationValidator? fluentValidationValidator;
+	private CreateUserDto createUserDto = new();
 
 	public async Task OpenModalAsync()
 	{
-		if (_modalRef != null)
+		if (modalRef != null)
 		{
-			_createUserDto = new CreateUserDto();
+			createUserDto = new CreateUserDto();
 			await InvokeAsync(StateHasChanged);
-			await _modalRef.OpenModalAsync();
+			await modalRef.OpenModalAsync();
 		}
 	}
 
 	public async Task CloseModalAsync()
 	{
-		if (_modalRef != null)
+		if (modalRef != null)
 		{
-			await _modalRef.CloseModalAsync();
+			await modalRef.CloseModalAsync();
 		}
 	}
 
 	private async Task HandleValidSubmit()
 	{
-		if (await _fluentValidationValidator!.ValidateAsync())
+		if (await fluentValidationValidator!.ValidateAsync())
 		{
-			await OnUserCreated.InvokeAsync(_createUserDto);
+			await OnUserCreated.InvokeAsync(createUserDto);
 		}
 	}
 }

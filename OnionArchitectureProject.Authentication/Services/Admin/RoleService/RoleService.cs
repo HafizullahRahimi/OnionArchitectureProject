@@ -8,37 +8,34 @@ using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService.Models.UpsertRoleDto;
 using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication.Services.Admin.RoleService;
 
 public class RoleService : IRoleService
 {
-    private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger<RoleService> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly RoleManager<ApplicationRole> roleManager;
+    private readonly IMapper mapper;
+    private readonly ILogger<RoleService> logger;
+    private readonly IServiceScopeFactory scopeFactory;
 
     public RoleService(
         RoleManager<ApplicationRole> roleManager,
-        IUserRepository userRepository,
         IMapper mapper,
         ILogger<RoleService> logger,
         IServiceScopeFactory scopeFactory)
     {
-        _roleManager = roleManager;
-        _userRepository = userRepository;
-        _mapper = mapper;
-        _logger = logger;
-        _scopeFactory = scopeFactory;
+        this.roleManager = roleManager;
+        this.mapper = mapper;
+        this.logger = logger;
+        this.scopeFactory = scopeFactory;
     }
 
     public async Task<List<RoleDto>> GetRolesAsync()
     {
         try
         {
-            var appRoles = await _roleManager.Roles
+            var appRoles = await roleManager.Roles
                 .OrderByDescending(r => r.CreatedUtcDate)
                 .ToListAsync();
 
@@ -50,7 +47,7 @@ public class RoleService : IRoleService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while fetching roles");
+            logger.LogError(ex, "Error occurred while fetching roles");
             throw;
         }
     }
@@ -65,14 +62,14 @@ public class RoleService : IRoleService
                 return new OperationResult(false, message);
             }
 
-            var newAppRole = _mapper.Map<ApplicationRole>(upsertRoleDto);
-            var result = await _roleManager.CreateAsync(newAppRole);
+            var newAppRole = mapper.Map<ApplicationRole>(upsertRoleDto);
+            var result = await roleManager.CreateAsync(newAppRole);
 
             return HandleIdentityResult(result, "create", upsertRoleDto.Name);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while creating role '{RoleName}'", upsertRoleDto.Name);
+            logger.LogError(ex, "Error occurred while creating role '{RoleName}'", upsertRoleDto.Name);
             throw;
         }
     }
@@ -93,14 +90,14 @@ public class RoleService : IRoleService
                 return new OperationResult(false, message);
             }
 
-            _mapper.Map(upsertRoleDto, existingAppRole);
-            var result = await _roleManager.UpdateAsync(existingAppRole);
+            mapper.Map(upsertRoleDto, existingAppRole);
+            var result = await roleManager.UpdateAsync(existingAppRole);
 
             return HandleIdentityResult(result, "update", upsertRoleDto.Name);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while updating role '{RoleName}'", upsertRoleDto.Name);
+            logger.LogError(ex, "Error occurred while updating role '{RoleName}'", upsertRoleDto.Name);
             throw;
         }
     }
@@ -115,24 +112,24 @@ public class RoleService : IRoleService
                 return new OperationResult(false, "Role not found.");
             }
 
-            var result = await _roleManager.DeleteAsync(existingAppRole);
+            var result = await roleManager.DeleteAsync(existingAppRole);
             return HandleIdentityResult(result, "delete", existingAppRole.Name);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while deleting role with ID: {RoleId}", roleId);
+            logger.LogError(ex, "Error occurred while deleting role with ID: {RoleId}", roleId);
             throw;
         }
     }
 
     public UpsertRoleDto MapToUpsertRoleDto(RoleDto roleDto)
     {
-        return _mapper.Map<UpsertRoleDto>(roleDto);
+        return mapper.Map<UpsertRoleDto>(roleDto);
     }
 
     public async Task<bool> ExistsByRoleNameAsync(string roleName, CancellationToken cancellationToken)
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
         var exists = await roleManager.Roles
             .IgnoreQueryFilters()
@@ -142,18 +139,23 @@ public class RoleService : IRoleService
 
     private async Task<RoleDto> MapToRoleDtoAsync(ApplicationRole appRole)
     {
-        var roleDto = _mapper.Map<RoleDto>(appRole);
+        var roleDto = mapper.Map<RoleDto>(appRole);
         roleDto.CreatedByUserName = await GetUserNameByIdAsync(appRole.CreatedBy) ?? "Unknown";
         roleDto.ModifiedByUserName = await GetUserNameByIdAsync(appRole.ModifiedBy) ?? "Unknown";
         return roleDto;
     }
 
-    private async Task<string?> GetUserNameByIdAsync(string userId) =>
-        await _userRepository.GetUserNameByUserIdAsync(userId);
+    private async Task<string?> GetUserNameByIdAsync(string userId)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var user = await userRepository.GetByIdAsync(userId);
+        return user?.UserName;
+    }
 
     private async Task<(bool exists, string message)> ValidateRoleNameAsync(string roleName, string? excludeRoleName = null)
     {
-        var exists = await _roleManager.Roles
+        var exists = await roleManager.Roles
             .IgnoreQueryFilters()
             .AnyAsync(r => r.Name == roleName && (excludeRoleName == null || r.Name != excludeRoleName));
 
@@ -162,7 +164,7 @@ public class RoleService : IRoleService
 
     private async Task<ApplicationRole?> GetAppRoleByIdAsync(string roleId)
     {
-        return await _roleManager.FindByIdAsync(roleId);
+        return await roleManager.FindByIdAsync(roleId);
     }
 
     private OperationResult HandleIdentityResult(IdentityResult result, string operation, string roleName)
@@ -170,11 +172,11 @@ public class RoleService : IRoleService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            _logger.LogWarning("Failed to {Operation} role: {Errors}", operation, errors);
+            logger.LogWarning("Failed to {Operation} role: {Errors}", operation, errors);
             return new OperationResult(false, $"Failed to {operation} role: {errors}");
         }
 
-        _logger.LogInformation("Role '{RoleName}' {Operation}d successfully", roleName, operation);
+        logger.LogInformation("Role '{RoleName}' {Operation}d successfully", roleName, operation);
         return new OperationResult(true, null);
     }
 }

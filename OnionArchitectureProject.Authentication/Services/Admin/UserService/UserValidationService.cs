@@ -1,17 +1,16 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Admin.UserService;
-using OnionArchitectureProject.Authentication.Models;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
 
 public class UserValidationService : IUserValidationService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IServiceScopeFactory scopeFactory;
 
     public UserValidationService(IServiceScopeFactory scopeFactory)
     {
-        _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
+        this.scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
     }
 
     public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken cancellationToken)
@@ -19,10 +18,10 @@ public class UserValidationService : IUserValidationService
         if (string.IsNullOrEmpty(email))
             return false;
 
-        using var scope = _scopeFactory.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var user = await userManager.FindByEmailAsync(email);
-        return user == null;
+        using var scope = scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var emailExists = await userRepository.EmailExistsAsync(email);
+        return emailExists == false;
     }
 
     public async Task<bool> IsUserNameUniqueAsync(string userName, CancellationToken cancellationToken)
@@ -30,9 +29,9 @@ public class UserValidationService : IUserValidationService
         if (string.IsNullOrEmpty(userName))
             return false;
 
-        using var scope = _scopeFactory.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var user = await userManager.FindByNameAsync(userName);
-        return user == null;
+        using var scope = scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var userNameExists = await userRepository.UserNameExistsAsync(userName);
+        return userNameExists == false;
     }
 }

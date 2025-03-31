@@ -1,44 +1,34 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Application.Common.Models;
-using OnionArchitectureProject.Authentication.Models;
-using OnionArchitectureProject.Domain.Authentication;
+using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
 public class UserService : IUserService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IMapper _mapper;
-    private readonly IUserValidationService _userValidationService;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepository userRepository;
+    private readonly IMapper mapper;
+    private readonly IServiceScopeFactory scopeFactory;
 
     public UserService(
-        UserManager<ApplicationUser> userManager,
+        IUserRepository userRepository,
         IMapper mapper,
-        IServiceScopeFactory scopeFactory,
-        IUserValidationService userValidationService,
-        IUserRepository userRepository)
+        IServiceScopeFactory scopeFactory)
     {
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _userValidationService = userValidationService ?? throw new ArgumentNullException(nameof(userValidationService));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        this.scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
     }
 
     public async Task<List<UserDto>> GetUsersAsync()
     {
         try
         {
-            var appUsers = await _userManager.Users
-                .OrderByDescending(u => u.CreatedUtcDate)
-                .ToListAsync();
-
+            var users = await userRepository.GetAllAsync();
             var userDtos = await Task.WhenAll(
-                appUsers.Select(MapToUserDtoAsync)
+                users.Select(MapToUserDtoAsync)
             );
             return userDtos.ToList();
         }
@@ -48,30 +38,24 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<OperationResult> CreateAsync(CreateUserDto createUserDto)
+    public async Task<OperationResult> CreateAsync(CreateUserDto upsertUserDto)
     {
         try
         {
-            var userExists = await _userValidationService.IsUserNameUniqueAsync(createUserDto.UserName, CancellationToken.None);
-            if (!userExists)
+            var userNameExists = await userRepository.UserNameExistsAsync(upsertUserDto.UserName);
+            if (userNameExists)
             {
-                return new OperationResult(false, $"User '{createUserDto.UserName}' already exists.");
+                return new OperationResult(false, $"User '{upsertUserDto.UserName}' already exists.");
             }
 
-            var emailExists = await _userValidationService.IsEmailUniqueAsync(createUserDto.Email, CancellationToken.None);
-            if (!emailExists)
+            var emailExists = await userRepository.EmailExistsAsync(upsertUserDto.Email);
+            if (emailExists)
             {
-                return new OperationResult(false, $"Email '{createUserDto.Email}' is already registered.");
+                return new OperationResult(false, $"Email '{upsertUserDto.Email}' is already registered.");
             }
 
-            var user = _mapper.Map<ApplicationUser>(createUserDto);
-            var result = await _userManager.CreateAsync(user, createUserDto.Password);
-
-            if (!result.Succeeded)
-            {
-                var errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
-                return new OperationResult(false, errorMessage);
-            }
+            var user = mapper.Map<User>(upsertUserDto);
+            await userRepository.CreateAsync(user, upsertUserDto.Password);
 
             return new OperationResult(true, null);
         }
@@ -81,14 +65,19 @@ public class UserService : IUserService
         }
     }
 
-    private async Task<UserDto> MapToUserDtoAsync(ApplicationUser appUser)
+    private async Task<UserDto> MapToUserDtoAsync(User user)
     {
-        var userDto = _mapper.Map<UserDto>(appUser);
-        userDto.CreatedByUserName = await GetUserNameByIdAsync(appUser.CreatedBy) ?? "Unknown";
-        userDto.ModifiedByUserName = await GetUserNameByIdAsync(appUser.ModifiedBy) ?? "Unknown";
+        var userDto = mapper.Map<UserDto>(user);
+        userDto.CreatedByUserName = await GetUserNameByIdAsync(user.CreatedBy) ?? "Unknown";
+        userDto.ModifiedByUserName = await GetUserNameByIdAsync(user.ModifiedBy) ?? "Unknown";
         return userDto;
     }
 
-    private async Task<string?> GetUserNameByIdAsync(string userId) =>
-        await _userRepository.GetUserNameByUserIdAsync(userId);
+    private async Task<string?> GetUserNameByIdAsync(string userId)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var user = await userRepository.GetByIdAsync(userId);
+        return user?.UserName;
+    }
 }
