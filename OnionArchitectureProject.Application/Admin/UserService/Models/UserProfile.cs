@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
 
-namespace OnionArchitectureProject.Authentication.Services.Admin.UserService.Models;
+namespace OnionArchitectureProject.Application.Admin.UserService.Models;
 public class UserProfile : Profile
 {
     public UserProfile()

@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
 
-namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
+namespace OnionArchitectureProject.Application.Admin.UserService;
 public class UserService : IUserService
 {
     private readonly IUserRepository userRepository;

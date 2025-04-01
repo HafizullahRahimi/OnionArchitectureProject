@@ -1,8 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Admin.UserService;
 using OnionArchitectureProject.Domain.Authentication.Users;
 
-namespace OnionArchitectureProject.Authentication.Services.Admin.UserService;
+namespace OnionArchitectureProject.Application.Admin.UserService;
 
 public class UserValidationService : IUserValidationService
 {
