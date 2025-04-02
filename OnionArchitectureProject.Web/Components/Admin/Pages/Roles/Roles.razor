@@ -18,19 +18,19 @@
         </button>
     </div>
 
-    @if (_isLoading)
+    @if (isLoading)
     {
         <div class="text-center">
             <Spinner />
         </div>
     }
-    else if (_errorMessage != null)
+    else if (errorMessage != null)
     {
         <div class="alert alert-danger" role="alert">
-            @_errorMessage
+            @errorMessage
         </div>
     }
-    else if (!_roles?.Any() ?? true)
+    else if (!roles?.Any() ?? true)
     {
         <div class="alert alert-info" role="alert">
             No roles available. Click the "Add Role" button to create one.
@@ -51,7 +51,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <Virtualize Items="@_roles" Context="role">
+                    <Virtualize Items="@roles" Context="role">
                         <tr>
                             <td>@role.Name</td>
                             <td>@role.CreatedLocalTime.ToString("g")</td>
@@ -85,17 +85,17 @@
     }
 </div>
 
-<ModalUpsertRole @ref="_upsertModalRef" OnRoleCreated="OnRoleCreated" OnRoleUpdated="OnRoleUpdated" />
-<ModalDeleteRole @ref="_deleteModalRef" OnRoleDeleted="OnRoleDeleted" />
-<SweetAlert @ref="_sweetAlertRef" ConfirmButtonText="Ok" />
+<ModalUpsertRole @ref="upsertModalRef" OnRoleCreated="OnRoleCreated" OnRoleUpdated="OnRoleUpdated" />
+<ModalDeleteRole @ref="deleteModalRef" OnRoleDeleted="OnRoleDeleted" />
+<SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
-    private ModalUpsertRole? _upsertModalRef;
-    private ModalDeleteRole? _deleteModalRef;
-    private SweetAlert? _sweetAlertRef;
-    private List<RoleDto>? _roles;
-    private bool _isLoading = true;
-    private string? _errorMessage;
+    private ModalUpsertRole? upsertModalRef;
+    private ModalDeleteRole? deleteModalRef;
+    private SweetAlert? sweetAlertRef;
+    private List<RoleDto>? roles;
+    private bool isLoading = true;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,11 +106,11 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error occurred while initializing Roles component");
-            _errorMessage = "An error occurred while loading roles. Please try again later.";
+            errorMessage = "An error occurred while loading roles. Please try again later.";
         }
         finally
         {
-            _isLoading = false;
+            isLoading = false;
         }
     }
 
@@ -118,9 +118,9 @@
     {
         try
         {
-            if (_upsertModalRef != null)
+            if (upsertModalRef != null)
             {
-                await _upsertModalRef.OpenModalAsync();
+                await upsertModalRef.OpenModalAsync();
             }
         }
         catch (Exception ex)
@@ -134,12 +134,12 @@
     {
         try
         {
-            if (_upsertModalRef != null)
+            if (upsertModalRef != null)
             {
                 var upsertRoleDto = Service.MapToUpsertRoleDto(roleDto);
                 if (upsertRoleDto != null)
                 {
-                    await _upsertModalRef.OpenModalAsync(roleDto.Id, upsertRoleDto);
+                    await upsertModalRef.OpenModalAsync(roleDto.Id, upsertRoleDto);
                 }
             }
         }
@@ -154,9 +154,9 @@
     {
         try
         {
-            if (_upsertModalRef != null)
+            if (upsertModalRef != null)
             {
-                await _upsertModalRef.CloseModalAsync();
+                await upsertModalRef.CloseModalAsync();
             }
         }
         catch (Exception ex)
@@ -190,18 +190,18 @@
         }
     }
 
-    private async Task OnRoleUpdated((string roleId, UpsertRoleDto upsertRoleDto) args)
+    private async Task OnRoleUpdated(UpsertRoleDto upsertRoleDto)
     {
         try
         {
-            var result = await Service.UpdateAsync(args.roleId, args.upsertRoleDto);
+            var result = await Service.UpdateAsync(upsertRoleDto);
             if (result.Succeeded)
             {
                 await HandleRoleOperationAsync(async () =>
                 {
                     await LoadRolesAsync();
                     await CloseUpsertModal();
-                }, $"Role '{args.upsertRoleDto.Name}' updated successfully!");
+                }, $"Role '{upsertRoleDto.Name}' updated successfully!");
             }
             else
             {
@@ -210,7 +210,7 @@
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error occurred while updating role {RoleName}", args.upsertRoleDto.Name);
+            Logger.LogError(ex, "Error occurred while updating role {RoleName}", upsertRoleDto.Name);
             await ShowAlertAsync("An error occurred while updating the role.", SweetAlertIcon.Error);
         }
     }
@@ -219,9 +219,9 @@
     {
         try
         {
-            if (_deleteModalRef != null)
+            if (deleteModalRef != null)
             {
-                await _deleteModalRef.OpenModalAsync(role);
+                await deleteModalRef.OpenModalAsync(role);
             }
         }
         catch (Exception ex)
@@ -274,7 +274,7 @@
     {
         try
         {
-            _roles = await Service.GetRolesAsync();
+            roles = await Service.GetRolesAsync();
         }
         catch (Exception ex)
         {
@@ -287,9 +287,9 @@
     {
         try
         {
-            if (_sweetAlertRef != null)
+            if (sweetAlertRef != null)
             {
-                await _sweetAlertRef.ShowAlertAsync(text, icon);
+                await sweetAlertRef.ShowAlertAsync(text, icon);
             }
         }
         catch (Exception ex)

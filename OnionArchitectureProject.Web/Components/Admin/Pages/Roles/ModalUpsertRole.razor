@@ -1,30 +1,30 @@
 ﻿@using OnionArchitectureProject.Application.Admin.RoleService.Models
 
-<ModalBase @ref="_modalRef">
-    <EditForm Model="@_formModel" OnValidSubmit="OnSubmitForm">
+<ModalBase @ref="modalRef">
+    <EditForm Model="@formModel" OnValidSubmit="OnSubmitForm">
         <div class="modal-header">
-            <h5 class="modal-title">@(_modalMode == ModalMode.Add ? "Add Role" : "Edit Role")</h5>
+            <h5 class="modal-title">@(modalMode == ModalMode.Add ? "Add Role" : "Edit Role")</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <FluentValidationValidator @ref="_fluentValidationValidator" />
+            <FluentValidationValidator @ref="fluentValidationValidator" />
             <ValidationSummary />
 
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <InputText id="name" @bind-Value="_formModel.Name" class="form-control" />
-                <ValidationMessage For="@(() => _formModel.Name)" class="text-danger" />
+                <InputText id="name" @bind-Value="formModel.Name" class="form-control" />
+                <ValidationMessage For="@(() => formModel.Name)" class="text-danger" />
             </div>
 
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <InputTextArea id="description" @bind-Value="_formModel.Description" class="form-control" rows="3" />
-                <ValidationMessage For="@(() => _formModel.Description)" class="text-danger" />
+                <InputTextArea id="description" @bind-Value="formModel.Description" class="form-control" rows="3" />
+                <ValidationMessage For="@(() => formModel.Description)" class="text-danger" />
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            @if (_isLoading)
+            @if (isLoading)
             {
                 <button type="button" class="btn btn-success" disabled>
                     <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -46,14 +46,13 @@
     public EventCallback<UpsertRoleDto> OnRoleCreated { get; set; }
 
     [Parameter]
-    public EventCallback<(string, UpsertRoleDto)> OnRoleUpdated { get; set; }
+    public EventCallback<UpsertRoleDto> OnRoleUpdated { get; set; }
 
-    private ModalBase? _modalRef;
-    private UpsertRoleDto _formModel = new();
-    private ModalMode _modalMode = ModalMode.Add;
-    private FluentValidationValidator? _fluentValidationValidator;
-    private bool _isLoading;
-    private string? _roleId;
+    private ModalBase? modalRef;
+    private UpsertRoleDto formModel = new();
+    private ModalMode modalMode = ModalMode.Add;
+    private FluentValidationValidator? fluentValidationValidator;
+    private bool isLoading;
 
     private enum ModalMode
     {
@@ -65,11 +64,11 @@
     {
         try
         {
-            _modalMode = ModalMode.Add;
-            _formModel = new();
-            if (_modalRef != null)
+            modalMode = ModalMode.Add;
+            formModel = new();
+            if (modalRef != null)
             {
-                await _modalRef.OpenModalAsync();
+                await modalRef.OpenModalAsync();
             }
         }
         catch (Exception ex)
@@ -82,12 +81,11 @@
     {
         try
         {
-            _roleId = roleId;
-            _modalMode = ModalMode.Edit;
-            _formModel = upsertRoleDto;
-            if (_modalRef != null)
+            modalMode = ModalMode.Edit;
+            formModel = upsertRoleDto;
+            if (modalRef != null)
             {
-                await _modalRef.OpenModalAsync();
+                await modalRef.OpenModalAsync();
             }
         }
         catch (Exception ex)
@@ -100,11 +98,10 @@
     {
         try
         {
-            _isLoading = false;
-            _roleId = null;
-            if (_modalRef != null)
+            isLoading = false;
+            if (modalRef != null)
             {
-                await _modalRef.CloseModalAsync();
+                await modalRef.CloseModalAsync();
             }
         }
         catch (Exception ex)
@@ -115,20 +112,20 @@
 
     private async Task OnSubmitForm()
     {
-        if (_fluentValidationValidator == null) return;
+        if (fluentValidationValidator == null) return;
 
         try
         {
-            _isLoading = true;
-            if (await _fluentValidationValidator.ValidateAsync())
+            isLoading = true;
+            if (await fluentValidationValidator.ValidateAsync())
             {
-                if (_modalMode == ModalMode.Add)
+                if (modalMode == ModalMode.Add)
                 {
-                    await OnRoleCreated.InvokeAsync(_formModel);
+                    await OnRoleCreated.InvokeAsync(formModel);
                 }
-                else if (_modalMode == ModalMode.Edit && !string.IsNullOrEmpty(_roleId))
+                else if (modalMode == ModalMode.Edit )
                 {
-                    await OnRoleUpdated.InvokeAsync((_roleId, _formModel));
+                    await OnRoleUpdated.InvokeAsync(formModel);
                 }
             }
         }
@@ -138,7 +135,7 @@
         }
         finally
         {
-            _isLoading = false;
+            isLoading = false;
         }
     }
 }

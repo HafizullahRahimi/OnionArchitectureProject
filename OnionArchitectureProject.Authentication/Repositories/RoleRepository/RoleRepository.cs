@@ -29,10 +29,10 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper ma
         var appRole = await GetAppRoleByIdAsync(id);
         return appRole != null;
     }
+
     public async Task<bool> RoleNameExistsAsync(string roleName)
     {
         var appRole = await roleManager.Roles
-               .IgnoreQueryFilters()
                .FirstOrDefaultAsync(r => r.Name == roleName);
         return appRole != null;
     }

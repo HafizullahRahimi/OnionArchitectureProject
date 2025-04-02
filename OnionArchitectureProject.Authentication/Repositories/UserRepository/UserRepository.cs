@@ -40,7 +40,6 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByUserNameAsync(string userName)
     {
         var appUser = await userManager.Users
-              .IgnoreQueryFilters()
               .FirstOrDefaultAsync(r => r.UserName == userName);
         return appUser != null ? mapper.Map<User>(appUser) : null;
     }

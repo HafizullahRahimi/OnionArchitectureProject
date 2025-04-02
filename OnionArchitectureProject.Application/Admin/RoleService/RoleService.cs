@@ -42,25 +42,25 @@ public class RoleService(IRoleRepository roleRepository, IMapper mapper, IServic
         }
     }
 
-    public async Task<OperationResult> UpdateAsync(string roleId, UpsertRoleDto upsertRoleDto)
+    public async Task<OperationResult> UpdateAsync(UpsertRoleDto upsertRoleDto)
     {
         try
         {
-            var existingRole = await roleRepository.GetByIdAsync(roleId);
+            if (string.IsNullOrEmpty(upsertRoleDto.Id))
+                return new OperationResult(false, "Role ID is required.");
+
+            var existingRole = await roleRepository.GetByIdAsync(upsertRoleDto.Id);
             if (existingRole == null)
                 return new OperationResult(false, "Role not found.");
 
-            var roleNameExists = await roleRepository.RoleNameExistsAsync(upsertRoleDto.Name);
-            if (roleNameExists && existingRole.Name != upsertRoleDto.Name)
-                return new OperationResult(false, $"Role '{upsertRoleDto.Name}' already exists.");
-
             mapper.Map(upsertRoleDto, existingRole);
             await roleRepository.UpdateAsync(existingRole);
+
             return new OperationResult(true, null);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            return new OperationResult(false, $"An error occurred while updating the role: {ex.Message}");
         }
     }
 
