@@ -1,0 +1,138 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using FluentValidation
+
+@typeparam TModel
+
+<ModalBase @ref="modalRef">
+	<EditForm Model="@FormModel" OnValidSubmit="OnSubmitForm">
+		<div class="modal-header">
+			<h5 class="modal-title">@(modalMode == ModalMode.Add ? AddTitle : EditTitle)</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<FluentValidationValidator @ref="fluentValidationValidator" />
+			<ValidationSummary />
+			@ChildContent
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			@if (IsLoading)
+			{
+				<button type="button" class="btn btn-success" disabled>
+					<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+					Saving...
+				</button>
+			}
+			else
+			{
+				<button type="submit" class="btn btn-success">
+					<i class="bi bi-save me-1"></i>Save
+				</button>
+			}
+		</div>
+	</EditForm>
+</ModalBase>
+
+@code {
+	[Parameter]
+	public string AddTitle { get; set; } = "Add";
+
+	[Parameter]
+	public string EditTitle { get; set; } = "Edit";
+
+	[Parameter]
+	public TModel FormModel { get; set; } = default!;
+
+	[Parameter]
+	public EventCallback<TModel> OnCreated { get; set; }
+
+	[Parameter]
+	public EventCallback<TModel> OnUpdated { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; } = default!;
+
+	private ModalBase? modalRef;
+	private ModalMode modalMode { get; set; } = ModalMode.Add;
+	private FluentValidationValidator? fluentValidationValidator;
+	private bool IsLoading { get; set; }
+
+	public async Task OpenModalAsync()
+	{
+		try
+		{
+			modalMode = ModalMode.Add;
+			if (modalRef != null)
+			{
+				await modalRef.OpenModalAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.Error.WriteLine($"Error opening modal: {ex.Message}");
+		}
+	}
+
+	public async Task OpenModalAsync(TModel model)
+	{
+		try
+		{
+			modalMode = ModalMode.Edit;
+			FormModel = model;
+			if (modalRef != null)
+			{
+				await modalRef.OpenModalAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.Error.WriteLine($"Error opening edit modal: {ex.Message}");
+		}
+	}
+
+	public async Task CloseModalAsync()
+	{
+		try
+		{
+			IsLoading = false;
+			if (modalRef != null)
+			{
+				await modalRef.CloseModalAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.Error.WriteLine($"Error closing modal: {ex.Message}");
+		}
+	}
+
+	private async Task OnSubmitForm()
+	{
+		if (fluentValidationValidator == null) return;
+
+		try
+		{
+			IsLoading = true;
+			if (await fluentValidationValidator.ValidateAsync())
+			{
+				if (modalMode == ModalMode.Add)
+				{
+					await OnCreated.InvokeAsync(FormModel);
+				}
+				else
+				{
+					await OnUpdated.InvokeAsync(FormModel);
+				}
+				await CloseModalAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.Error.WriteLine($"Error during form submission: {ex.Message}");
+		}
+		finally
+		{
+			IsLoading = false;
+		}
+	}
+}

@@ -1,34 +1,14 @@
 ﻿@using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto
 @using OnionArchitectureProject.Domain.Categories
 
-<ModalBase @ref=modalRef>
-    <EditForm Model="@formModel" Enhance=true OnValidSubmit="OnSubmitForm">
-        <div class="modal-header">
-            <h5 class="modal-title">@((modalMode == "add") ? "Add category" : "Edit category")</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <FluentValidationValidator @ref="_fluentValidationValidator" />
-            <ValidationSummary />
-            <div class="mt-2">
-                <label for="name" class="form-label">Name:</label>
-                <InputText id="name" @bind-Value="formModel.Name" class="form-control" />
-                <ValidationMessage For="@(()=>formModel.Name)"></ValidationMessage>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            @if (isLoading)
-            {
-                <Spinner Title="Saving" TextColor="text-light" BgColor="bg-success" />
-            }
-            else
-            {
-                <button type="submit" class="btn btn-success ">Save</button>
-            }
-        </div>
-    </EditForm>
-</ModalBase>
+<ModalUpsert @ref="modalRef" AddTitle="Add Category" EditTitle="Edit Category" FormModel="@formModel"
+    OnCreated="OnCategoryCreated" OnUpdated="OnCategoryUpdated">
+    <div class="mt-2">
+        <label for="name" class="form-label">Name:</label>
+        <InputText id="name" @bind-Value="formModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => formModel.Name)"></ValidationMessage>
+    </div>
+</ModalUpsert>
 
 @code {
     [Parameter]
@@ -36,15 +16,11 @@
     [Parameter]
     public EventCallback<UpsertCategoryDto> OnCategoryUpdated { get; set; }
 
-    private ModalBase? modalRef;
-    private string modalMode = "add";
+    private ModalUpsert<UpsertCategoryDto>? modalRef;
     private UpsertCategoryDto formModel = new();
-    private FluentValidationValidator? _fluentValidationValidator;
-    private bool isLoading = false;
 
     public async Task OpenModalAsync()
     {
-        modalMode = "add";
         formModel = new();
         if (modalRef != null)
         {
@@ -54,51 +30,18 @@
 
     public async Task OpenModalAsync(UpsertCategoryDto upsertCategoryDto)
     {
-        modalMode = "update";
         formModel = upsertCategoryDto;
         if (modalRef != null)
         {
-            await modalRef.OpenModalAsync();
+            await modalRef.OpenModalAsync(formModel);
         }
     }
 
     public async Task CloseModalAsync()
     {
-        StopLoading();
         if (modalRef != null)
         {
             await modalRef.CloseModalAsync();
         }
     }
-
-    private async Task OnSubmitForm()
-    {
-        StartLoading();
-        try
-        {
-            if (await _fluentValidationValidator!.ValidateAsync())
-            {
-                if (modalMode == "add")
-                {
-                    await OnCategoryCreated.InvokeAsync(formModel);
-                }
-                else if (modalMode == "update")
-                {
-                    await OnCategoryUpdated.InvokeAsync(formModel);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error during form submission: {ex.Message}");
-        }
-        finally
-        {
-            StopLoading();
-        }
-    }
-
-    private void StartLoading() => isLoading = true;
-
-    private void StopLoading() => isLoading = false;
 }
