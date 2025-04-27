@@ -23,7 +23,7 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .MaximumLength(50).WithMessage("Username must not exceed 50 characters")
             .Matches("^[a-zA-Z0-9_-]+$").WithMessage("Username can only contain letters, numbers, underscores, and hyphens")
             .MustAsync(async (userName, cancellation) =>
-                await userValidationService.IsUserNameUniqueAsync(userName, cancellation))
+                await userValidationService.IsUserNameUniqueAsync(userName, string.Empty, cancellation))
             .WithMessage("The username '{PropertyValue}' is already in use. Please choose a different username.");
     }
 
@@ -34,7 +34,7 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .EmailAddress().WithMessage("A valid email address is required")
             .MaximumLength(100).WithMessage("Email must not exceed 100 characters")
             .MustAsync(async (email, cancellation) =>
-                await userValidationService.IsEmailUniqueAsync(email, cancellation))
+                await userValidationService.IsEmailUniqueAsync(email, string.Empty, cancellation))
             .WithMessage("The email '{PropertyValue}' is already registered. Please use a different email address.");
     }
 

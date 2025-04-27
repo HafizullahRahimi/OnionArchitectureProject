@@ -90,6 +90,34 @@ public class UserRepository : IUserRepository
     public async Task DeleteAsync(User user) =>
        await DeleteAsync(user.Id);
 
-    private async Task<ApplicationUser?> GetAppUserByIdAsync(string id) =>
-       await userManager.FindByIdAsync(id);
+    public async Task<bool> ChangePasswordAsync(string userId, string newPassword)
+    {
+        var appUser = await GetAppUserByIdAsync(userId);
+        if (appUser == null)
+            return false;
+
+        var hasPassword = await userManager.HasPasswordAsync(appUser);
+        if (hasPassword)
+        {
+            var removeResult = await userManager.RemovePasswordAsync(appUser);
+            if (!removeResult.Succeeded)
+                return false;
+        }
+
+        var addResult = await userManager.AddPasswordAsync(appUser, newPassword);
+        return addResult.Succeeded;
+    }
+
+    public async Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword)
+    {
+        var appUser = await GetAppUserByIdAsync(userId);
+        if (appUser == null)
+            return false;
+
+        var result = await userManager.ChangePasswordAsync(appUser, currentPassword, newPassword);
+        return result.Succeeded;
+    }
+
+    private async Task<ApplicationUser?> GetAppUserByIdAsync(string userId) =>
+       await userManager.FindByIdAsync(userId);
 }

@@ -45,6 +45,7 @@ else
 					<th>Modified (Local Time)</th>
 					<th>Modified By</th>
 					<th>Status</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,6 +69,12 @@ else
 								@(user.EmailConfirmed ? "Confirmed" : "Pending")
 							</span>
 						</td>
+						<td>
+							<button type="button" class="btn btn-sm btn-primary me-2"
+								@onclick="() => OpenUpdateModal(user)">
+								<i class="bi bi-pencil"></i>
+							</button>
+						</td>
 					</tr>
 				</Virtualize>
 			</tbody>
@@ -76,11 +83,13 @@ else
 }
 
 <ModalCreateUser @ref="modalCreateUserRef" OnUserCreated="HandleUserCreated" />
+<ModalUpdateUser @ref="modalUpdateUserRef" OnUserUpdated="HandleUserUpdated" />
 <SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
 	private List<UserDto>? users;
 	private ModalCreateUser? modalCreateUserRef;
+	private ModalUpdateUser? modalUpdateUserRef;
 	private SweetAlert? sweetAlertRef;
 	private bool isLoading;
 	private string? error;
@@ -103,6 +112,22 @@ else
 		if (modalCreateUserRef != null)
 		{
 			await modalCreateUserRef.CloseModalAsync();
+		}
+	}
+
+	private async Task OpenUpdateModal(UserDto user)
+	{
+		if (modalUpdateUserRef != null)
+		{
+			await modalUpdateUserRef.OpenModalAsync(user);
+		}
+	}
+
+	private async Task CloseUpdateModal()
+	{
+		if (modalUpdateUserRef != null)
+		{
+			await modalUpdateUserRef.CloseModalAsync();
 		}
 	}
 
@@ -130,6 +155,38 @@ else
 		catch (Exception ex)
 		{
 			await ShowAlertAsync($"Error creating user: {ex.Message}", SweetAlertIcon.Error);
+		}
+		finally
+		{
+			isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private async Task HandleUserUpdated(UpdateUserDto updateUserDto)
+	{
+		try
+		{
+			isLoading = true;
+			StateHasChanged();
+
+			var result = await Service.UpdateAsync(updateUserDto);
+			if (result.Succeeded)
+			{
+				await HandleUserOperationAsync(async () =>
+				{
+					await CloseUpdateModal();
+					await LoadUsersAsync();
+				}, "User updated successfully!");
+			}
+			else
+			{
+				await ShowAlertAsync($"Error updating user: {result.Error}", SweetAlertIcon.Error);
+			}
+		}
+		catch (Exception ex)
+		{
+			await ShowAlertAsync($"Error updating user: {ex.Message}", SweetAlertIcon.Error);
 		}
 		finally
 		{

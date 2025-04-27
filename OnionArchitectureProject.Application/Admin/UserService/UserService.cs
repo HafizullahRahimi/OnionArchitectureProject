@@ -37,24 +37,70 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<OperationResult> CreateAsync(CreateUserDto upsertUserDto)
+    public async Task<OperationResult> CreateAsync(CreateUserDto createUserDto)
     {
         try
         {
-            var userNameExists = await userRepository.UserNameExistsAsync(upsertUserDto.UserName);
+            var userNameExists = await userRepository.UserNameExistsAsync(createUserDto.UserName);
             if (userNameExists)
             {
-                return new OperationResult(false, $"User '{upsertUserDto.UserName}' already exists.");
+                return new OperationResult(false, $"User '{createUserDto.UserName}' already exists.");
             }
 
-            var emailExists = await userRepository.EmailExistsAsync(upsertUserDto.Email);
+            var emailExists = await userRepository.EmailExistsAsync(createUserDto.Email);
             if (emailExists)
             {
-                return new OperationResult(false, $"Email '{upsertUserDto.Email}' is already registered.");
+                return new OperationResult(false, $"Email '{createUserDto.Email}' is already registered.");
             }
 
-            var user = mapper.Map<User>(upsertUserDto);
-            await userRepository.CreateAsync(user, upsertUserDto.Password);
+            var user = mapper.Map<User>(createUserDto);
+            await userRepository.CreateAsync(user, createUserDto.Password);
+
+            return new OperationResult(true, null);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> UpdateAsync(UpdateUserDto updateUserDto)
+    {
+        try
+        {
+            var existingUser = await userRepository.GetByIdAsync(updateUserDto.Id);
+            if (existingUser == null)
+            {
+                return new OperationResult(false, $"User with ID '{updateUserDto.Id}' not found.");
+            }
+
+            if (existingUser.UserName != updateUserDto.UserName)
+            {
+                var userNameExists = await userRepository.UserNameExistsAsync(updateUserDto.UserName);
+                if (userNameExists)
+                {
+                    return new OperationResult(false, $"Username '{updateUserDto.UserName}' is already taken.");
+                }
+            }
+
+            if (existingUser.Email != updateUserDto.Email)
+            {
+                var emailExists = await userRepository.EmailExistsAsync(updateUserDto.Email);
+                if (emailExists)
+                {
+                    return new OperationResult(false, $"Email '{updateUserDto.Email}' is already registered.");
+                }
+            }
+
+            mapper.Map(updateUserDto, existingUser);
+
+            // Update password if provided
+            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            {
+                await userRepository.ChangePasswordAsync(existingUser.Id, updateUserDto.Password);
+            }
+
+            await userRepository.UpdateAsync(existingUser);
 
             return new OperationResult(true, null);
         }

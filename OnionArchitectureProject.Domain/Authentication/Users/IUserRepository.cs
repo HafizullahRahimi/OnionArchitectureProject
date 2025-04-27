@@ -13,4 +13,6 @@ public interface IUserRepository
     Task UpdateAsync(User user);
     Task DeleteAsync(User user);
     Task DeleteAsync(string id);
+    Task<bool> ChangePasswordAsync(string userId, string newPassword);
+    Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword);
 }
