@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
+using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
@@ -37,24 +39,24 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<OperationResult> CreateAsync(CreateUserDto createUserDto)
+    public async Task<OperationResult> CreateAsync(UpsertUserDto upsertUserDto)
     {
         try
         {
-            var userNameExists = await userRepository.UserNameExistsAsync(createUserDto.UserName);
+            var userNameExists = await userRepository.UserNameExistsAsync(upsertUserDto.UserName);
             if (userNameExists)
             {
-                return new OperationResult(false, $"User '{createUserDto.UserName}' already exists.");
+                return new OperationResult(false, $"User '{upsertUserDto.UserName}' already exists.");
             }
 
-            var emailExists = await userRepository.EmailExistsAsync(createUserDto.Email);
+            var emailExists = await userRepository.EmailExistsAsync(upsertUserDto.Email);
             if (emailExists)
             {
-                return new OperationResult(false, $"Email '{createUserDto.Email}' is already registered.");
+                return new OperationResult(false, $"Email '{upsertUserDto.Email}' is already registered.");
             }
 
-            var user = mapper.Map<User>(createUserDto);
-            await userRepository.CreateAsync(user, createUserDto.Password);
+            var user = mapper.Map<User>(upsertUserDto);
+            await userRepository.CreateAsync(user, upsertUserDto.Password);
 
             return new OperationResult(true, null);
         }
@@ -64,40 +66,40 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<OperationResult> UpdateAsync(UpdateUserDto updateUserDto)
+    public async Task<OperationResult> UpdateAsync(UpsertUserDto upsertUserDto)
     {
         try
         {
-            var existingUser = await userRepository.GetByIdAsync(updateUserDto.Id);
+            var existingUser = await userRepository.GetByIdAsync(upsertUserDto.Id);
             if (existingUser == null)
             {
-                return new OperationResult(false, $"User with ID '{updateUserDto.Id}' not found.");
+                return new OperationResult(false, $"User with ID '{upsertUserDto.Id}' not found.");
             }
 
-            if (existingUser.UserName != updateUserDto.UserName)
+            if (existingUser.UserName != upsertUserDto.UserName)
             {
-                var userNameExists = await userRepository.UserNameExistsAsync(updateUserDto.UserName);
+                var userNameExists = await userRepository.UserNameExistsAsync(upsertUserDto.UserName);
                 if (userNameExists)
                 {
-                    return new OperationResult(false, $"Username '{updateUserDto.UserName}' is already taken.");
+                    return new OperationResult(false, $"Username '{upsertUserDto.UserName}' is already taken.");
                 }
             }
 
-            if (existingUser.Email != updateUserDto.Email)
+            if (existingUser.Email != upsertUserDto.Email)
             {
-                var emailExists = await userRepository.EmailExistsAsync(updateUserDto.Email);
+                var emailExists = await userRepository.EmailExistsAsync(upsertUserDto.Email);
                 if (emailExists)
                 {
-                    return new OperationResult(false, $"Email '{updateUserDto.Email}' is already registered.");
+                    return new OperationResult(false, $"Email '{upsertUserDto.Email}' is already registered.");
                 }
             }
 
-            mapper.Map(updateUserDto, existingUser);
+            mapper.Map(upsertUserDto, existingUser);
 
             // Update password if provided
-            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            if (!string.IsNullOrEmpty(upsertUserDto.Password))
             {
-                await userRepository.ChangePasswordAsync(existingUser.Id, updateUserDto.Password);
+                await userRepository.ChangePasswordAsync(existingUser.Id, upsertUserDto.Password);
             }
 
             await userRepository.UpdateAsync(existingUser);
@@ -108,6 +110,11 @@ public class UserService : IUserService
         {
             throw;
         }
+    }
+
+    public UpsertUserDto MapToUpsertUserDto(UserDto userDto)
+    {
+        return mapper.Map<UpsertUserDto>(userDto);
     }
 
     private async Task<UserDto> MapToUserDtoAsync(User user)

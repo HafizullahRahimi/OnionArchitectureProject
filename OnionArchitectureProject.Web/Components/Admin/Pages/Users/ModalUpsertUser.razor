@@ -1,0 +1,72 @@
+﻿@using OnionArchitectureProject.Application.Admin.UserService.Models
+
+<ModalUpsert @ref="modalRef" AddTitle="Add User" EditTitle="Edit User" FormModel="@formModel" 
+    OnCreated="OnUserCreated" OnUpdated="OnUserUpdated">
+    <div class="mb-3">
+        <label for="userName" class="form-label">Username</label>
+        <InputText @bind-Value="formModel.UserName" class="form-control" id="userName" />
+        <ValidationMessage For="@(() => formModel.UserName)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <InputText @bind-Value="formModel.Email" class="form-control" id="email" />
+        <ValidationMessage For="@(() => formModel.Email)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText type="password" @bind-Value="formModel.Password" class="form-control" id="password" />
+        <ValidationMessage For="@(() => formModel.Password)" class="text-danger small" />
+        <div class="form-text">
+            Password must be at least 8 characters long and contain uppercase, lowercase, number, and special
+            character.
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <InputText type="password" @bind-Value="formModel.ConfirmPassword" class="form-control"
+                   id="confirmPassword" />
+        <ValidationMessage For="@(() => formModel.ConfirmPassword)" class="text-danger small" />
+    </div>
+    <div class="checkbox mb-3">
+        <label class="form-label">
+            <InputCheckbox @bind-Value="formModel.EmailConfirmed" class="darker-border-checkbox form-check-input" />
+            Email confirmed
+        </label>
+    </div>   
+</ModalUpsert>
+
+@code {
+    [Parameter]
+    public EventCallback<UpsertUserDto> OnUserCreated { get; set; }
+    [Parameter]
+    public EventCallback<UpsertUserDto> OnUserUpdated { get; set; }
+
+    private ModalUpsert<UpsertUserDto>? modalRef;
+    private UpsertUserDto formModel = new();
+
+    public async Task OpenModalAsync()
+    {
+        formModel = new();
+        if (modalRef != null)
+        {
+            await modalRef.OpenModalAsync();
+        }
+    }
+
+    public async Task OpenModalAsync(UpsertUserDto upsertUserDto)
+    {
+        formModel = upsertUserDto;
+        if (modalRef != null)
+        {
+            await modalRef.OpenModalAsync(formModel);
+        }
+    }
+
+    public async Task CloseModalAsync()
+    {
+        if (modalRef != null)
+        {
+            await modalRef.CloseModalAsync();
+        }
+    }
+}

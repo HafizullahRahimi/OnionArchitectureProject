@@ -20,7 +20,7 @@ public class UserProfile : Profile
                opt.MapFrom(src => src.ModifiedUtcDate.ToLocalTime());
            });
 
-        CreateMap<CreateUserDto, User>();
-        CreateMap<UpdateUserDto, User>();
+        CreateMap<UpsertUserDto, User>();
+        CreateMap<UserDto, UpsertUserDto>();
     }
 }

@@ -10,7 +10,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 	<h1 class="fs-2 text-black mb-0">Users</h1>
-	<button type="button" class="btn btn-success" @onclick="OpenCreateModal">
+	<button type="button" class="btn btn-success" @onclick="OpenModalUpsert">
 		<i class="bi bi-plus-circle me-2"></i>Add User
 	</button>
 </div>
@@ -71,8 +71,8 @@ else
 						</td>
 						<td>
 							<button type="button" class="btn btn-sm btn-primary me-2"
-								@onclick="() => OpenUpdateModal(user)">
-								<i class="bi bi-pencil"></i>
+									@onclick="() => OpenModalUpsert(user)">
+									<i class="bi bi-pencil"></i>
 							</button>
 						</td>
 					</tr>
@@ -82,14 +82,12 @@ else
 	</div>
 }
 
-<ModalCreateUser @ref="modalCreateUserRef" OnUserCreated="HandleUserCreated" />
-<ModalUpdateUser @ref="modalUpdateUserRef" OnUserUpdated="HandleUserUpdated" />
+<ModalUpsertUser @ref="modalUpsertUserRef" OnUserCreated="HandleUserCreated" OnUserUpdated="HandleUserUpdated" />
 <SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
 	private List<UserDto>? users;
-	private ModalCreateUser? modalCreateUserRef;
-	private ModalUpdateUser? modalUpdateUserRef;
+	private ModalUpsertUser? modalUpsertUserRef;
 	private SweetAlert? sweetAlertRef;
 	private bool isLoading;
 	private string? error;
@@ -99,51 +97,48 @@ else
 		await LoadUsersAsync();
 	}
 
-	private async Task OpenCreateModal()
+	private async Task OpenModalUpsert()
 	{
-		if (modalCreateUserRef != null)
+		if (modalUpsertUserRef != null)
 		{
-			await modalCreateUserRef.OpenModalAsync();
+			await modalUpsertUserRef.OpenModalAsync();
 		}
 	}
 
-	private async Task CloseCreateModal()
+	private async Task OpenModalUpsert(UserDto userDto)
 	{
-		if (modalCreateUserRef != null)
+		if (modalUpsertUserRef != null)
 		{
-			await modalCreateUserRef.CloseModalAsync();
+			var upsertUserDto = Service.MapToUpsertUserDto(userDto);
+
+			if (upsertUserDto != null)
+			{
+				await modalUpsertUserRef.OpenModalAsync(upsertUserDto);
+			}
 		}
 	}
 
-	private async Task OpenUpdateModal(UserDto user)
+	private async Task CloseModalUpsert()
 	{
-		if (modalUpdateUserRef != null)
+		if (modalUpsertUserRef != null)
 		{
-			await modalUpdateUserRef.OpenModalAsync(user);
+			await modalUpsertUserRef.CloseModalAsync();
 		}
 	}
 
-	private async Task CloseUpdateModal()
-	{
-		if (modalUpdateUserRef != null)
-		{
-			await modalUpdateUserRef.CloseModalAsync();
-		}
-	}
-
-	private async Task HandleUserCreated(CreateUserDto createUserDto)
+	private async Task HandleUserCreated(UpsertUserDto upsertUserDto)
 	{
 		try
 		{
 			isLoading = true;
 			StateHasChanged();
 
-			var result = await Service.CreateAsync(createUserDto);
+			var result = await Service.CreateAsync(upsertUserDto);
 			if (result.Succeeded)
 			{
 				await HandleUserOperationAsync(async () =>
 				{
-					await CloseCreateModal();
+					await CloseModalUpsert();
 					await LoadUsersAsync();
 				}, "User created successfully!");
 			}
@@ -163,19 +158,19 @@ else
 		}
 	}
 
-	private async Task HandleUserUpdated(UpdateUserDto updateUserDto)
+	private async Task HandleUserUpdated(UpsertUserDto upsertUserDto)
 	{
 		try
 		{
 			isLoading = true;
 			StateHasChanged();
 
-			var result = await Service.UpdateAsync(updateUserDto);
+			var result = await Service.UpdateAsync(upsertUserDto);
 			if (result.Succeeded)
 			{
 				await HandleUserOperationAsync(async () =>
 				{
-					await CloseUpdateModal();
+					await CloseModalUpsert();
 					await LoadUsersAsync();
 				}, "User updated successfully!");
 			}

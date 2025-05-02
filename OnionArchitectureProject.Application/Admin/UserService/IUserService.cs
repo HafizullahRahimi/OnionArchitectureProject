@@ -5,6 +5,7 @@ namespace OnionArchitectureProject.Application.Admin.UserService;
 public interface IUserService
 {
     Task<List<UserDto>> GetUsersAsync();
-    Task<OperationResult> CreateAsync(CreateUserDto createUserDto);
-    Task<OperationResult> UpdateAsync(UpdateUserDto updateUserDto);
+    Task<OperationResult> CreateAsync(UpsertUserDto upsertUserDto);
+    Task<OperationResult> UpdateAsync(UpsertUserDto upsertUserDto);
+    UpsertUserDto MapToUpsertUserDto(UserDto userDto);
 }
