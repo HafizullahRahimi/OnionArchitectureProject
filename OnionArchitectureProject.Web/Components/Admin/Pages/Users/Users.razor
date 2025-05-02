@@ -71,8 +71,11 @@ else
 						</td>
 						<td>
 							<button type="button" class="btn btn-sm btn-primary me-2"
-									@onclick="() => OpenModalUpsert(user)">
-									<i class="bi bi-pencil"></i>
+								@onclick="() => OpenModalUpsert(user)">
+								<i class="bi bi-pencil"></i>
+							</button>
+							<button type="button" class="btn btn-sm btn-danger" @onclick="() => OpenModalDelete(user)">
+								<i class="bi bi-trash"></i>
 							</button>
 						</td>
 					</tr>
@@ -83,11 +86,13 @@ else
 }
 
 <ModalUpsertUser @ref="modalUpsertUserRef" OnUserCreated="HandleUserCreated" OnUserUpdated="HandleUserUpdated" />
+<ModalDeleteUser @ref="modalDeleteUserRef" OnUserDeleted="HandleUserDeleted" />
 <SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
 	private List<UserDto>? users;
 	private ModalUpsertUser? modalUpsertUserRef;
+	private ModalDeleteUser? modalDeleteUserRef;
 	private SweetAlert? sweetAlertRef;
 	private bool isLoading;
 	private string? error;
@@ -123,6 +128,14 @@ else
 		if (modalUpsertUserRef != null)
 		{
 			await modalUpsertUserRef.CloseModalAsync();
+		}
+	}
+
+	private async Task OpenModalDelete(UserDto userDto)
+	{
+		if (modalDeleteUserRef != null)
+		{
+			await modalDeleteUserRef.OpenModalAsync(userDto);
 		}
 	}
 
@@ -200,6 +213,37 @@ else
 		catch (Exception ex)
 		{
 			await ShowAlertAsync($"Operation failed: {ex.Message}", SweetAlertIcon.Error);
+		}
+	}
+
+	private async Task HandleUserDeleted(UserDto userDto)
+	{
+		try
+		{
+			isLoading = true;
+			StateHasChanged();
+
+			var result = await Service.DeleteAsync(userDto.Id);
+			if (result.Succeeded)
+			{
+				await HandleUserOperationAsync(async () =>
+				{
+					await LoadUsersAsync();
+				}, "User deleted successfully!");
+			}
+			else
+			{
+				await ShowAlertAsync($"Error deleting user: {result.Error}", SweetAlertIcon.Error);
+			}
+		}
+		catch (Exception ex)
+		{
+			await ShowAlertAsync($"Error deleting user: {ex.Message}", SweetAlertIcon.Error);
+		}
+		finally
+		{
+			isLoading = false;
+			StateHasChanged();
 		}
 	}
 

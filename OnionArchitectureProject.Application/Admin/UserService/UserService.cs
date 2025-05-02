@@ -112,6 +112,25 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<OperationResult> DeleteAsync(string userId)
+    {
+        try
+        {
+            var existingUser = await userRepository.GetByIdAsync(userId);
+            if (existingUser == null)
+            {
+                return new OperationResult(false, $"User with ID '{userId}' not found.");
+            }
+
+            await userRepository.DeleteAsync(existingUser);
+            return new OperationResult(true, null);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
     public UpsertUserDto MapToUpsertUserDto(UserDto userDto)
     {
         return mapper.Map<UpsertUserDto>(userDto);
