@@ -1,0 +1,45 @@
+@using OnionArchitectureProject.Application.Admin.UserService.Models
+
+<ModalUpsert @ref="modalRef" EditTitle="Manage User Roles" FormModel="@formModel" OnUpdated="OnUserRolesUpdated">
+	@* <div class="mb-3">
+		<label for="userId" class="form-label">Username</label>
+		<InputText @bind-Value="formModel.UserId" class="form-control" id="userId" />
+		<ValidationMessage For="@(() => formModel.UserId)" class="text-danger small" />
+	</div> *@
+	@foreach (var item in formModel.Roles)
+	{
+		<div class="checkbox mb-3">
+			<label class="form-label">
+				<InputCheckbox @bind-Value="@item.Status" class="darker-border-checkbox form-check-input"
+					disabled="@(item.Name == "System")" />
+				@item.Name
+			</label>
+		</div>
+	}
+</ModalUpsert>
+
+@code {
+	[Parameter]
+	public EventCallback<UserRoleAssignmentDto> OnUserRolesUpdated { get; set; }
+
+	private ModalUpsert<UserRoleAssignmentDto>? modalRef;
+	private UserRoleAssignmentDto formModel = new();
+
+	public async Task OpenModalAsync(UserRoleAssignmentDto userRoleAssignmentDto)
+	{
+		formModel = userRoleAssignmentDto;
+
+		if (modalRef != null)
+		{
+			await modalRef.OpenModalAsync(userRoleAssignmentDto);
+		}
+	}
+
+	public async Task CloseModalAsync()
+	{
+		if (modalRef != null)
+		{
+			await modalRef.CloseModalAsync();
+		}
+	}
+}

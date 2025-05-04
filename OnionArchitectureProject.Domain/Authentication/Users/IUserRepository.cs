@@ -15,4 +15,8 @@ public interface IUserRepository
     Task DeleteAsync(string id);
     Task<bool> ChangePasswordAsync(string userId, string newPassword);
     Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword);
+    Task<IList<string>?> GetRolesAsync(string userId);
+    Task AddToRolesAsync(string userId, IList<string> newRoles);
+    Task RemoveFromRolesAsync(string userId, IList<string> currentRoles);
+    Task UpdateUserRolesAsync(string userId, IList<string> newRoles);
 }

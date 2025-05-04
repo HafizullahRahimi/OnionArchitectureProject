@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCategoryDto;
-using OnionArchitectureProject.Application.Admin.CategoryService.Models;
 using OnionArchitectureProject.Application.Admin.UserService.Models;
 using OnionArchitectureProject.Application.Common.Models;
+using OnionArchitectureProject.Domain.Authentication.Roles;
 using OnionArchitectureProject.Domain.Authentication.Users;
 
 namespace OnionArchitectureProject.Application.Admin.UserService;
@@ -12,15 +12,18 @@ public class UserService : IUserService
     private readonly IUserRepository userRepository;
     private readonly IMapper mapper;
     private readonly IServiceScopeFactory scopeFactory;
+    private readonly IRoleRepository roleRepository;
 
     public UserService(
         IUserRepository userRepository,
         IMapper mapper,
-        IServiceScopeFactory scopeFactory)
+        IServiceScopeFactory scopeFactory,
+        IRoleRepository roleRepository)
     {
         this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         this.scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
+        this.roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
     }
 
     public async Task<List<UserDto>> GetUsersAsync()
@@ -150,5 +153,62 @@ public class UserService : IUserService
         var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
         var user = await userRepository.GetByIdAsync(userId);
         return user?.UserName;
+    }
+
+    public async Task<List<Role>?> GetAvailableRolesAsync() =>
+        await roleRepository.GetAllAsync();
+
+    public async Task<UserRoleAssignmentDto> GetUserRolesAsync(string userId)
+    {
+        try
+        {
+            var availableRoles = await GetAvailableRolesAsync();
+            var existingUser = await userRepository.GetByIdAsync(userId);
+
+            if (existingUser == null || availableRoles == null)
+            {
+                return new UserRoleAssignmentDto { UserId = userId };
+            }
+
+            var userRoles = await userRepository.GetRolesAsync(userId);
+
+            return new UserRoleAssignmentDto
+            {
+                UserId = userId,
+                Roles = availableRoles.Select(r => new RoleCheckbox
+                {
+                    Name = r.Name,
+                    Status = userRoles.Contains(r.Name)
+                }).ToList()
+            };
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> UpdateUserRolesAsync(UserRoleAssignmentDto userRoleAssignmentDto)
+    {
+        try
+        {
+            var existingUser = await userRepository.GetByIdAsync(userRoleAssignmentDto.UserId);
+            if (existingUser == null)
+            {
+                return new OperationResult(false, $"User with ID '{userRoleAssignmentDto.UserId}' not found.");
+            }
+
+            var roles = userRoleAssignmentDto.Roles
+                .Where(r => r.Status)
+                .Select(r => r.Name)
+                .ToList();
+
+            await userRepository.UpdateUserRolesAsync(existingUser.Id, roles);
+            return new OperationResult(true, null);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

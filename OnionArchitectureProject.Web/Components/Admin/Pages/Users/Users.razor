@@ -1,4 +1,4 @@
-﻿@page "/Admin/Users"
+@page "/Admin/Users"
 
 @using OnionArchitectureProject.Application.Admin.UserService
 @using OnionArchitectureProject.Application.Admin.UserService.Models
@@ -71,8 +71,11 @@ else
 						</td>
 						<td>
 							<button type="button" class="btn btn-sm btn-primary me-2"
-								@onclick="() => OpenModalUpsert(user)">
+									@onclick="() => OpenModalUpsert(user)">
 								<i class="bi bi-pencil"></i>
+							</button>
+							<button type="button" class="btn btn-sm btn-info me-2" @onclick="() => OpenModalManageUserRoles(user)">
+								<i class="bi bi-person-gear"></i>
 							</button>
 							<button type="button" class="btn btn-sm btn-danger" @onclick="() => OpenModalDelete(user)">
 								<i class="bi bi-trash"></i>
@@ -87,12 +90,14 @@ else
 
 <ModalUpsertUser @ref="modalUpsertUserRef" OnUserCreated="HandleUserCreated" OnUserUpdated="HandleUserUpdated" />
 <ModalDeleteUser @ref="modalDeleteUserRef" OnUserDeleted="HandleUserDeleted" />
+<ModalManageUserRoles @ref="modalManageUserRolesRef" OnUserRolesUpdated="HandleUserRolesUpdated" />
 <SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
 	private List<UserDto>? users;
 	private ModalUpsertUser? modalUpsertUserRef;
 	private ModalDeleteUser? modalDeleteUserRef;
+	private ModalManageUserRoles? modalManageUserRolesRef;
 	private SweetAlert? sweetAlertRef;
 	private bool isLoading;
 	private string? error;
@@ -139,12 +144,28 @@ else
 		}
 	}
 
+	private async Task OpenModalManageUserRoles(UserDto userDto)
+	{
+		var userRoles = await Service.GetUserRolesAsync(userDto.Id);
+		if (modalManageUserRolesRef != null)
+		{
+			await modalManageUserRolesRef.OpenModalAsync(userRoles);
+		}
+	}
+
+	private async Task CloseModalManageUserRoles()
+	{
+		if (modalManageUserRolesRef != null)
+		{
+			await modalManageUserRolesRef.CloseModalAsync();
+		}
+	}
+
 	private async Task HandleUserCreated(UpsertUserDto upsertUserDto)
 	{
 		try
 		{
 			isLoading = true;
-			StateHasChanged();
 
 			var result = await Service.CreateAsync(upsertUserDto);
 			if (result.Succeeded)
@@ -176,7 +197,6 @@ else
 		try
 		{
 			isLoading = true;
-			StateHasChanged();
 
 			var result = await Service.UpdateAsync(upsertUserDto);
 			if (result.Succeeded)
@@ -203,25 +223,11 @@ else
 		}
 	}
 
-	private async Task HandleUserOperationAsync(Func<Task> operation, string successMessage)
-	{
-		try
-		{
-			await operation();
-			await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
-		}
-		catch (Exception ex)
-		{
-			await ShowAlertAsync($"Operation failed: {ex.Message}", SweetAlertIcon.Error);
-		}
-	}
-
 	private async Task HandleUserDeleted(UserDto userDto)
 	{
 		try
 		{
 			isLoading = true;
-			StateHasChanged();
 
 			var result = await Service.DeleteAsync(userDto.Id);
 			if (result.Succeeded)
@@ -244,6 +250,50 @@ else
 		{
 			isLoading = false;
 			StateHasChanged();
+		}
+	}
+
+	private async Task HandleUserRolesUpdated(UserRoleAssignmentDto userRoleAssignmentDto)
+	{
+		try
+		{
+			isLoading = true;
+
+			var result = await Service.UpdateUserRolesAsync(userRoleAssignmentDto);
+			if (result.Succeeded)
+			{
+				await HandleUserOperationAsync(async () =>
+				{
+					await CloseModalManageUserRoles();
+					await LoadUsersAsync();
+				}, "User roles updated successfully!");
+			}
+			else
+			{
+				await ShowAlertAsync("Failed to update user roles.", SweetAlertIcon.Error);
+			}
+		}
+		catch (Exception ex)
+		{
+			await ShowAlertAsync($"Error updating user roles: {ex.Message}", SweetAlertIcon.Error);
+		}
+		finally
+		{
+			isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private async Task HandleUserOperationAsync(Func<Task> operation, string successMessage)
+	{
+		try
+		{
+			await operation();
+			await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
+		}
+		catch (Exception ex)
+		{
+			await ShowAlertAsync($"Operation failed: {ex.Message}", SweetAlertIcon.Error);
 		}
 	}
 

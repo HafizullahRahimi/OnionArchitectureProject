@@ -70,12 +70,12 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task UpdateAsync(User entity)
+    public async Task UpdateAsync(User user)
     {
-        var existingAppUser = await GetAppUserByIdAsync(entity.Id);
+        var existingAppUser = await GetAppUserByIdAsync(user.Id);
         if (existingAppUser != null)
         {
-            mapper.Map(entity, existingAppUser);
+            mapper.Map(user, existingAppUser);
             await userManager.UpdateAsync(existingAppUser);
         }
     }
@@ -118,6 +118,42 @@ public class UserRepository : IUserRepository
         return result.Succeeded;
     }
 
+    public async Task<IList<string>?> GetRolesAsync(string userId)
+    {
+        var appUser = await GetAppUserByIdAsync(userId);
+        return appUser is null
+            ? null
+            : await userManager.GetRolesAsync(appUser);
+    }
+
+    public async Task AddToRolesAsync(string userId, IList<string> newRoles)
+    {
+        var appUser = await GetAppUserByIdAsync(userId);
+        if (appUser != null)
+            await userManager.AddToRolesAsync(appUser, newRoles);
+    }
+
+    public async Task RemoveFromRolesAsync(string userId, IList<string> currentRoles)
+    {
+        var appUser = await GetAppUserByIdAsync(userId);
+        if (appUser != null)
+            await userManager.RemoveFromRolesAsync(appUser, currentRoles);
+    }
+
+    public async Task UpdateUserRolesAsync(string userId, IList<string> newRoles)
+    {
+        var currentRoles = await GetRolesAsync(userId);
+        if (currentRoles?.Count > 0)
+        {
+            await RemoveFromRolesAsync(userId, currentRoles);
+        }
+
+        if (newRoles.Count > 0)
+        {
+            await AddToRolesAsync(userId, newRoles);
+        }
+    }
+
     private async Task<ApplicationUser?> GetAppUserByIdAsync(string userId) =>
-       await userManager.FindByIdAsync(userId);
+        await userManager.FindByIdAsync(userId);
 }
