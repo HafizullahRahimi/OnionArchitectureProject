@@ -6,10 +6,10 @@
 
 @inherits OwningComponentBase<IUserService>
 
-<PageTitle>Users</PageTitle>
+<PageTitle>Users Management</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-	<h1 class="fs-2 text-black mb-0">Users</h1>
+	<h1 class="fs-2 text-black mb-0">Users Management</h1>
 	<button type="button" class="btn btn-success" @onclick="OpenModalUpsert">
 		<i class="bi bi-plus-circle me-2"></i>Add User
 	</button>
@@ -30,7 +30,7 @@ else if (error != null)
 else if (!users?.Any() ?? true)
 {
 	<div class="alert alert-info" role="alert">
-		<i class="bi bi-info-circle me-2"></i>No users available.
+		<i class="bi bi-info-circle me-2"></i>No users available. Click the "Add user" button to create one.
 	</div>
 }
 else

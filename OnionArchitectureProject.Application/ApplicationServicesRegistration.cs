@@ -2,6 +2,7 @@
 using OnionArchitectureProject.Application.Admin.CategoryService;
 using OnionArchitectureProject.Application.Admin.CategoryService.Profiles;
 using OnionArchitectureProject.Application.Admin.ProductService;
+using OnionArchitectureProject.Application.Admin.ProductService.Models;
 using OnionArchitectureProject.Application.Admin.RoleService;
 using OnionArchitectureProject.Application.Admin.RoleService.Models;
 using OnionArchitectureProject.Application.Admin.UserService;
@@ -17,6 +18,7 @@ public static class ApplicationServicesRegistration
         services.AddAutoMapper(typeof(CategoryProfile));
         services.AddAutoMapper(typeof(UserProfile));
         services.AddAutoMapper(typeof(RoleProfile));
+        services.AddAutoMapper(typeof(ProductProfile));
         #endregion
 
         #region Services
