@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OnionArchitectureProject.Domain.Base;
 using OnionArchitectureProject.Domain.Base.Repositories;
 using System.Linq.Expressions;
@@ -21,7 +21,7 @@ public class RepositoryWithFilter<TEntity> : IRepositoryWithFilter<TEntity>
         await GetAllAsync(null, includes, cancellationToken, 0);
 
     public async Task<List<TEntity>> GetAllAsync(IFilter<TEntity> filter, IIncludes<TEntity> includes,
-        CancellationToken cancellationToken) => await GetAllAsync(filter, includes, cancellationToken);
+        CancellationToken cancellationToken) => await GetAllAsync(filter, includes, cancellationToken, 0);
 
     public async Task<List<TEntity>> GetAllAsync(IIncludes<TEntity> includes, CancellationToken cancellationToken,
         int numberOfEntities) => await GetAllAsync(null, includes, cancellationToken, numberOfEntities);
