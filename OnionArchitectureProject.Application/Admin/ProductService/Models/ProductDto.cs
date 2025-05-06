@@ -2,6 +2,7 @@
 using OnionArchitectureProject.Domain.Categories;
 
 namespace OnionArchitectureProject.Application.Admin.ProductService.Models;
+
 public class ProductDto
 {
     public Guid Id { get; set; }

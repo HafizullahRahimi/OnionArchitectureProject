@@ -1,0 +1,81 @@
+﻿@using OnionArchitectureProject.Application.Admin.ProductService.Models
+@using OnionArchitectureProject.Domain.Categories
+@using FluentValidation
+
+<ModalUpsert @ref="modalRef" AddTitle="Add product" EditTitle="Edit product" FormModel="@formModel"
+    OnCreated="OnUserCreated" OnUpdated="OnUserUpdated">
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <InputText @bind-Value="formModel.Name" class="form-control" id="Name" />
+        <ValidationMessage For="@(() => formModel.Name)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <InputTextArea @bind-Value="formModel.Description" class="form-control" id="description" rows="3" />
+        <ValidationMessage For="@(() => formModel.Description)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="imageUrl" class="form-label">ImageUrl</label>
+        <InputText @bind-Value="formModel.ImageUrl" class="form-control" id="imageUrl" />
+        <ValidationMessage For="@(() => formModel.ImageUrl)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <InputNumber @bind-Value="formModel.Price" class="form-control" id="price" />
+        <ValidationMessage For="@(() => formModel.Price)" class="text-danger small" />
+    </div>
+    <div class="mb-3">
+        <label for="categoryId" class="form-label">Category</label>
+        <InputSelect @bind-Value="formModel.CategoryId" class="form-control" id="categoryId">
+            @if (categories != null && categories.Any())
+            {
+                <option value="">Select a category</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            }
+
+        </InputSelect>
+        <ValidationMessage For="@(() => formModel.CategoryId)" class="text-danger small" />
+    </div>
+</ModalUpsert>
+
+@code {
+    [Parameter]
+    public EventCallback<UpsertProductDto> OnUserCreated { get; set; }
+    [Parameter]
+    public EventCallback<UpsertProductDto> OnUserUpdated { get; set; }
+
+    private ModalUpsert<UpsertProductDto>? modalRef;
+    private UpsertProductDto formModel = new();
+    private List<Category>? categories;
+
+    public async Task OpenModalAsync(List<Category>? categories)
+    {
+        this.categories = categories;
+        formModel = new();
+        if (modalRef != null)
+        {
+            await modalRef.OpenModalAsync();
+        }
+    }
+
+    public async Task OpenModalAsync(List<Category>? categories, UpsertProductDto upsertProductDto)
+    {
+        this.categories = categories;
+        formModel = upsertProductDto;
+        if (modalRef != null)
+        {
+            await modalRef.OpenModalAsync(formModel);
+        }
+    }
+
+    public async Task CloseModalAsync()
+    {
+        if (modalRef != null)
+        {
+            await modalRef.CloseModalAsync();
+        }
+    }
+}

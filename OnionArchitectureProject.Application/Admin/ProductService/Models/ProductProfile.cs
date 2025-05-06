@@ -2,6 +2,7 @@
 using OnionArchitectureProject.Domain.Products;
 
 namespace OnionArchitectureProject.Application.Admin.ProductService.Models;
+
 public class ProductProfile : Profile
 {
     public ProductProfile()
@@ -19,5 +20,8 @@ public class ProductProfile : Profile
                 opt.PreCondition(src => src.ModifiedUtcDate != DateTime.MinValue);
                 opt.MapFrom(src => src.ModifiedUtcDate.ToLocalTime());
             });
+
+        CreateMap<UpsertProductDto, Product>();
+        CreateMap<ProductDto, UpsertProductDto>();
     }
 }
