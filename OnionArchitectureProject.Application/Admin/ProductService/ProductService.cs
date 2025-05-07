@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading;
+using AutoMapper;
 using OnionArchitectureProject.Application.Admin.ProductService.Models;
 using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
@@ -71,7 +72,7 @@ public class ProductService : IProductService
             var existingProduct = await GetProductByIdAsync(upsertProductDto.Id ?? Guid.Empty, cancellationToken);
             if (existingProduct == null)
             {
-                return new OperationResult(false, $"Error updating product");
+                return new OperationResult(false, $"Product with ID '{upsertProductDto.Id}' not found.");
             }
 
             mapper.Map(upsertProductDto, existingProduct);
@@ -81,6 +82,25 @@ public class ProductService : IProductService
         catch (Exception)
         {
             return new OperationResult(false, $"Error updating product");
+        }
+    }
+
+    public async Task<OperationResult> DeleteAsync(Guid productId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingProduct = await GetProductByIdAsync(productId, cancellationToken);
+            if (existingProduct == null)
+            {
+                return new OperationResult(false, $"Product with ID '{productId}' not found.");
+            }
+
+            await productRepository.DeleteAsync(existingProduct, cancellationToken);
+            return new OperationResult(true, null);
+        }
+        catch (Exception)
+        {
+            return new OperationResult(false, $"Error deleting product");
         }
     }
 

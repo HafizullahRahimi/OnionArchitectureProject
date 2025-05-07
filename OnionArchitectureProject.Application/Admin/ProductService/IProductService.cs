@@ -11,4 +11,5 @@ public interface IProductService
     Task<OperationResult> CreateAsync(UpsertProductDto upsertProductDto, CancellationToken cancellationToken);
     UpsertProductDto MapToUpsertProductDto(ProductDto productDto);
     Task<OperationResult> UpdateAsync(UpsertProductDto upsertProductDto, CancellationToken cancellationToken);
+    Task<OperationResult> DeleteAsync(Guid productId, CancellationToken cancellationToken);
 }

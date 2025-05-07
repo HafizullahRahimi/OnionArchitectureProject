@@ -16,7 +16,7 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			@if (IsLoading)
+			@if (isLoading)
 			{
 				<button type="button" class="btn btn-success" disabled>
 					<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -55,7 +55,7 @@
 	private ModalBase? modalRef;
 	private ModalMode modalMode { get; set; } = ModalMode.Add;
 	private FluentValidationValidator? fluentValidationValidator;
-	private bool IsLoading { get; set; }
+	private bool isLoading { get; set; }
 
 	public async Task OpenModalAsync()
 	{
@@ -94,7 +94,7 @@
 	{
 		try
 		{
-			IsLoading = false;
+			isLoading = false;
 			if (modalRef != null)
 			{
 				await modalRef.CloseModalAsync();
@@ -112,7 +112,7 @@
 
 		try
 		{
-			IsLoading = true;
+			isLoading = true;
 			if (await fluentValidationValidator.ValidateAsync())
 			{
 				if (modalMode == ModalMode.Add)
@@ -123,7 +123,6 @@
 				{
 					await OnUpdated.InvokeAsync(FormModel);
 				}
-				await CloseModalAsync();
 			}
 		}
 		catch (Exception ex)
@@ -132,7 +131,7 @@
 		}
 		finally
 		{
-			IsLoading = false;
+			isLoading = false;
 		}
 	}
 }
