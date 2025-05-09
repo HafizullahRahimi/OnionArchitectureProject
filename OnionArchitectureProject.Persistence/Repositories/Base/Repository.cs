@@ -54,6 +54,11 @@ public class Repository<TEntity> : RepositoryWithFilter<TEntity>, IRepository<TE
         var entity = await GetByIdAsync(id, cancellationToken);
         return entity != null;
     }
+    public async Task DeleteAsync(ICollection<TEntity> entities, CancellationToken cancellationToken)
+    {
+        DbContext.Set<TEntity>().RemoveRange(entities);
+        await SaveChangesAsync(cancellationToken);
+    }
 
     private async Task SaveChangesAsync(CancellationToken cancellationToken)
     {

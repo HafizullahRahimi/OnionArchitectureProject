@@ -8,4 +8,5 @@ public interface IRepository<TEntity> where TEntity : class
     Task UpdateAsync(TEntity entity, CancellationToken cancellationToken);
     Task DeleteAsync(TEntity entity, CancellationToken cancellationToken);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken);
+    Task DeleteAsync(ICollection<TEntity> entities, CancellationToken cancellationToken);
 }

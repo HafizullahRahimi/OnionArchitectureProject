@@ -104,10 +104,7 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
             {
                 await categoryRepository.DeleteAsync(existingCategory, cancellationToken);
                 var products = await productRepository.WithCategoryId(categoryId).ToListAsync(cancellationToken);
-                foreach (var product in products)
-                {
-                    await productRepository.DeleteAsync(product, cancellationToken);
-                }
+                await productRepository.DeleteAsync(products, cancellationToken);
 
                 return new OperationResult(true, null);
             }
