@@ -12,7 +12,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 	<h1 class="fs-2 text-black mb-0">Products Management</h1>
-	<button type="button" class="btn btn-success" @onclick="OpenModalUpsert">
+	<button type="button" class="btn btn-success" @onclick="OpenUpsertModalAsync">
 		<i class="bi bi-plus-circle me-2"></i>Add product
 	</button>
 </div>
@@ -23,10 +23,13 @@
 		<Spinner />
 	</div>
 }
-else if (!products?.Any() ?? true)
+else if (!products.Any())
 {
 	<div class="alert alert-info" role="alert">
-		<i class="bi bi-info-circle me-2"></i> No products available. Click the "Add product" button to create one.
+		<p>
+			<i class="bi bi-info-circle me-2"></i>
+			No products available. Click the "Add product" button to create one.
+		</p>
 	</div>
 }
 else
@@ -65,13 +68,13 @@ else
 						}
 						<td>
 							<button type="button" class="btn btn-sm btn-primary me-2"
-								@onclick="() => OpenModalUpsert(product)">
+									@onclick="() => OpenUpsertModalAsync(product)">
 								<i class="bi bi-pencil"></i>
 							</button>
 							<button type="button" class="btn btn-sm btn-info me-2">
 								<i class="bi bi-person-gear"></i>
 							</button>
-							<button type="button" class="btn btn-sm btn-danger" @onclick="() => OpenModalDelete(product)">
+							<button type="button" class="btn btn-sm btn-danger" @onclick="() => OpenDeleteModalAsync(product)">
 								<i class="bi bi-trash"></i>
 							</button>
 						</td>
@@ -99,8 +102,7 @@ else
 		await LoadProductsAsync();
 	}
 
-
-	private async Task OpenModalUpsert()
+	private async Task OpenUpsertModalAsync()
 	{
 		if (modalUpsertProductRef != null)
 		{
@@ -108,7 +110,7 @@ else
 		}
 	}
 
-	private async Task OpenModalUpsert(ProductDto productDto)
+	private async Task OpenUpsertModalAsync(ProductDto productDto)
 	{
 		if (modalUpsertProductRef != null)
 		{
@@ -121,7 +123,7 @@ else
 		}
 	}
 
-	private async Task CloseModalUpsert()
+	private async Task CloseUpsertModalAsync()
 	{
 		if (modalUpsertProductRef != null)
 		{
@@ -129,7 +131,7 @@ else
 		}
 	}
 
-	private async Task OpenModalDelete(ProductDto productDto)
+	private async Task OpenDeleteModalAsync(ProductDto productDto)
 	{
 		if (modalDeleteProductRef != null)
 		{
@@ -137,7 +139,7 @@ else
 		}
 	}
 
-	private async Task CloseModalDelete()
+	private async Task CloseDeleteModalAsync()
 	{
 		if (modalDeleteProductRef != null)
 		{
@@ -152,13 +154,13 @@ else
 		{
 			await HandleProductOperationAsync(async () =>
 			{
-				await CloseModalUpsert();
 				await LoadProductsAsync();
-			}, "Product created successfully!");
+				await CloseUpsertModalAsync();
+			}, $"Product '{upsertProductDto.Name}' created successfully!");
 		}
 		else
 		{
-			await ShowAlertAsync($"Error creating product", SweetAlertIcon.Error);
+			await ShowAlertAsync($"An error occurred while creating the product.", SweetAlertIcon.Error);
 		}
 	}
 
@@ -169,13 +171,13 @@ else
 		{
 			await HandleProductOperationAsync(async () =>
 			{
-				await CloseModalUpsert();
 				await LoadProductsAsync();
-			}, "Product updated successfully!");
+				await CloseUpsertModalAsync();
+			}, $"Product '{upsertProductDto.Name}' updated successfully!");
 		}
 		else
 		{
-			await ShowAlertAsync($"Error updating product", SweetAlertIcon.Error);
+			await ShowAlertAsync($"An error occurred while updating the product.", SweetAlertIcon.Error);
 		}
 	}
 
@@ -186,26 +188,26 @@ else
 		{
 			await HandleProductOperationAsync(async () =>
 			{
-				await CloseModalDelete();
 				await LoadProductsAsync();
-			}, "Product deleted successfully!");
+				await CloseDeleteModalAsync();
+			}, $"Product '{productDto.Name}' deleted successfully!");
 		}
 		else
 		{
-			await ShowAlertAsync($"Error deleting product", SweetAlertIcon.Error);
+			await ShowAlertAsync($"An error occurred while deleting the product.", SweetAlertIcon.Error);
 		}
 	}
 
 	private async Task HandleProductOperationAsync(Func<Task> operation, string successMessage)
 	{
 		await operation();
+		await InvokeAsync(StateHasChanged);
 		await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
 	}
 
 	private async Task LoadProductsAsync()
 	{
 		products = await Service.GetProductsAsync(CancellationToken.None);
-		StateHasChanged();
 	}
 
 	private async Task ShowAlertAsync(string text, SweetAlertIcon icon)

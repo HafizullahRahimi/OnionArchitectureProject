@@ -1,141 +1,54 @@
 ﻿@using OnionArchitectureProject.Application.Admin.RoleService.Models
 
-<ModalBase @ref="modalRef">
-    <EditForm Model="@formModel" OnValidSubmit="OnSubmitForm">
-        <div class="modal-header">
-            <h5 class="modal-title">@(modalMode == ModalMode.Add ? "Add Role" : "Edit Role")</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <FluentValidationValidator @ref="fluentValidationValidator" />
-            <ValidationSummary />
+<ModalUpsert @ref="modalRef" AddTitle="Add role" EditTitle="Edit role" FormModel="@formModel"
+			 OnCreated="OnRoleCreated" OnUpdated="OnRoleUpdated">
+	<div class="mb-3">
+		<label for="name" class="form-label">Name</label>
+		<InputText id="name" @bind-Value="formModel.Name" class="form-control" />
+		<ValidationMessage For="@(() => formModel.Name)" class="text-danger" />
+	</div>
 
-            <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <InputText id="name" @bind-Value="formModel.Name" class="form-control" />
-                <ValidationMessage For="@(() => formModel.Name)" class="text-danger" />
-            </div>
+	<div class="mb-3">
+		<label for="description" class="form-label">Description</label>
+		<InputTextArea id="description" @bind-Value="formModel.Description" class="form-control" rows="3" />
+		<ValidationMessage For="@(() => formModel.Description)" class="text-danger" />
+	</div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <InputTextArea id="description" @bind-Value="formModel.Description" class="form-control" rows="3" />
-                <ValidationMessage For="@(() => formModel.Description)" class="text-danger" />
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            @if (isLoading)
-            {
-                <button type="button" class="btn btn-success" disabled>
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Saving...
-                </button>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-save me-1"></i>Save
-                </button>
-            }
-        </div>
-    </EditForm>
-</ModalBase>
+</ModalUpsert>
 
 @code {
-    [Parameter]
-    public EventCallback<UpsertRoleDto> OnRoleCreated { get; set; }
+	[Parameter]
+	public EventCallback<UpsertRoleDto> OnRoleCreated { get; set; }
 
-    [Parameter]
-    public EventCallback<UpsertRoleDto> OnRoleUpdated { get; set; }
+	[Parameter]
+	public EventCallback<UpsertRoleDto> OnRoleUpdated { get; set; }
 
-    private ModalBase? modalRef;
-    private UpsertRoleDto formModel = new();
-    private ModalMode modalMode = ModalMode.Add;
-    private FluentValidationValidator? fluentValidationValidator;
-    private bool isLoading;
+	private ModalUpsert<UpsertRoleDto>? modalRef;
+	private UpsertRoleDto formModel = new();
 
-    private enum ModalMode
-    {
-        Add,
-        Edit
-    }
+	public async Task OpenModalAsync()
+	{
+		formModel = new();
+		if (modalRef != null)
+		{
+			await modalRef.OpenModalAsync();
+		}
+	}
 
-    public async Task OpenModalAsync()
-    {
-        try
-        {
-            modalMode = ModalMode.Add;
-            formModel = new();
-            if (modalRef != null)
-            {
-                await modalRef.OpenModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error opening modal: {ex.Message}");
-        }
-    }
+	public async Task OpenModalAsync(UpsertRoleDto upsertRoleDto)
+	{
+		formModel = upsertRoleDto;
+		if (modalRef != null)
+		{
+			await modalRef.OpenModalAsync(upsertRoleDto);
+		}
+	}
 
-    public async Task OpenModalAsync(string roleId, UpsertRoleDto upsertRoleDto)
-    {
-        try
-        {
-            modalMode = ModalMode.Edit;
-            formModel = upsertRoleDto;
-            if (modalRef != null)
-            {
-                await modalRef.OpenModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error opening edit modal: {ex.Message}");
-        }
-    }
-
-    public async Task CloseModalAsync()
-    {
-        try
-        {
-            isLoading = false;
-            if (modalRef != null)
-            {
-                await modalRef.CloseModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error closing modal: {ex.Message}");
-        }
-    }
-
-    private async Task OnSubmitForm()
-    {
-        if (fluentValidationValidator == null) return;
-
-        try
-        {
-            isLoading = true;
-            if (await fluentValidationValidator.ValidateAsync())
-            {
-                if (modalMode == ModalMode.Add)
-                {
-                    await OnRoleCreated.InvokeAsync(formModel);
-                }
-                else if (modalMode == ModalMode.Edit )
-                {
-                    await OnRoleUpdated.InvokeAsync(formModel);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error during form submission: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+	public async Task CloseModalAsync()
+	{
+		if (modalRef != null)
+		{
+			await modalRef.CloseModalAsync();
+		}
+	}
 }

@@ -1,92 +1,41 @@
 ﻿@using OnionArchitectureProject.Application.Admin.RoleService.Models
 
-<ModalBase @ref="_modalRef">
-    <div class="modal-header">
-        <h5 class="modal-title">Delete Role</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-        <div class="alert alert-warning">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Are you sure you want to delete the role <strong>@_roleToDelete.Name</strong>?
-            <p class="mb-0 mt-2 text-muted small">This action cannot be undone.</p>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        @if (_isLoading)
-        {
-            <button type="button" class="btn btn-danger" disabled>
-                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                Deleting...
-            </button>
-        }
-        else
-        {
-            <button type="button" class="btn btn-danger" @onclick="DeleteRole">
-                <i class="bi bi-trash me-1"></i>Delete
-            </button>
-        }
-    </div>
-</ModalBase>
+<ModalDelete @ref="deleteModal" Title="Delete role" OnDeleted="HandleDeleted">
+	<div class="alert alert-warning">
+		<p>
+			<i class="bi bi-exclamation-triangle me-2"></i>
+			Are you sure you want to delete role <strong>@roleToDelete.Name</strong>?
+		</p>
+		<p class="mb-0 mt-2 text-muted small">This action cannot be undone.</p>
+	</div>
+</ModalDelete>
 
 @code {
-    [Parameter]
-    public EventCallback<RoleDto> OnRoleDeleted { get; set; }
+	[Parameter]
+	public EventCallback<RoleDto> OnRoleDeleted { get; set; }
 
-    private ModalBase? _modalRef;
-    private RoleDto _roleToDelete = new();
-    private bool _isLoading;
+	private ModalDelete? deleteModal;
+	private RoleDto roleToDelete = new();
 
-    public async Task OpenModalAsync(RoleDto role)
-    {
-        try
-        {
-            _roleToDelete = role;
-            _isLoading = false;
-            if (_modalRef != null)
-            {
-                await _modalRef.OpenModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error opening delete modal: {ex.Message}");
-        }
-    }
+	public async Task OpenModalAsync(RoleDto role)
+	{
+		roleToDelete = role;
+		if (deleteModal != null)
+		{
+			await deleteModal.OpenModalAsync();
+		}
+	}
 
-    public async Task CloseModalAsync()
-    {
-        try
-        {
-            _isLoading = false;
-            if (_modalRef != null)
-            {
-                await _modalRef.CloseModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error closing delete modal: {ex.Message}");
-        }
-    }
+	public async Task CloseModalAsync()
+	{
+		if (deleteModal != null)
+		{
+			await deleteModal.CloseModalAsync();
+		}
+	}
 
-    private async Task DeleteRole()
-    {
-        if (_roleToDelete == null) return;
-
-        try
-        {
-            _isLoading = true;
-            await OnRoleDeleted.InvokeAsync(_roleToDelete);
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error deleting role: {ex.Message}");
-        }
-        finally
-        {
-			await CloseModalAsync();
-        }
-    }
+	private async Task HandleDeleted()
+	{
+		await OnRoleDeleted.InvokeAsync(roleToDelete);
+	}
 }

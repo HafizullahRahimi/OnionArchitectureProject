@@ -8,182 +8,208 @@
 @using System.Diagnostics
 
 @inherits OwningComponentBase<ICategoryService>
-@inject ILogger<Categories> Logger
 
-<PageTitle>Categories</PageTitle>
+<PageTitle>Categories Management</PageTitle>
 
-<div>
-    <button type="button" class="btn btn-success float-end me-3" @onclick=OpenUpsertModal>Add category</button>
-    <h1 class="fs-2 text-black">Categories</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h1 class="fs-2 text-black mb-0">Categories Management</h1>
+	<button type="button" class="btn btn-success" @onclick="OpenUpsertModalAsync">
+		<i class="bi bi-plus-circle me-2"></i>Add category
+	</button>
 </div>
 
 @if (categories == null)
 {
-    <Spinner />
+	<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+		<Spinner />
+	</div>
 }
 else if (!categories.Any())
 {
-    <div>No categories available.</div>
+	<div class="alert alert-info" role="alert">
+		<p>
+			<i class="bi bi-info-circle me-2"></i>
+			No categories available. Click the "Add category" button to create one.
+		</p>
+	</div>
 }
 else
 {
-    <table class="table table-striped caption-top">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Created(LocalTime)</th>
-                <th>CreatedBy</th>
-                <th>Modified(LocalTime)</th>
-                <th>ModifiedBy</th>
-                <th>Settings</th>
-            </tr>
-        </thead>
-        <tbody>
-            <Virtualize Items="@categories" Context="category">
-                <tr>
-                    <td>@category.Name</td>
-                    <td>@category.CreatedLocalTime</td>
-                    <td>@category.CreatedByUserName</td>
-                    @if (@category.ModifiedLocalTime != DateTime.MinValue)
-                    {
-                        <td>@category.ModifiedLocalTime</td>
-                        <td>@category.ModifiedByUserName</td>
-                    }
-                    else
-                    {
-                        <td>-</td>
-                        <td>-</td>
-                    }
-                    <td>
-                        <a class="btn btn-sm btn-outline-primary me-2" @onclick=@(()=>OpenUpsertModal(category))>Edit</a> |
-                        <a class="btn btn-sm btn-outline-success mx-2">Details</a> |
-                        <a class="btn btn-sm btn-outline-danger ms-2" @onclick=@(()=>OpenDeleteModal(category))>Delete</a>
-                    </td>
-                </tr>
-            </Virtualize>
-        </tbody>
-    </table>
+	<table class="table table-striped caption-top">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Created(LocalTime)</th>
+				<th>CreatedBy</th>
+				<th>Modified(LocalTime)</th>
+				<th>ModifiedBy</th>
+				<th>Settings</th>
+			</tr>
+		</thead>
+		<tbody>
+			<Virtualize Items="@categories" Context="category">
+				<tr>
+					<td>@category.Name</td>
+					<td>@category.CreatedLocalTime.ToString("g")</td>
+					<td>@category.CreatedByUserName</td>
+					@if (@category.ModifiedLocalTime != DateTime.MinValue)
+					{
+						<td>@category.ModifiedLocalTime.ToString("g")</td>
+						<td>@category.ModifiedByUserName</td>
+					}
+					else
+					{
+						<td>-</td>
+						<td>-</td>
+					}
+					<td>
+						<div class="btn-group" role="group">
+							<button class="btn btn-sm btn-outline-primary me-2"
+									@onclick="@(() => OpenUpsertModalAsync(category))">
+								<i class="bi bi-pencil"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-success me-2">
+								<i class="bi bi-info-circle"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-danger" @onclick="@(() => OpenDeleteModalAsync(category))">
+								<i class="bi bi-trash"></i>
+							</button>
+						</div>
+					</td>
+				</tr>
+			</Virtualize>
+		</tbody>
+	</table>
 }
 
-<ModalUpsertCategory @ref=upsertModalRef OnCategoryCreated="OnCategoryCreated" OnCategoryUpdated="OnCategoryUpdated" />
-<ModalDeleteCategory @ref=deleteModalRef OnCategoryDeleted="OnCategoryDeleted" />
+<ModalUpsertCategory @ref=upsertModalRef OnCategoryCreated="HandleCategoryCreated" OnCategoryUpdated="HandleCategoryUpdated" />
+<ModalDeleteCategory @ref=deleteModalRef OnCategoryDeleted="HandleCategoryDeleted" />
 <SweetAlert @ref=sweetAlertRef ConfirmButtonText="Ok" />
 
 @code {
-    private ModalUpsertCategory? upsertModalRef;
-    private ModalDeleteCategory? deleteModalRef;
-    private List<CategoryDto>? categories;
-    private SweetAlert? sweetAlertRef;
+	private List<CategoryDto>? categories;
+	private ModalUpsertCategory? upsertModalRef;
+	private ModalDeleteCategory? deleteModalRef;
+	private SweetAlert? sweetAlertRef;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCategoriesAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadCategoriesAsync();
+	}
 
-    private async Task OpenUpsertModal()
-    {
-        if (upsertModalRef != null)
-        {
-            await upsertModalRef.OpenModalAsync();
-        }
-    }
+	private async Task OpenUpsertModalAsync()
+	{
+		if (upsertModalRef != null)
+		{
+			await upsertModalRef.OpenModalAsync();
+		}
+	}
 
-    private async Task OpenUpsertModal(CategoryDto categoryDto)
-    {
-        if (upsertModalRef != null)
-        {
-            var upsertCategoryDto = Service.MapToUpsertCategoryDto(categoryDto);
+	private async Task OpenUpsertModalAsync(CategoryDto categoryDto)
+	{
+		if (upsertModalRef != null)
+		{
+			var upsertCategoryDto = Service.MapToUpsertCategoryDto(categoryDto);
 
-            if (upsertCategoryDto != null)
-            {
-                await upsertModalRef.OpenModalAsync(upsertCategoryDto);
-            }
-        }
-    }
+			if (upsertCategoryDto != null)
+			{
+				await upsertModalRef.OpenModalAsync(upsertCategoryDto);
+			}
+		}
+	}
 
-    private async Task CloseUpsertModal()
-    {
-        if (upsertModalRef != null)
-        {
-            await upsertModalRef.CloseModalAsync();
-        }
-    }
+	private async Task CloseUpsertModalAsync()
+	{
+		if (upsertModalRef != null)
+		{
+			await upsertModalRef.CloseModalAsync();
+		}
+	}
 
-    private async Task OnCategoryCreated(UpsertCategoryDto upsertCategoryDto)
-    {
-        var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
-        if (categoryCreated.Succeeded)
-        {
-            await HandleCategoryOperationAsync(async () =>
-            {
-                await LoadCategoriesAsync();
-                await CloseUpsertModal();
-            }, "Category created successfully!");
-        }
-        else
-        {
-            await ShowAlertAsync($"{categoryCreated.Error}", SweetAlertIcon.Warning);
-        }
-    }
+	private async Task OpenDeleteModalAsync(CategoryDto categoryDto)
+	{
+		if (deleteModalRef != null)
+		{
+			await deleteModalRef.OpenModalAsync(categoryDto);
+		}
+	}
 
-    private async Task OnCategoryUpdated(UpsertCategoryDto upsertCategoryDto)
-    {
-        var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
-        if (categoryUpdated.Succeeded)
-        {
-            await HandleCategoryOperationAsync(async () =>
-            {
-                await LoadCategoriesAsync();
-                await CloseUpsertModal();
-            }, $"Category {upsertCategoryDto.Name} updated successfully!");
-        }
-        else
-        {
-            await ShowAlertAsync($"{categoryUpdated.Error}", SweetAlertIcon.Warning);
-        }
-    }
+	private async Task CloseDeleteModalAsync()
+	{
+		if (deleteModalRef != null)
+		{
+			await deleteModalRef.CloseModalAsync();
+		}
+	}
 
-    private async Task OpenDeleteModal(CategoryDto categoryDto)
-    {
-        if (deleteModalRef != null)
-        {
-            await deleteModalRef.OpenModalAsync(categoryDto);
-        }
-    }
+	private async Task HandleCategoryCreated(UpsertCategoryDto upsertCategoryDto)
+	{
+		var categoryCreated = await Service.CreateAsync(upsertCategoryDto, CancellationToken.None);
+		if (categoryCreated.Succeeded)
+		{
+			await HandleCategoryOperationAsync(async () =>
+			{
+				await LoadCategoriesAsync();
+				await CloseUpsertModalAsync();
+			}, $"Category '{upsertCategoryDto.Name}' created successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"Error creating category: {categoryCreated.Error}", SweetAlertIcon.Error);
+		}
+	}
 
-    private async Task OnCategoryDeleted(CategoryDto categoryDto)
-    {
-        var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
-        if (categoryDeleted.Succeeded)
-        {
-            await HandleCategoryOperationAsync(async () =>
-            {
-                await LoadCategoriesAsync();
-            }, $"Category '{categoryDto.Name}' deleted successfully!");
-        }
-        else
-        {
-            await ShowAlertAsync($"{categoryDeleted.Error}", SweetAlertIcon.Warning);
-        }
-    }
+	private async Task HandleCategoryUpdated(UpsertCategoryDto upsertCategoryDto)
+	{
+		var categoryUpdated = await Service.UpdateAsync(upsertCategoryDto, CancellationToken.None);
+		if (categoryUpdated.Succeeded)
+		{
+			await HandleCategoryOperationAsync(async () =>
+			{
+				await LoadCategoriesAsync();
+				await CloseUpsertModalAsync();
+			}, $"Category '{upsertCategoryDto.Name}' updated successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"Error updating category: {categoryUpdated.Error}", SweetAlertIcon.Error);
+		}
+	}
 
-    private async Task HandleCategoryOperationAsync(Func<Task> operation, string successMessage)
-    {
-        await operation();
-        await InvokeAsync(StateHasChanged);
-        await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
-    }
+	private async Task HandleCategoryDeleted(CategoryDto categoryDto)
+	{
+		var categoryDeleted = await Service.DeleteAsync(categoryDto.Id, CancellationToken.None);
+		if (categoryDeleted.Succeeded)
+		{
+			await HandleCategoryOperationAsync(async () =>
+			{
+				await LoadCategoriesAsync();
+				await CloseDeleteModalAsync();
+			}, $"Category '{categoryDto.Name}' deleted successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"Error deleting category: {categoryDeleted.Error}", SweetAlertIcon.Error);
+		}
+	}
 
-    private async Task LoadCategoriesAsync()
-    {
-        categories = await Service.GetCategoriesAsync(CancellationToken.None);
-    }
+	private async Task HandleCategoryOperationAsync(Func<Task> operation, string successMessage)
+	{
+		await operation();
+		await InvokeAsync(StateHasChanged);
+		await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
+	}
 
-    private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
-    {
-        if (sweetAlertRef != null)
-        {
-            await sweetAlertRef.ShowAlertAsync(text, icon);
-        }
-    }
+	private async Task LoadCategoriesAsync()
+	{
+		categories = await Service.GetCategoriesAsync(CancellationToken.None);
+	}
+
+	private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
+	{
+		if (sweetAlertRef != null)
+		{
+			await sweetAlertRef.ShowAlertAsync(text, icon);
+		}
+	}
 }

@@ -10,291 +10,208 @@
 
 <PageTitle>Roles Management</PageTitle>
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Roles Management</h1>
-        <button type="button" class="btn btn-primary" @onclick="OpenUpsertModal">
-            <i class="bi bi-plus-circle"></i> Add Role
-        </button>
-    </div>
 
-    @if (isLoading)
-    {
-        <div class="text-center">
-            <Spinner />
-        </div>
-    }
-    else if (errorMessage != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @errorMessage
-        </div>
-    }
-    else if (!roles?.Any() ?? true)
-    {
-        <div class="alert alert-info" role="alert">
-            No roles available. Click the "Add Role" button to create one.
-        </div>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Created</th>
-                        <th>Created By</th>
-                        <th>Modified</th>
-                        <th>Modified By</th>
-                        <th class="text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <Virtualize Items="@roles" Context="role">
-                        <tr>
-                            <td>@role.Name</td>
-                            <td>@role.CreatedLocalTime.ToString("g")</td>
-                            <td>@role.CreatedByUserName</td>
-                            @if (role.ModifiedLocalTime != DateTime.MinValue)
-                            {
-                                <td>@role.ModifiedLocalTime.ToString("g")</td>
-                                <td>@role.ModifiedByUserName</td>
-                            }
-                            else
-                            {
-                                <td>-</td>
-                                <td>-</td>
-                            }
-                            <td class="text-end">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary"
-                                        @onclick="@(() => OpenUpsertModal(role))">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" @onclick="@(() => OpenDeleteModal(role))">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </Virtualize>
-                </tbody>
-            </table>
-        </div>
-    }
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h1 class="fs-2 text-black mb-0">Roles Management</h1>
+	<button type="button" class="btn btn-primary" @onclick="OpenUpsertModalAsync">
+		<i class="bi bi-plus-circle"></i> Add Role
+	</button>
 </div>
+
+@if (roles == null)
+{
+	<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+		<Spinner />
+	</div>
+}
+else if (!roles.Any())
+{
+	<div class="alert alert-info" role="alert">
+		<p>
+			<i class="bi bi-info-circle me-2"></i>
+			No roles available. Click the "Add Role" button to create one.
+		</p>
+	</div>
+}
+else
+{
+	<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead class="table-light">
+				<tr>
+					<th>Name</th>
+					<th>Created</th>
+					<th>Created By</th>
+					<th>Modified</th>
+					<th>Modified By</th>
+					<th class="text-end">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<Virtualize Items="@roles" Context="role">
+					<tr>
+						<td>@role.Name</td>
+						<td>@role.CreatedLocalTime.ToString("g")</td>
+						<td>@role.CreatedByUserName</td>
+						@if (role.ModifiedLocalTime != DateTime.MinValue)
+						{
+							<td>@role.ModifiedLocalTime.ToString("g")</td>
+							<td>@role.ModifiedByUserName</td>
+						}
+						else
+						{
+							<td>-</td>
+							<td>-</td>
+						}
+						<td class="text-end">
+							<div class="btn-group" role="group">
+								<button class="btn btn-sm btn-outline-primary"
+										@onclick="@(() => OpenUpsertModalAsync(role))">
+									<i class="bi bi-pencil"></i>
+								</button>
+								<button class="btn btn-sm btn-outline-danger" @onclick="@(() => OpenDeleteModalAsync(role))">
+									<i class="bi bi-trash"></i>
+								</button>
+							</div>
+						</td>
+					</tr>
+				</Virtualize>
+			</tbody>
+		</table>
+	</div>
+}
+
 
 <ModalUpsertRole @ref="upsertModalRef" OnRoleCreated="OnRoleCreated" OnRoleUpdated="OnRoleUpdated" />
 <ModalDeleteRole @ref="deleteModalRef" OnRoleDeleted="OnRoleDeleted" />
 <SweetAlert @ref="sweetAlertRef" ConfirmButtonText="Ok" />
 
 @code {
-    private ModalUpsertRole? upsertModalRef;
-    private ModalDeleteRole? deleteModalRef;
-    private SweetAlert? sweetAlertRef;
-    private List<RoleDto>? roles;
-    private bool isLoading = true;
-    private string? errorMessage;
+	private List<RoleDto>? roles;
+	private ModalUpsertRole? upsertModalRef;
+	private ModalDeleteRole? deleteModalRef;
+	private SweetAlert? sweetAlertRef;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await LoadRolesAsync();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while initializing Roles component");
-            errorMessage = "An error occurred while loading roles. Please try again later.";
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadRolesAsync();
+	}
 
-    private async Task OpenUpsertModal()
-    {
-        try
-        {
-            if (upsertModalRef != null)
-            {
-                await upsertModalRef.OpenModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while opening upsert modal");
-            await ShowAlertAsync("Failed to open the role creation form.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OpenUpsertModalAsync()
+	{
+		if (upsertModalRef != null)
+		{
+			await upsertModalRef.OpenModalAsync();
+		}
+	}
 
-    private async Task OpenUpsertModal(RoleDto roleDto)
-    {
-        try
-        {
-            if (upsertModalRef != null)
-            {
-                var upsertRoleDto = Service.MapToUpsertRoleDto(roleDto);
-                if (upsertRoleDto != null)
-                {
-                    await upsertModalRef.OpenModalAsync(roleDto.Id, upsertRoleDto);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while opening edit modal for role {RoleName}", roleDto.Name);
-            await ShowAlertAsync("Failed to open the role edit form.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OpenUpsertModalAsync(RoleDto roleDto)
+	{
+		if (upsertModalRef != null)
+		{
+			var upsertRoleDto = Service.MapToUpsertRoleDto(roleDto);
+			if (upsertRoleDto != null)
+			{
+				await upsertModalRef.OpenModalAsync(upsertRoleDto);
+			}
+		}
+	}
 
-    private async Task CloseUpsertModal()
-    {
-        try
-        {
-            if (upsertModalRef != null)
-            {
-                await upsertModalRef.CloseModalAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while closing upsert modal");
-        }
-    }
+	private async Task CloseUpsertModalAsync()
+	{
+		if (upsertModalRef != null)
+		{
+			await upsertModalRef.CloseModalAsync();
+		}
+	}
 
-    private async Task OnRoleCreated(UpsertRoleDto upsertRoleDto)
-    {
-        try
-        {
-            var result = await Service.CreateAsync(upsertRoleDto);
-            if (result.Succeeded)
-            {
-                await HandleRoleOperationAsync(async () =>
-                {
-                    await LoadRolesAsync();
-                    await CloseUpsertModal();
-                }, "Role created successfully!");
-            }
-            else
-            {
-                await ShowAlertAsync(result.Error ?? "Failed to create role.", SweetAlertIcon.Warning);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while creating role {RoleName}", upsertRoleDto.Name);
-            await ShowAlertAsync("An error occurred while creating the role.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OpenDeleteModalAsync(RoleDto role)
+	{
+		if (deleteModalRef != null)
+		{
+			await deleteModalRef.OpenModalAsync(role);
+		}
+	}
 
-    private async Task OnRoleUpdated(UpsertRoleDto upsertRoleDto)
-    {
-        try
-        {
-            var result = await Service.UpdateAsync(upsertRoleDto);
-            if (result.Succeeded)
-            {
-                await HandleRoleOperationAsync(async () =>
-                {
-                    await LoadRolesAsync();
-                    await CloseUpsertModal();
-                }, $"Role '{upsertRoleDto.Name}' updated successfully!");
-            }
-            else
-            {
-                await ShowAlertAsync(result.Error ?? "Failed to update role.", SweetAlertIcon.Warning);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while updating role {RoleName}", upsertRoleDto.Name);
-            await ShowAlertAsync("An error occurred while updating the role.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task CloseDeleteModalAsync()
+	{
+		if (deleteModalRef != null)
+		{
+			await deleteModalRef.CloseModalAsync();
+		}
+	}
 
-    private async Task OpenDeleteModal(RoleDto role)
-    {
-        try
-        {
-            if (deleteModalRef != null)
-            {
-                await deleteModalRef.OpenModalAsync(role);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while opening delete modal for role {RoleName}", role.Name);
-            await ShowAlertAsync("Failed to open the delete confirmation dialog.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OnRoleCreated(UpsertRoleDto upsertRoleDto)
+	{
+		var result = await Service.CreateAsync(upsertRoleDto);
+		if (result.Succeeded)
+		{
+			await HandleRoleOperationAsync(async () =>
+			{
+				await LoadRolesAsync();
+				await CloseUpsertModalAsync();
+			}, $"Role '{upsertRoleDto.Name}' created successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"An error occurred while creating the role.", SweetAlertIcon.Warning);
+			Logger.LogError(result.Error, $"Error occurred while creating role {upsertRoleDto.Name}");
+		}
+	}
 
-    private async Task OnRoleDeleted(RoleDto role)
-    {
-        try
-        {
-            var result = await Service.DeleteAsync(role.Id);
-            if (result.Succeeded)
-            {
-                await HandleRoleOperationAsync(async () =>
-                {
-                    await LoadRolesAsync();
-                }, $"Role '{role.Name}' deleted successfully!");
-            }
-            else
-            {
-                await ShowAlertAsync(result.Error ?? "Failed to delete role.", SweetAlertIcon.Warning);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while deleting role {RoleName}", role.Name);
-            await ShowAlertAsync("An error occurred while deleting the role.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OnRoleUpdated(UpsertRoleDto upsertRoleDto)
+	{
+		var result = await Service.UpdateAsync(upsertRoleDto);
+		if (result.Succeeded)
+		{
+			await HandleRoleOperationAsync(async () =>
+			{
+				await LoadRolesAsync();
+				await CloseUpsertModalAsync();
+			}, $"Role '{upsertRoleDto.Name}' updated successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"An error occurred while updating the role.", SweetAlertIcon.Error);
+			Logger.LogError(result.Error, $"Error occurred while updating role {upsertRoleDto.Name}");
+		}
+	}
 
-    private async Task HandleRoleOperationAsync(Func<Task> operation, string successMessage)
-    {
-        try
-        {
-            await operation();
-            await InvokeAsync(StateHasChanged);
-            await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while handling role operation");
-            await ShowAlertAsync("An error occurred while processing your request.", SweetAlertIcon.Error);
-        }
-    }
+	private async Task OnRoleDeleted(RoleDto role)
+	{
+		var result = await Service.DeleteAsync(role.Id);
+		if (result.Succeeded)
+		{
+			await HandleRoleOperationAsync(async () =>
+			{
+				await CloseDeleteModalAsync();
+				await LoadRolesAsync();
+			}, $"Role '{role.Name}' deleted successfully!");
+		}
+		else
+		{
+			await ShowAlertAsync($"An error occurred while deleting the role.", SweetAlertIcon.Error);
+			Logger.LogError(result.Error, $"Error occurred while deleting role {role.Name}");
+		}
+	}
 
-    private async Task LoadRolesAsync()
-    {
-        try
-        {
-            roles = await Service.GetRolesAsync();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while loading roles");
-            throw;
-        }
-    }
+	private async Task HandleRoleOperationAsync(Func<Task> operation, string successMessage)
+	{
+		await operation();
+		await InvokeAsync(StateHasChanged);
+		await ShowAlertAsync(successMessage, SweetAlertIcon.Success);
+	}
 
-    private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
-    {
-        try
-        {
-            if (sweetAlertRef != null)
-            {
-                await sweetAlertRef.ShowAlertAsync(text, icon);
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error occurred while showing alert");
-        }
-    }
+	private async Task LoadRolesAsync()
+	{
+		roles = await Service.GetRolesAsync();
+	}
+
+	private async Task ShowAlertAsync(string text, SweetAlertIcon icon)
+	{
+		if (sweetAlertRef != null)
+		{
+			await sweetAlertRef.ShowAlertAsync(text, icon);
+		}
+	}
 }

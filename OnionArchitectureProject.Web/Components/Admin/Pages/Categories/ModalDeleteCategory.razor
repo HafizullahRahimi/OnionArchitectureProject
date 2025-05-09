@@ -1,50 +1,41 @@
 ﻿@using OnionArchitectureProject.Application.Admin.CategoryService.Models
 
-<ModalBase @ref="modalRef">
-    <div class="modal-header">
-        <h1 class="modal-title fs-5">Delete Category</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-        Are you sure you want to delete the category: <strong>@categoryToDelete.Name</strong>?
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="DeleteCategory">Delete</button>
-    </div>
-</ModalBase>
+<ModalDelete @ref="deleteModal" Title="Delete category" OnDeleted="HandleDeleted">
+	<div class="alert alert-warning">
+		<p>
+			<i class="bi bi-exclamation-triangle me-2"></i>
+			Are you sure you want to delete the <strong>@categoryToDelete.Name</strong>?
+		</p>
+		<p class="mb-0 mt-2 text-muted small">This action cannot be undone.</p>
+	</div>
+</ModalDelete>
 
 @code {
-    [Parameter]
-    public EventCallback<CategoryDto> OnCategoryDeleted { get; set; }
+	[Parameter]
+	public EventCallback<CategoryDto> OnCategoryDeleted { get; set; }
 
-    private ModalBase? modalRef;
-    private CategoryDto categoryToDelete = new();
+	private ModalDelete? deleteModal;
+	private CategoryDto categoryToDelete = new();
 
-    public async Task OpenModalAsync(CategoryDto categoryDto)
-    {
-        if (modalRef != null)
-        {
-            categoryToDelete = categoryDto;
-            await InvokeAsync(StateHasChanged);
-            await modalRef.OpenModalAsync();
-        }
+	public async Task OpenModalAsync(CategoryDto category)
+	{
+		categoryToDelete = category;
+		if (deleteModal != null)
+		{
+			await deleteModal.OpenModalAsync();
+		}
+	}
 
-    }
+	public async Task CloseModalAsync()
+	{
+		if (deleteModal != null)
+		{
+			await deleteModal.CloseModalAsync();
+		}
+	}
 
-    public async Task CloseModalAsync()
-    {
-        if (modalRef != null)
-        {
-            await modalRef.CloseModalAsync();
-        }
-    }
-
-    private async Task DeleteCategory()
-    {
-        if (categoryToDelete != null)
-        {
-            await OnCategoryDeleted.InvokeAsync(categoryToDelete);
-        }
-    }
+	private async Task HandleDeleted()
+	{
+		await OnCategoryDeleted.InvokeAsync(categoryToDelete);
+	}
 }

@@ -1,0 +1,64 @@
+@using OnionArchitectureProject.Web.Components.Shared.SweetAlert
+
+<ModalBase @ref="modalRef">
+	<div class="modal-header">
+		<h5 class="modal-title">@Title</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	</div>
+	<div class="modal-body">
+		@ChildContent
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+		@if (IsLoading)
+		{
+			<button type="button" class="btn btn-danger" disabled>
+				<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+				Deleting...
+			</button>
+		}
+		else
+		{
+			<button type="button" class="btn btn-danger" @onclick="DeleteEntity">
+				<i class="bi bi-trash me-1"></i>Delete
+			</button>
+		}
+	</div>
+</ModalBase>
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = "Delete Entity";
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; } = default!;
+
+	[Parameter]
+	public EventCallback<object> OnDeleted { get; set; }
+
+	private ModalBase? modalRef;
+	private bool IsLoading { get; set; }
+
+	public async Task OpenModalAsync()
+	{
+		if (modalRef != null)
+		{
+			await modalRef.OpenModalAsync();
+		}
+	}
+
+	public async Task CloseModalAsync()
+	{
+		IsLoading = false;
+		if (modalRef != null)
+		{
+			await modalRef.CloseModalAsync();
+		}
+	}
+
+	private async Task DeleteEntity()
+	{
+		IsLoading = true;
+		await OnDeleted.InvokeAsync();
+	}
+}
