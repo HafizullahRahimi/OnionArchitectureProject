@@ -5,13 +5,15 @@ using OnionArchitectureProject.Application.Admin.CategoryService.Models.UpsertCa
 using OnionArchitectureProject.Application.Common.Models;
 using OnionArchitectureProject.Domain.Authentication.Users;
 using OnionArchitectureProject.Domain.Categories;
+using OnionArchitectureProject.Domain.Products;
 
 namespace OnionArchitectureProject.Application.Admin.CategoryService;
-public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IServiceScopeFactory scopeFactory) : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IServiceScopeFactory scopeFactory, IProductRepository productRepository) : ICategoryService
 {
     private readonly ICategoryRepository categoryRepository = categoryRepository;
     private readonly IMapper mapper = mapper;
     private readonly IServiceScopeFactory scopeFactory = scopeFactory;
+    private readonly IProductRepository productRepository = productRepository;
 
     public async Task<List<CategoryDto>?> GetCategoriesAsync(CancellationToken cancellationToken)
     {
@@ -101,6 +103,12 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
             if (existingCategory != null)
             {
                 await categoryRepository.DeleteAsync(existingCategory, cancellationToken);
+                var products = await productRepository.WithCategoryId(categoryId).ToListAsync(cancellationToken);
+                foreach (var product in products)
+                {
+                    await productRepository.DeleteAsync(product, cancellationToken);
+                }
+
                 return new OperationResult(true, null);
             }
             return new OperationResult(false, "Category not found.");
