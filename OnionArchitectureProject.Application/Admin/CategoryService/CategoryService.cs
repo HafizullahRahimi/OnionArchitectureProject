@@ -19,25 +19,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
     {
         try
         {
-            // Start Example Category Repository Filter ----------------------------------------
-
-            ////  1- With Created At UtcTime
-            //var timeOnly = new TimeOnly(13, 38, 24);
-            //var categories = await categoryRepository
-            //    .WithCreatedAtUtcTime(timeOnly.ToUtcTimeOnly())
-            //    .ToListAsync(cancellationToken);
-
-            //// 2- With Created At UtcDate
-            //var localDate1 = DateOnly.FromDateTime(DateTime.UtcNow);
-            //var localDate2 = DateTime.UtcNow.ToUtcDateOnly(); // Extension Method from DateTimeExtensions
-            //var localDate3 = new DateOnly(2025, 03, 09);
-
-            //var categories = await categoryRepository
-            //    .WithCreatedAtUtcDate(localDate3)
-            //    .ToListAsync(cancellationToken);
-
-            // En Example Category Repository Filter ----------------------------------------
-
             var categories = await categoryRepository.GetAllAsync(cancellationToken);
             var categoryDtos = mapper.Map<List<CategoryDto>>(categories);
             var categoriesWithUserName = new List<CategoryDto>();

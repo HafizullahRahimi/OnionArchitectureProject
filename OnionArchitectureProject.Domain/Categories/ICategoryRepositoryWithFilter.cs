@@ -3,6 +3,7 @@
 public interface ICategoryRepositoryWithFilter
 {
     ICategoryRepositoryWithFilter WithName(string name);
+    ICategoryRepositoryWithFilter WithProducts();
     ICategoryRepositoryWithFilter WithCreatedBy(string userId);
     ICategoryRepositoryWithFilter WithModifiedBy(string userId);
     ICategoryRepositoryWithFilter WithCreatedAtUtcDate(DateOnly utcDate);

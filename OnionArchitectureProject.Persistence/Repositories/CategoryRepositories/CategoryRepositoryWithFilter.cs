@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnionArchitectureProject.Domain.Base.Repositories;
 using OnionArchitectureProject.Domain.Categories;
 using OnionArchitectureProject.Persistence.Repositories.Base;
 
@@ -6,71 +7,65 @@ namespace OnionArchitectureProject.Persistence.Repositories.CategoryRepositories
 
 public class CategoryRepositoryWithFilter : Repository<Category>, ICategoryRepositoryWithFilter
 {
-    private string? name;
-    private string? createdBy;
-    private DateOnly? createdUtcDate;
-    private TimeOnly? createdUtcTime;
-    private string? modifiedBy;
-    private DateOnly? modifiedUtcDate;
-    private TimeOnly? modifiedUtcTime;
+    private CategoryFilter Filter { get; }
+    private IIncludes<Category>? IncludeProducts { get; set; }
 
     protected CategoryRepositoryWithFilter(IDbContextFactory<ApplicationDbContext> dbcontextFactory)
         : base(dbcontextFactory)
     {
+        Filter = new CategoryFilter();
     }
 
     public ICategoryRepositoryWithFilter WithName(string name)
     {
-        this.name = name;
+        Filter.Name = name;
+        return this;
+    }
+
+    public ICategoryRepositoryWithFilter WithProducts()
+    {
+        IncludeProducts = new CategoryIncludes();
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithCreatedBy(string userId)
     {
-        createdBy = userId;
+        Filter.CreatedBy = userId;
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithCreatedAtUtcDate(DateOnly utcDate)
     {
-        createdUtcDate = utcDate;
+        Filter.CreatedUtcDate = utcDate;
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithCreatedAtUtcTime(TimeOnly utcTime)
     {
-        createdUtcTime = utcTime;
+        Filter.CreatedUtcTime = utcTime;
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithModifiedBy(string userId)
     {
-        modifiedBy = userId;
+        Filter.ModifiedBy = userId;
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithModifiedAtUtcDate(DateOnly utcDate)
     {
-        modifiedUtcDate = utcDate;
+        Filter.ModifiedUtcDate = utcDate;
         return this;
     }
 
     public ICategoryRepositoryWithFilter WithModifiedAtUtcTime(TimeOnly utcTime)
     {
-        modifiedUtcTime = utcTime;
+        Filter.ModifiedUtcTime = utcTime;
         return this;
     }
 
     public async Task<List<Category>> ToListAsync(CancellationToken cancellationToken)
     {
-        var filter = new CategoryFilter(
-            name,
-            createdBy,
-            createdUtcDate,
-            createdUtcTime,
-            modifiedBy,
-            modifiedUtcDate,
-            modifiedUtcTime);
-        return await GetAllAsync(filter, cancellationToken);
+        return await GetAllAsync(Filter, IncludeProducts, cancellationToken);
     }
 }
