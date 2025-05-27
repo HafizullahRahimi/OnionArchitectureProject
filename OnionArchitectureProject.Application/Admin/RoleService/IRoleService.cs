@@ -7,6 +7,7 @@ public interface IRoleService
     Task<List<RoleDto>> GetRolesAsync();
     Task<OperationResult> CreateAsync(UpsertRoleDto upsertRoleDto);
     Task<OperationResult> UpdateAsync(UpsertRoleDto upsertRoleDto);
-    Task<OperationResult> DeleteAsync(string roleId);
+    Task<OperationResult> DeleteAsync(string roleName);
+    Task<OperationResult> RestoreAsync(string roleName);
     UpsertRoleDto MapToUpsertRoleDto(RoleDto roleDto);
 }

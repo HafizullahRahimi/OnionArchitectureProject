@@ -1,0 +1,82 @@
+﻿<ModalDialog @ref="modalRef">
+    <HeaderContent>
+        <h5 class="modal-title">
+            @(Title ?? $"{actionText} {EntityType}")
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </HeaderContent>
+    <BodyContent>
+        <div class="alert @alertColor">
+            @if (!string.IsNullOrEmpty(Message))
+            {
+                <p>
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    @Message
+                </p>
+            }
+            else
+            {
+                <p>
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Are you sure you want to @actionText.ToLower() <strong>@EntityName</strong>?
+                </p>
+            }
+            @if (Mode == DeleteRestoreMode.Delete)
+            {
+                <p class="mb-0 mt-2 text-muted small">This action cannot be undone.</p>
+            }
+        </div>
+    </BodyContent>
+    <FooterContent>
+        <button type="button" class="btn @cancelColor" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn @actionColor" @onclick="HandleConfirmedAsync" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            }
+            @(isLoading? loadingText : actionText)
+        </button>
+    </FooterContent>
+</ModalDialog>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public DeleteRestoreMode Mode { get; set; } = DeleteRestoreMode.Delete;
+    [Parameter] public string? EntityName { get; set; }
+    [Parameter] public string? EntityType { get; set; }
+    [Parameter, EditorRequired] public EventCallback<DeleteRestoreMode> OnConfirmed { get; set; }
+
+    private ModalDialog? modalRef;
+    private bool isLoading = false;
+    private string alertColor => Mode == DeleteRestoreMode.Delete ? "alert-warning" : "alert-info";
+    private string cancelColor => Mode == DeleteRestoreMode.Delete ? "btn-success" : "btn-danger";
+    private string actionColor => Mode == DeleteRestoreMode.Delete ? "btn-danger" : "btn-success";
+    private string actionText => Mode == DeleteRestoreMode.Delete ? "Delete" : "Restore";
+    private string loadingText => Mode == DeleteRestoreMode.Delete ? "Deleting..." : "Restoring...";
+
+    public async Task OpenModalAsync()
+    {
+        if (modalRef is null)
+            return;
+
+        await modalRef.OpenModalAsync();
+    }
+
+    public async Task CloseModalAsync()
+    {
+        if (modalRef is null)
+            return;
+
+        isLoading = false;
+        await modalRef.CloseModalAsync();
+    }
+
+    private async Task HandleConfirmedAsync()
+    {
+        isLoading = true;
+
+        if (OnConfirmed.HasDelegate)
+            await OnConfirmed.InvokeAsync(Mode);
+    }
+}

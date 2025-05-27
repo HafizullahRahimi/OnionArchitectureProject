@@ -1,0 +1,39 @@
+﻿<DeleteRestoreModal @ref="modalRef" Mode="@mode" Message="@message" EntityType="Role" EntityName="@roleName"
+                    OnConfirmed="HandleConfirmedAsync" />
+
+@code {
+    [Parameter, EditorRequired] public EventCallback<(DeleteRestoreMode, string)> OnConfirmed { get; set; }
+
+    private DeleteRestoreModal? modalRef;
+    private DeleteRestoreMode mode;
+    private string roleName = string.Empty;
+    private string? message;
+
+    public async Task OpenModalAsync(DeleteRestoreMode mode, string roleName)
+    {
+        if (modalRef == null)
+            return;
+
+        this.mode = mode;
+        this.roleName = roleName;
+        await modalRef.OpenModalAsync();
+    }
+
+    public async Task OpenModalAsync(DeleteRestoreMode mode, string roleName, string message)
+    {
+        this.message = message;
+        await OpenModalAsync(mode, roleName);
+    }
+
+    public async Task CloseModalAsync()
+    {
+        if (modalRef != null)
+            await modalRef.CloseModalAsync();
+    }
+
+    private async Task HandleConfirmedAsync(DeleteRestoreMode modalMode)
+    {
+        if (OnConfirmed.HasDelegate)
+            await OnConfirmed.InvokeAsync((modalMode, roleName));
+    }
+}

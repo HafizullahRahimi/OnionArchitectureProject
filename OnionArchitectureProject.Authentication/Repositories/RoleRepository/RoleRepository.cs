@@ -5,10 +5,16 @@ using OnionArchitectureProject.Authentication.Models;
 using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Authentication.Repositories.RoleRepository;
-public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper mapper) : IRoleRepository
+public class RoleRepository : IRoleRepository
 {
-    private readonly RoleManager<ApplicationRole> roleManager = roleManager;
-    private readonly IMapper mapper = mapper;
+    private readonly RoleManager<ApplicationRole> roleManager;
+    private readonly IMapper mapper;
+
+    public RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper mapper)
+    {
+        this.roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+        this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
 
     public async Task<List<Role>> GetAllAsync()
     {
@@ -20,23 +26,27 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper ma
 
     public async Task<Role?> GetByIdAsync(string id)
     {
-        var appRole = await roleManager.FindByIdAsync(id);
+        var appRole = await GetAppRoleByIdAsync(id);
         return appRole != null ? mapper.Map<Role>(appRole) : null;
     }
 
-    public async Task<bool> ExistAsync(string id)
+    public async Task<Role?> GetByNameAsync(string roleName)
     {
-        var appRole = await GetAppRoleByIdAsync(id);
-        return appRole != null;
+        var appRole = await GetAppRoleByNameAsync(roleName);
+        return appRole != null ? mapper.Map<Role>(appRole) : null;
     }
 
-    public async Task<bool> RoleNameExistsAsync(string roleName)
+    public async Task<Role?> GetByNameIncludingDeletedAsync(string roleName)
     {
-        var appRole = await roleManager.Roles
-               .IgnoreQueryFilters()
-               .FirstOrDefaultAsync(r => r.Name == roleName);
-        return appRole != null;
+        var appRole = await GetAppRoleIncludingDeletedByNameAsync(roleName);
+        return appRole != null ? mapper.Map<Role>(appRole) : null;
     }
+
+    public async Task<bool> ExistAsync(string id) =>
+        await GetAppRoleByIdAsync(id) != null;
+
+    public async Task<bool> RoleNameExistsAsync(string roleName) =>
+        await roleManager.Roles.AnyAsync(r => r.Name == roleName);
 
     public async Task<Role> CreateAsync(Role role)
     {
@@ -56,16 +66,32 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager, IMapper ma
         }
     }
 
-    public async Task DeleteAsync(Role role) =>
-        await DeleteAsync(role.Id);
-
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string roleName)
     {
-        var existingAppRole = await GetAppRoleByIdAsync(id);
+        var existingAppRole = await GetAppRoleByNameAsync(roleName);
         if (existingAppRole != null)
             await roleManager.DeleteAsync(existingAppRole);
     }
 
+    public async Task RestoreAsync(string roleName)
+    {
+        var existingAppRole = await GetAppRoleIncludingDeletedByNameAsync(roleName);
+        if (existingAppRole != null)
+        {
+            existingAppRole.IsDeleted = false;
+            await roleManager.UpdateAsync(existingAppRole);
+        }
+    }
+
     private async Task<ApplicationRole?> GetAppRoleByIdAsync(string id) =>
         await roleManager.FindByIdAsync(id);
+
+    private async Task<ApplicationRole?> GetAppRoleByNameAsync(string roleName) =>
+        await roleManager.Roles
+                .FirstOrDefaultAsync(r => r.Name == roleName);
+
+    private async Task<ApplicationRole?> GetAppRoleIncludingDeletedByNameAsync(string roleName) =>
+        await roleManager.Roles
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(r => r.Name == roleName);
 }

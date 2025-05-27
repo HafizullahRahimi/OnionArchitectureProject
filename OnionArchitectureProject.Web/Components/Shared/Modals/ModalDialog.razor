@@ -1,0 +1,35 @@
+﻿<ModalBase @ref="modalRef">
+	<div class="modal-header">
+		@HeaderContent
+	</div>
+	<div class="modal-body">
+		@BodyContent
+	</div>
+	<div class="modal-footer">
+		@FooterContent
+	</div>
+</ModalBase>
+
+@code {
+	[Parameter] public RenderFragment HeaderContent { get; set; } = default!;
+	[Parameter] public RenderFragment BodyContent { get; set; } = default!;
+	[Parameter] public RenderFragment FooterContent { get; set; } = default!;
+
+	private ModalBase? modalRef;
+
+	public async Task OpenModalAsync()
+	{
+		if (modalRef != null)
+		{
+			await modalRef.OpenModalAsync();
+		}
+	}
+
+	public async Task CloseModalAsync()
+	{
+		if (modalRef != null)
+		{
+			await modalRef.CloseModalAsync();
+		}
+	}
+}

@@ -2,9 +2,14 @@
 using OnionArchitectureProject.Domain.Authentication.Roles;
 
 namespace OnionArchitectureProject.Application.Admin.RoleService;
-public class RoleValidationService(IServiceScopeFactory scopeFactory) : IRoleValidationService
+public class RoleValidationService : IRoleValidationService
 {
-    private readonly IServiceScopeFactory scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
+    private readonly IServiceScopeFactory scopeFactory;
+
+    public RoleValidationService(IServiceScopeFactory scopeFactory)
+    {
+        this.scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
+    }
 
     public async Task<bool> IsRoleNameUniqueAsync(string roleName, CancellationToken cancellationToken)
     {
